@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { CategoriesService } from './categories.service';
 
 @Controller('categories')
-export class CategoriesController {}
+export class CategoriesController {
+    constructor( private categoriesService: CategoriesService ){}
+
+    @Get()
+    async getAllCategories(){
+        return await this.categoriesService.getAllCategories();
+    }
+}
