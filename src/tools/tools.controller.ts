@@ -20,7 +20,7 @@ export class ToolsController {
         return tool;
     }
 
-    @Get(':categoryId/:categoryName')
+    @Get('herramientas/:categoryId/:categoryName')
     async getToolsForCategoryId(@Param('categoryId') categoryId: number ) {
         if(isNaN(categoryId)) throw new NotFoundException('Id is not a number.');
         const tools = await this.toolsService.getToolsForCategoryId(categoryId);
@@ -28,7 +28,7 @@ export class ToolsController {
         return tools;
     }
 
-    @Get(':categoryId/:name/:subcategoryId/:subcategoryName')
+    @Get('herramientas/:categoryId/:name/:subcategoryId/:subcategoryName')
     async getToolsForSubcategoryId(@Param('subcategoryId') subcategoryId: number ) {
         if(isNaN(subcategoryId)) throw new NotFoundException('Id is not a number.');
         const tools = await this.toolsService.getToolsForSubcategoryId(subcategoryId);
