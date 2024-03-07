@@ -19,15 +19,22 @@ export class ToolsController {
         if(!tool) throw new NotFoundException('Tool not found');
         return tool;
     }
-    
-    @Get(':name/:id')
-    async getToolsForCategoryId(@Param('id') id: number ) {
-        if(isNaN(id)) throw new NotFoundException('Id is not a number.');
-        const tools = await this.toolsService.getToolsForCategoryId(id);
+
+    @Get(':categoryId/:categoryName')
+    async getToolsForCategoryId(@Param('categoryId') categoryId: number ) {
+        if(isNaN(categoryId)) throw new NotFoundException('Id is not a number.');
+        const tools = await this.toolsService.getToolsForCategoryId(categoryId);
         if(!tools) throw new NotFoundException('Error: No tools found with the provided categoryId.');
         return tools;
     }
-    
+
+    @Get(':categoryId/:name/:subcategoryId/:subcategoryName')
+    async getToolsForSubcategoryId(@Param('subcategoryId') subcategoryId: number ) {
+        if(isNaN(subcategoryId)) throw new NotFoundException('Id is not a number.');
+        const tools = await this.toolsService.getToolsForSubcategoryId(subcategoryId);
+        if(!tools) throw new NotFoundException('Error: No tools found with the provided subcategoryId.');
+        return tools;
+    }
 
     @Post()
     async createTool(@Body() body: CreateToolDto){

@@ -18,6 +18,12 @@ export class ToolsService {
         return tools;
     }
 
+    // TODO: cuando se haga la refactorización de la base de datos, cambiar la consulta de las herramientas de este método
+    getToolsForSubcategoryId(id: number): Promise<Tool[]> {
+        const tools = this.toolModel.find({categoryId: id});
+        return tools;
+    }
+
     async createTool(tool: CreateToolDto){
         const newTool = new this.toolModel(tool);
         return newTool.save();
