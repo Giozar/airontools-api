@@ -9,8 +9,13 @@ import { Tool } from './schemas/tool.schema';
 export class ToolsService {
     constructor(@InjectModel(Tool.name) private toolModel: Model<Tool>){}
 
-    async getAllTools(): Promise<Tool[]>{
+    getAllTools(): Promise<Tool[]>{
         return this.toolModel.find(); 
+    }
+
+    getToolsForCategoryId( id: number ): Promise<Tool[]> {
+        const tools = this.toolModel.find({categoryId: id});
+        return tools;
     }
 
     async createTool(tool: CreateToolDto){
