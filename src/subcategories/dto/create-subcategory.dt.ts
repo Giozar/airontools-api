@@ -5,6 +5,10 @@ export class createSubcategoryDto {
     @IsNotEmpty()
     @IsNumber()
     id: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    categoryId: number;
     
     @IsNotEmpty()
     @IsString()

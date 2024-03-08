@@ -9,6 +9,11 @@ export class Subcategory {
         unique: true,
     })
     id: number;
+
+    @Prop({
+        required: true,
+    })
+    categoryId: number;
     
     @Prop({
         required: true,

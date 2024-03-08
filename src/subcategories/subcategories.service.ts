@@ -7,7 +7,11 @@ import { Model } from 'mongoose';
 export class SubcategoriesService {
     constructor(@InjectModel(Subcategory.name) private subcategoryModel: Model<Subcategory>){}
 
-    async getAllSubcategories(): Promise<Subcategory[]> {
+    getAllSubcategories(): Promise<Subcategory[]> {
         return this.subcategoryModel.find();
+    }
+
+    getSubcategoriesForId(categoryId: number): Promise<Subcategory[]> {
+        return this.subcategoryModel.find({ categoryId })
     }
 }
