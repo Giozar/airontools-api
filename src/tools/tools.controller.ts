@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, ConflictException, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put} from '@nestjs/common';
 import { ToolsService } from './tools.service';
 import { CreateToolDto } from './dto/create-tool.dto';
 import { UpdateToolDto } from './dto/update-tool.dto';
@@ -13,25 +13,32 @@ export class ToolsController {
         return this.toolsService.getAllTools();
     }
 
-    @Get(':id')
-    async findOneTool(@Param('id') id: number) {
-        const tool = await this.toolsService.findOneTool(id);
+    @Get('/herramientas/:categoryId/:categoryName/p/:toolId/:toolName')
+    async findOneToolInCategory(@Param('toolId') toolId: number) {
+        const tool = await this.toolsService.findOneToolById(toolId);
+        if(!tool) throw new NotFoundException('Tool not found');
+        return tool;
+    }
+
+    @Get('/herramientas/:categoryId/:categoryName/:subcategoryId/:subcategoryName/p/:toolId/:toolName')
+    async findOneToolInSubategory(@Param('toolId') toolId: number) {
+        const tool = await this.toolsService.findOneToolById(toolId);
         if(!tool) throw new NotFoundException('Tool not found');
         return tool;
     }
 
     @Get('herramientas/:categoryId/:categoryName')
-    async getToolsForCategoryId(@Param('categoryId') categoryId: number ) {
+    async getToolsByCategoryId(@Param('categoryId') categoryId: number ) {
         if(isNaN(categoryId)) throw new NotFoundException('Id is not a number.');
-        const tools = await this.toolsService.getToolsForCategoryId(categoryId);
+        const tools = await this.toolsService.getToolsByCategoryId(categoryId);
         if(!tools) throw new NotFoundException('Error: No tools found with the provided categoryId.');
         return tools;
     }
 
     @Get('herramientas/:categoryId/:name/:subcategoryId/:subcategoryName')
-    async getToolsForSubcategoryId(@Param('subcategoryId') subcategoryId: number ) {
+    async getToolsBySubcategoryId(@Param('subcategoryId') subcategoryId: number ) {
         if(isNaN(subcategoryId)) throw new NotFoundException('Id is not a number.');
-        const tools = await this.toolsService.getToolsForSubcategoryId(subcategoryId);
+        const tools = await this.toolsService.getToolsBySubcategoryId(subcategoryId);
         if(!tools) throw new NotFoundException('Error: No tools found with the provided subcategoryId.');
         return tools;
     }
