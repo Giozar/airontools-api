@@ -13,6 +13,13 @@ export class ToolsController {
         return this.toolsService.getAllTools();
     }
 
+    @Get(':toolId')
+    async findOneToolById(@Param('toolId') toolId: number) {
+        const tool = await this.toolsService.findOneToolById(toolId);
+        if(!tool) throw new NotFoundException('Tool not found');
+        return tool;
+    }
+
     @Get('/herramientas/:categoryId/:categoryName/p/:toolId/:toolName')
     async findOneToolInCategory(@Param('toolId') toolId: number) {
         const tool = await this.toolsService.findOneToolById(toolId);
@@ -49,7 +56,7 @@ export class ToolsController {
             return await this.toolsService.createTool(body);
         } catch (error) {
             if( error.code === 11000){
-                throw new ConflictException('Tool already exists');
+                throw new ConflictException(`Duplication error, Tool ${error} already exists!`);
             }
             throw error;
         }
@@ -65,8 +72,15 @@ export class ToolsController {
 
     @Put(':id')
     async updateTool(@Param('id') id: number, @Body() body:UpdateToolDto){
-        const tool = await this.toolsService.updateTool(id, body);
-        if(!tool) throw new NotFoundException('Tool not found');
-        return tool;
+        try {
+            const tool = await this.toolsService.updateTool(id, body);
+            if(!tool) throw new NotFoundException('Tool not found');
+            return tool;
+        } catch (error) {
+            if( error.code === 11000){
+                throw new ConflictException(`Duplication error, Tool ${error} already exists!`);
+            }
+            throw error;
+        }
     }
 }
