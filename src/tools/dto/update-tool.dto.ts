@@ -21,6 +21,7 @@ export class UpdateToolDto {
     subsubcategoryId?: number;
 
     @IsString()
+    @IsOptional()
     path?: string;
 
     @IsOptional()
