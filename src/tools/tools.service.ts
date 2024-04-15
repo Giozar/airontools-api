@@ -13,7 +13,11 @@ export class ToolsService {
         return this.toolModel.find(); 
     }
 
-    async getAllByKeywords( keyword1: string, keyword2: string ): Promise<Tool[]>{
+    async getAllByKeywords( keyword1: string = '', keyword2: string = '' ): Promise<Tool[]>{
+
+        if (keyword1.length == 0 && keyword2.length == 0) {
+            return [];
+        }
         const tools = await this.toolModel
         .find({
             $and: [
