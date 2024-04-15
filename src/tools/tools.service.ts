@@ -13,6 +13,34 @@ export class ToolsService {
         return this.toolModel.find(); 
     }
 
+    async getAllByKeywords( keyword1: string, keyword2: string ): Promise<Tool[]>{
+        const tools = await this.toolModel
+        .find({
+            $and: [
+              {
+                $or: [
+                  { name: { $regex: keyword1, $options: 'i' } },
+                  { path: { $regex: keyword1, $options: 'i' } },
+                  { overview: { $regex: keyword1, $options: 'i' } },
+                  { description: { $regex: keyword1, $options: 'i' } },
+                  { specification: { $regex: keyword1, $options: 'i' } }
+                ]
+              },
+              {
+                $or: [
+                  { name: { $regex: keyword2, $options: 'i' } },
+                  { path: { $regex: keyword2, $options: 'i' } },
+                  { overview: { $regex: keyword2, $options: 'i' } },
+                  { description: { $regex: keyword2, $options: 'i' } },
+                  { specification: { $regex: keyword2, $options: 'i' } }
+                ]
+              }
+            ]
+          });
+        //   console.log(tools.length);
+        return tools;
+    }
+
     getToolsByCategoryId( id: number ): Promise<Tool[]> {
         const tools = this.toolModel.find({categoryId: id});
         return tools;

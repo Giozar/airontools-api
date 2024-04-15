@@ -2,6 +2,7 @@ import { Body, ConflictException, Controller, Delete, Get, HttpCode, NotFoundExc
 import { ToolsService } from './tools.service';
 import { CreateToolDto } from './dto/create-tool.dto';
 import { UpdateToolDto } from './dto/update-tool.dto';
+import { SearchToolDto } from './dto/search-tool.dto';
 
 @Controller('tools')
 export class ToolsController {
@@ -11,6 +12,14 @@ export class ToolsController {
     @Get()
     getAllTools(){
         return this.toolsService.getAllTools();
+    }
+
+    @Post('tool-searching')
+    async getAllByKeywords(
+        @Body() search: SearchToolDto
+    ) {
+        const response = await this.toolsService.getAllByKeywords( search.keyword1, search.keyword2 );
+        return response;
     }
 
     @Get(':toolId')
