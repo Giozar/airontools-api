@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { ConfigModule } from '@nestjs/config';
+import { GptModule } from './gpt/gpt.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { ConfigModule } from '@nestjs/config';
     MongooseModule.forRoot( configuration().database.host ),
     ToolsModule,
     CategoriesModule,
-    SubcategoriesModule
+    SubcategoriesModule,
+    GptModule
   ],
   controllers: [],
   providers: [],
