@@ -14,11 +14,11 @@ export class ToolsController {
         return this.toolsService.getAllTools();
     }
 
-    @Post('tool-searching')
+    @Post('keyword-search')
     async getAllByKeywords(
         @Body() search: SearchToolDto
     ) {
-        const response = await this.toolsService.getAllByKeywords( search.keyword1, search.keyword2 );
+        const response = await this.toolsService.getAllByKeywords( search.keywords, );
         return response;
     }
 

@@ -12,37 +12,42 @@ export class ToolsService {
         return this.toolModel.find(); 
     }
 
-    async getAllByKeywords( keyword1: string = '', keyword2: string = '' ): Promise<Tool[]>{
-
-        if (keyword1.length == 0 && keyword2.length == 0) {
-            return [];
+    async getAllByKeywords(keywords: string = ''): Promise<any> {
+      interface ToolSearchResult {
+        keyword: string;
+        tools: Tool[];
+      }
+    
+      const toolSearchResults: ToolSearchResult[] = [];
+      
+      // Si la busqueda ingresada está vacía no hace ninguna busqueda
+      if (keywords.trim() === '') {
+        return toolSearchResults;
+      }
+    
+      const keywordArray = keywords.split(' ');
+    
+      for (const keyword of keywordArray) {
+        const tools = await this.toolModel.find({
+          $or: [
+            { name: { $regex: keyword, $options: 'i' } },
+            { path: { $regex: keyword, $options: 'i' } },
+            { overview: { $regex: keyword, $options: 'i' } },
+            { description: { $regex: keyword, $options: 'i' } },
+            { specification: { $regex: keyword, $options: 'i' } }
+          ]
+        });
+    
+        // Solo agregamos al resultado si se encontraron herramientas para la palabra clave actual
+        if (tools.length > 0) {
+          toolSearchResults.push({ keyword, tools });
         }
-        const tools = await this.toolModel
-        .find({
-            $and: [
-              {
-                $or: [
-                  { name: { $regex: keyword1, $options: 'i' } },
-                  { path: { $regex: keyword1, $options: 'i' } },
-                  { overview: { $regex: keyword1, $options: 'i' } },
-                  { description: { $regex: keyword1, $options: 'i' } },
-                  { specification: { $regex: keyword1, $options: 'i' } }
-                ]
-              },
-              {
-                $or: [
-                  { name: { $regex: keyword2, $options: 'i' } },
-                  { path: { $regex: keyword2, $options: 'i' } },
-                  { overview: { $regex: keyword2, $options: 'i' } },
-                  { description: { $regex: keyword2, $options: 'i' } },
-                  { specification: { $regex: keyword2, $options: 'i' } }
-                ]
-              }
-            ]
-          });
-        //   console.log(tools.length);
-        return tools;
+      }
+    
+      return toolSearchResults;
     }
+    
+    
 
     getToolsByCategoryId( id: number ): Promise<Tool[]> {
         const tools = this.toolModel.find({categoryId: id});
