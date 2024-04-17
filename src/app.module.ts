@@ -16,7 +16,7 @@ import { GptModule } from './gpt/gpt.module';
     ToolsModule,
     CategoriesModule,
     SubcategoriesModule,
-    GptModule
+    GptModule,
   ],
   controllers: [],
   providers: [],

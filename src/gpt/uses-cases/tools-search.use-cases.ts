@@ -5,10 +5,24 @@ interface Options {
 }
 
 interface Tool {
-    id: number;
+    id: string;
 }
 
-export const searchToolUseCase = async( openai: OpenAI, {prompt}: Options, myToolsFunction) => {
+async function toolsQuery( id ) {
+    try {
+        const response = await fetch(`http://localhost:4000/tools/${id}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const tool = await response.json();
+        console.log('La herramienta es', tool);
+    } catch (error) {
+        console.error('Error in the request:', error);
+        throw error; // Rethrow the error for further handling   
+    }
+}
+
+export const toolsSearchUseCase = async( openai: OpenAI, {prompt}: Options ) => {
     const response = await openai.chat.completions.create({
         messages: [
             {
@@ -24,17 +38,17 @@ export const searchToolUseCase = async( openai: OpenAI, {prompt}: Options, myToo
         ],
         functions: [
             {
-                name: 'myToolsFunction',
-                description: 'Performs a query for a tool given a toolId.',
+                name: 'toolsQuery',
+                description: 'Performs a query for a tool given a id.',
                 parameters: {
                     type: 'object',
                     properties: {
-                        toolId: {
+                        id: {
                             type:'number',
-                            description: 'Search for a tool by its toolId and you have to return the tool name the name of the tool is: name',
+                            description: 'Search for a tool by its id and you have to return the tool name the name of the tool is: name',
                         }
                     },
-                    required: ['toolId'],
+                    required: ['id'],
                 }
             }
         ],
@@ -50,10 +64,10 @@ export const searchToolUseCase = async( openai: OpenAI, {prompt}: Options, myToo
         const functionCallName = query.function_call.name;
         console.log(`Función llamada ${functionCallName}`);
 
-        if(functionCallName === 'myToolsFunction') {
+        if(functionCallName === 'toolsQuery') {
             const tool: Tool = JSON.parse(query.function_call.arguments);
             console.log(tool.id);
-            myToolsFunction(tool.id);
+            toolsQuery(tool.id);
         }
     }
 }

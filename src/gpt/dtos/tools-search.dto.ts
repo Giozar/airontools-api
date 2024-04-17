@@ -1,6 +1,6 @@
 import { IsString } from "class-validator";
 
-export class ToolsQueryDto {
+export class ToolsSearchDto {
     @IsString()
     readonly prompt: string;
 
