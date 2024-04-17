@@ -1,8 +1,8 @@
 import { Body, ConflictException, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put} from '@nestjs/common';
 import { ToolsService } from './tools.service';
-import { CreateToolDto } from './dto/create-tool.dto';
-import { UpdateToolDto } from './dto/update-tool.dto';
-import { SearchToolDto } from './dto/search-tool.dto';
+import { CreateToolDto } from './dtos/create-tool.dto';
+import { UpdateToolDto } from './dtos/update-tool.dto';
+import { SearchToolDto } from './dtos/search-tool.dto';
 
 @Controller('tools')
 export class ToolsController {
