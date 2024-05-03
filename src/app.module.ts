@@ -6,7 +6,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { ConfigModule } from '@nestjs/config';
 import { GptModule } from './gpt/gpt.module';
-import { EmailModule } from './email/email.module';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { EmailModule } from './email/email.module';
     CategoriesModule,
     SubcategoriesModule,
     GptModule,
-    EmailModule,
+    MailerModule,
   ],
   controllers: [],
   providers: [],
