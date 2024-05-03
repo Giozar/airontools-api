@@ -1,4 +1,4 @@
-import configuration from './config/configuration';
+import databaseConfig from './config/databaseConfig';
 import { Module } from '@nestjs/common';
 import { ToolsModule } from './tools/tools.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -6,17 +6,21 @@ import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { ConfigModule } from '@nestjs/config';
 import { GptModule } from './gpt/gpt.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [ configuration ],
+      load: [ databaseConfig ], // Para cargar el archivo de configuración
+      envFilePath: '.env', // Para leer archivo .env de variables de entorno
+      isGlobal: true, // Para que todas la variables de entorno sean globales en la aplicación
     }),
-    MongooseModule.forRoot( configuration().database.host ),
+    MongooseModule.forRoot( databaseConfig().database.host ),
     ToolsModule,
     CategoriesModule,
     SubcategoriesModule,
     GptModule,
+    EmailModule,
   ],
   controllers: [],
   providers: [],
