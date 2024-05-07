@@ -1,8 +1,9 @@
-import { Body, ConflictException, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put} from '@nestjs/common';
+import { Body, ConflictException, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put, Query} from '@nestjs/common';
 import { ToolsService } from './tools.service';
 import { CreateToolDto } from './dtos/create-tool.dto';
 import { UpdateToolDto } from './dtos/update-tool.dto';
 import { SearchToolDto } from './dtos/search-tool.dto';
+import { ToolsPaginationDto } from 'src/common/dtos/tools-pagination.dto';
 
 @Controller('tools')
 export class ToolsController {
@@ -10,8 +11,10 @@ export class ToolsController {
     constructor(private toolsService : ToolsService){}
     
     @Get()
-    getAllTools(){
-        return this.toolsService.getAllTools();
+    getAllTools( 
+        @Query() {limit, offset}: ToolsPaginationDto 
+    ) {
+        return this.toolsService.getAllTools( limit, offset );
     }
 
     @Post('keyword-search')

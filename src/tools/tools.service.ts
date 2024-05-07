@@ -8,8 +8,16 @@ import { CreateToolDto, UpdateToolDto } from './dtos';
 export class ToolsService {
     constructor(@InjectModel(Tool.name) private toolModel: Model<Tool>){}
 
-    getAllTools(): Promise<Tool[]>{
-        return this.toolModel.find(); 
+    getAllTools(limit: number = 20, offset: number = 0 ): Promise<Tool[]> {
+
+        return this.toolModel.find()
+        .limit( limit )
+        .skip( offset )
+        .sort({
+          id: 1, 
+          // name: 1, // Ordena la propiedad ascendentemente
+        },) 
+        // .select('-created_at') // Indica que en la respuesta no vendrá esta propiedad
     }
 
     async getAllByKeywords(keywords: string = ''): Promise<any> {
