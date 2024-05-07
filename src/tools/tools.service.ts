@@ -6,9 +6,10 @@ import { CreateToolDto, UpdateToolDto } from './dtos';
 
 @Injectable()
 export class ToolsService {
+
     constructor(@InjectModel(Tool.name) private toolModel: Model<Tool>){}
 
-    getAllTools(limit: number = 20, offset: number = 0 ): Promise<Tool[]> {
+    getAllTools(limit: number = 10, offset: number = 0 ): Promise<Tool[]> {
 
         return this.toolModel.find()
         .limit( limit )
@@ -20,7 +21,7 @@ export class ToolsService {
         // .select('-created_at') // Indica que en la respuesta no vendrá esta propiedad
     }
 
-    async getAllByKeywords(keywords: string = ''): Promise<any> {
+    async getAllByKeywords(keywords: string = '', limit: number = 10, offset: number = 0): Promise<any> {
       interface ToolSearchResult {
         keyword: string;
         tools: Tool[];
@@ -44,7 +45,12 @@ export class ToolsService {
             { description: { $regex: keyword, $options: 'i' } },
             { specification: { $regex: keyword, $options: 'i' } }
           ]
-        });
+        })
+        .limit( limit )
+        .skip( offset )
+        .sort({
+          id: 1, 
+        },) ;
     
         // Solo agregamos al resultado si se encontraron herramientas para la palabra clave actual
         if (tools.length > 0) {

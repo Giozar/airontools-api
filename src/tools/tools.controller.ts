@@ -19,7 +19,8 @@ export class ToolsController {
 
     @Post('keyword-search')
     async getAllByKeywords(
-        @Body() search: SearchToolDto
+        @Body() search: SearchToolDto,
+        @Query() {limit, offset}: ToolsPaginationDto 
     ) {
         const response = await this.toolsService.getAllByKeywords( search.keywords, );
         return response;
