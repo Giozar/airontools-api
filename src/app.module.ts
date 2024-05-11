@@ -11,11 +11,11 @@ import { MailerModule } from './mailer/mailer.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [ databaseConfig ], // Para cargar el archivo de configuración
+      load: [databaseConfig], // Para cargar el archivo de configuración
       envFilePath: '.env', // Para leer archivo .env de variables de entorno
       isGlobal: true, // Para que todas la variables de entorno sean globales en la aplicación
     }),
-    MongooseModule.forRoot( databaseConfig().database.host ),
+    MongooseModule.forRoot(databaseConfig().database.host),
     ToolsModule,
     CategoriesModule,
     SubcategoriesModule,

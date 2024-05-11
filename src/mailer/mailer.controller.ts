@@ -1,4 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { MailerService } from './mailer.service';
 
 @Controller('mailer')
@@ -7,6 +7,6 @@ export class MailerController {
 
   @Get()
   async sendMail() {
-    return await this.mailerService.sendMail()
+    return await this.mailerService.sendMail();
   }
 }

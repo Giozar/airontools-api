@@ -1,46 +1,46 @@
-import {IsNumber, IsString, IsOptional} from 'class-validator'
+import { IsNumber, IsString, IsOptional } from 'class-validator';
 export class UpdateToolDto {
-    @IsOptional()
-    @IsNumber()
-    id: number;
+  @IsOptional()
+  @IsNumber()
+  id: number;
 
-    @IsOptional()
-    @IsString()
-    name: string;
+  @IsOptional()
+  @IsString()
+  name: string;
 
-    @IsOptional()
-    @IsNumber()
-    categoryId?: number;
-    
-    @IsOptional()
-    @IsNumber()
-    subcategoryId?: number;
-    
-    @IsOptional()
-    @IsNumber()
-    subsubcategoryId?: number;
+  @IsOptional()
+  @IsNumber()
+  categoryId?: number;
 
-    @IsString()
-    @IsOptional()
-    path?: string;
+  @IsOptional()
+  @IsNumber()
+  subcategoryId?: number;
 
-    @IsOptional()
-    @IsString()
-    image?: string;
+  @IsOptional()
+  @IsNumber()
+  subsubcategoryId?: number;
 
-    @IsOptional()
-    @IsString()
-    overview?: string;
-    
-    @IsOptional()
-    @IsString()
-    description?: string;
-    
-    @IsOptional()
-    @IsString()
-    advantages?: string;
+  @IsString()
+  @IsOptional()
+  path?: string;
 
-    @IsOptional()
-    @IsString()
-    specification?: string;
+  @IsOptional()
+  @IsString()
+  image?: string;
+
+  @IsOptional()
+  @IsString()
+  overview?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  advantages?: string;
+
+  @IsOptional()
+  @IsString()
+  specification?: string;
 }

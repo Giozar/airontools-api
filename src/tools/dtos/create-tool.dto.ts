@@ -1,41 +1,41 @@
-import {IsNumber, IsString, IsNotEmpty, IsOptional} from 'class-validator'
+import { IsNumber, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 export class CreateToolDto {
-    @IsNotEmpty()
-    @IsNumber()
-    id: number;
+  @IsNotEmpty()
+  @IsNumber()
+  id: number;
 
-    @IsNotEmpty()
-    @IsString()
-    name: string;
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
-    @IsNotEmpty()
-    @IsNumber()
-    categoryId?: number;
-    
-    @IsNotEmpty()
-    @IsNumber()
-    subcategoryId?: number;
-    
-    @IsOptional()
-    @IsNumber()
-    subsubcategoryId?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  categoryId?: number;
 
-    @IsString()
-    path?: string;
+  @IsNotEmpty()
+  @IsNumber()
+  subcategoryId?: number;
 
-    @IsNotEmpty()
-    @IsString()
-    image?: string;
+  @IsOptional()
+  @IsNumber()
+  subsubcategoryId?: number;
 
-    @IsString()
-    overview?: string;
-    
-    @IsString()
-    description?: string;
-    
-    @IsString()
-    advantages?: string;
+  @IsString()
+  path?: string;
 
-    @IsString()
-    specification?: string;
+  @IsNotEmpty()
+  @IsString()
+  image?: string;
+
+  @IsString()
+  overview?: string;
+
+  @IsString()
+  description?: string;
+
+  @IsString()
+  advantages?: string;
+
+  @IsString()
+  specification?: string;
 }

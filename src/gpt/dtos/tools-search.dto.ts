@@ -1,7 +1,6 @@
-import { IsString } from "class-validator";
+import { IsString } from 'class-validator';
 
 export class ToolsSearchDto {
-    @IsString()
-    readonly prompt: string;
-
+  @IsString()
+  readonly prompt: string;
 }

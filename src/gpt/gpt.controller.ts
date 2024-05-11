@@ -6,11 +6,8 @@ import { ToolsSearchDto } from './dtos';
 export class GptController {
   constructor(private readonly gptService: GptService) {}
 
-
   @Post('tools-search')
-  async toolsSearch(
-    @Body() toolsSearchDto: ToolsSearchDto,
-  ){
+  async toolsSearch(@Body() toolsSearchDto: ToolsSearchDto) {
     return await this.gptService.searchTool(toolsSearchDto);
   }
 }

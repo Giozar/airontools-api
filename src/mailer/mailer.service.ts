@@ -3,8 +3,7 @@ import { sendMailUseCase } from './uses-cases';
 
 @Injectable()
 export class MailerService {
-
-    async sendMail(){
-        return await sendMailUseCase();
-    }
+  async sendMail() {
+    return await sendMailUseCase();
+  }
 }

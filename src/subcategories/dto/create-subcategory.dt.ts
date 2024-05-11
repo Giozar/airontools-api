@@ -1,25 +1,23 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class createSubcategoryDto {
-    
-    @IsNotEmpty()
-    @IsNumber()
-    id: number;
+  @IsNotEmpty()
+  @IsNumber()
+  id: number;
 
-    @IsNotEmpty()
-    @IsNumber()
-    categoryId: number;
-    
-    @IsNotEmpty()
-    @IsString()
-    name: string;
+  @IsNotEmpty()
+  @IsNumber()
+  categoryId: number;
 
-    @IsNotEmpty()
-    @IsString()
-    path: string;
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
-    @IsNotEmpty()
-    @IsString()
-    image: string;
+  @IsNotEmpty()
+  @IsString()
+  path: string;
 
+  @IsNotEmpty()
+  @IsString()
+  image: string;
 }

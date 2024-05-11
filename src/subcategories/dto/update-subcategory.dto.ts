@@ -1,25 +1,23 @@
-import { IsOptional, IsNumber, IsString } from "class-validator";
+import { IsOptional, IsNumber, IsString } from 'class-validator';
 
 export class createSubcategoryDto {
-    
-    @IsOptional()
-    @IsNumber()
-    id: number;
+  @IsOptional()
+  @IsNumber()
+  id: number;
 
-    @IsOptional()
-    @IsNumber()
-    categoryId: number;
-    
-    @IsOptional()
-    @IsString()
-    name: string;
+  @IsOptional()
+  @IsNumber()
+  categoryId: number;
 
-    @IsOptional()
-    @IsString()
-    path: string;
+  @IsOptional()
+  @IsString()
+  name: string;
 
-    @IsOptional()
-    @IsString()
-    image: string;
+  @IsOptional()
+  @IsString()
+  path: string;
 
+  @IsOptional()
+  @IsString()
+  image: string;
 }

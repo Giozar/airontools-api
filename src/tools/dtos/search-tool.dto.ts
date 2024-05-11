@@ -1,8 +1,7 @@
-import { IsAlphanumeric, IsOptional, IsString } from "class-validator";
+import { IsOptional, IsString } from 'class-validator';
 
 export class SearchToolDto {
-
-    @IsOptional()
-    @IsString()
-    keywords: string;
+  @IsOptional()
+  @IsString()
+  keywords: string;
 }

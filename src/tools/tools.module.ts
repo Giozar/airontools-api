@@ -5,13 +5,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Tool, ToolSchema } from './schemas/tool.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([
-    {
-      name: Tool.name,
-      schema: ToolSchema,
-    }
-  ])],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Tool.name,
+        schema: ToolSchema,
+      },
+    ]),
+  ],
   providers: [ToolsService],
-  controllers: [ToolsController]
+  controllers: [ToolsController],
 })
 export class ToolsModule {}
