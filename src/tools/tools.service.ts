@@ -8,15 +8,7 @@ import { CreateToolDto, UpdateToolDto } from './dtos';
 export class ToolsService {
   constructor(@InjectModel(Tool.name) private toolModel: Model<Tool>) {}
 
-  getAllTools(limit: number = 10, offset: number = 0): Promise<Tool[]> {
-    return this.toolModel.find().limit(limit).skip(offset).sort({
-      id: 1,
-      // name: 1, // Ordena la propiedad ascendentemente
-    });
-    // .select('-created_at') // Indica que en la respuesta no vendrá esta propiedad
-  }
-
-  async getAllByKeywords(
+  async getAllTools(
     keywords: string = '',
     limit: number = 10,
     offset: number = 0,
@@ -27,11 +19,6 @@ export class ToolsService {
     }
 
     const toolSearchResults: ToolSearchResult[] = [];
-
-    // Si la busqueda ingresada está vacía no hace ninguna busqueda
-    if (keywords.trim() === '') {
-      return toolSearchResults;
-    }
 
     const keywordArray = keywords.split(' ');
 
@@ -50,7 +37,9 @@ export class ToolsService {
         .skip(offset)
         .sort({
           id: 1,
+          // name: 1, // Ordena la propiedad ascendentemente
         });
+      // .select('-created_at'); // Indica que en la respuesta no vendrá esta propiedad
 
       // Solo agregamos al resultado si se encontraron herramientas para la palabra clave actual
       if (tools.length > 0) {

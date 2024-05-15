@@ -22,16 +22,11 @@ export class ToolsController {
   constructor(private toolsService: ToolsService) {}
 
   @Get()
-  getAllTools(@Query() { limit, offset }: ToolsPaginationDto) {
-    return this.toolsService.getAllTools(limit, offset);
-  }
-
-  @Post('keyword-search')
   async getAllByKeywords(
     @Body() search: SearchToolDto,
     @Query() { limit, offset }: ToolsPaginationDto,
   ) {
-    const response = await this.toolsService.getAllByKeywords(
+    const response = await this.toolsService.getAllTools(
       search.keywords,
       limit,
       offset,
