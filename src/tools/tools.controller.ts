@@ -21,7 +21,7 @@ import { ToolsPaginationDto } from 'src/common/dtos/tools-pagination.dto';
 export class ToolsController {
   constructor(private toolsService: ToolsService) {}
 
-  @Get()
+  @Post()
   async getAllByKeywords(
     @Body() search: SearchToolDto,
     @Query() { limit, offset }: ToolsPaginationDto,

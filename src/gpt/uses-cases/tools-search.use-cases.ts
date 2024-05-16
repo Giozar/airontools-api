@@ -22,15 +22,18 @@ async function toolsQuery(id) {
   }
 }
 
-async function toolsKeyword(keywords: string) {
+async function toolsKeyword(keywords, limit = 10, offset = 0) {
   try {
-    const response = await fetch(`http://localhost:4000/tools/keyword-search`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `http://localhost:4000/tools?limit=${limit}&offset=${offset}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ keywords }),
       },
-      body: JSON.stringify(keywords),
-    });
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -88,8 +91,19 @@ export const toolsSearchUseCase = async (
                             Important: and all of them will be returned to me in Spanish.
                             `,
             },
+            limit: {
+              type: 'number',
+              description: `the limit is the maximum number of tools that the function will return, 
+              if you are not given a limit number or a specific number of tools to return by default the limit is 10.
+              E.g. give me 15 tools or I want 20 tools, it is important that you only return the specified number.`,
+            },
+            offset: {
+              type: 'number',
+              description: `the offset is the number of tools that the function will skip, if you are not given an offset number or a specific number of tools to skip by default the offset is 0.
+              E.g. I want you to skip 5 tools or I want you to skip 10 tools, it is important that you only return the specified number.`,
+            },
           },
-          required: ['keywords'],
+          required: ['keywords', 'limit', 'offset'],
         },
       },
     ],
@@ -112,9 +126,10 @@ export const toolsSearchUseCase = async (
     }
 
     if (functionCallName === 'toolsKeyword') {
-      const keywords = JSON.parse(query.function_call.arguments);
-      // console.log(keywords);
-      toolsKeyword(keywords);
+      const searchArgs = JSON.parse(query.function_call.arguments);
+      const { keywords, limit, offset } = searchArgs;
+      console.log({ keywords }, limit, offset);
+      toolsKeyword(keywords, limit, offset);
     }
   }
 };
