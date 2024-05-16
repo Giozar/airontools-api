@@ -8,7 +8,7 @@ import { CreateToolDto, UpdateToolDto } from './dtos';
 export class ToolsService {
   constructor(@InjectModel(Tool.name) private toolModel: Model<Tool>) {}
 
-  async getAllTools(
+  async searchTools(
     keywords: string = '',
     limit: number = 10,
     offset: number = 0,
