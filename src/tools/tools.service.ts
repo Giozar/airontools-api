@@ -13,12 +13,13 @@ export class ToolsService {
     limit: number = 10,
     offset: number = 0,
   ): Promise<any> {
-    interface ToolSearchResult {
-      keyword: string;
-      tools: Tool[];
-    }
+    // Descomentar si se quiere devolver un objeto con la palabra clave y las herramientas encontradas
+    // interface ToolSearchResult {
+    //   keyword: string;
+    //   tools: Tool[];
+    // }
 
-    const toolSearchResults: ToolSearchResult[] = [];
+    const toolSearchResults: Tool[] = [];
 
     const keywordArray = keywords.split(' ');
 
@@ -43,7 +44,10 @@ export class ToolsService {
 
       // Solo agregamos al resultado si se encontraron herramientas para la palabra clave actual
       if (tools.length > 0) {
-        toolSearchResults.push({ keyword, tools });
+        // Descomentar si se quiere devolver un objeto con la palabra clave y las herramientas encontradas
+        // toolSearchResults.push({ keyword, tools });
+
+        toolSearchResults.push(...tools);
       }
     }
 
