@@ -45,7 +45,7 @@ async function toolsKeyword(keywords, limit = 10, offset = 0) {
   }
 }
 
-export const toolsSearchUseCase = async (
+export const toolSearchUseCase = async (
   openai: OpenAI,
   { prompt }: Options,
 ) => {

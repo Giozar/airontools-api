@@ -1,1 +1,1 @@
-export * from './tools-search.use-cases';
+export * from './tool-search.use-cases';

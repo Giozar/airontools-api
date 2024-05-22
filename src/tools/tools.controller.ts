@@ -14,7 +14,7 @@ import {
 import { ToolsService } from './tools.service';
 import { CreateToolDto } from './dtos/create-tool.dto';
 import { UpdateToolDto } from './dtos/update-tool.dto';
-import { SearchToolDto } from './dtos/search-tool.dto';
+import { ToolSearchDto } from './dtos/tool-search.dto';
 import { ToolsPaginationDto } from 'src/common/dtos/tools-pagination.dto';
 
 @Controller('tools')
@@ -22,11 +22,11 @@ export class ToolsController {
   constructor(private toolsService: ToolsService) {}
 
   @Post()
-  async searchTools(
-    @Body() search: SearchToolDto,
+  async toolSearch(
+    @Body() search: ToolSearchDto,
     @Query() { limit, offset }: ToolsPaginationDto,
   ) {
-    const response = await this.toolsService.searchTools(
+    const response = await this.toolsService.toolSearch(
       search.keywords,
       limit,
       offset,
