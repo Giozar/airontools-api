@@ -81,7 +81,7 @@ export class ToolsController {
     return tools;
   }
 
-  @Post()
+  @Post('create')
   async createTool(@Body() body: CreateToolDto) {
     try {
       return await this.toolsService.createTool(body);
