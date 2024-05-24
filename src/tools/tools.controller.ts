@@ -95,6 +95,13 @@ export class ToolsController {
     }
   }
 
+  // Endpoint para reiniciar el contador
+  @Post('reset-counter')
+  async resetCounter() {
+    await this.toolsService.resetCounter();
+    return { message: 'Counter reset successfully' };
+  }
+
   @Delete(':id')
   @HttpCode(204)
   async deleteTool(@Param('id') id: number) {

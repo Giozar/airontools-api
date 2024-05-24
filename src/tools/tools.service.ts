@@ -70,6 +70,23 @@ export class ToolsService {
     return newTool.save();
   }
 
+  // Método para reiniciar el contador
+  async resetCounter(): Promise<void> {
+    const model = this.toolModel as any;
+    if (model.counterReset) {
+      await new Promise<void>((resolve, reject) => {
+        model.counterReset('id', (err: any) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+    } else {
+      throw new Error('counterReset method is not available on the model');
+    }
+  }
+
   async deleteTool(id: number) {
     return this.toolModel.findOneAndDelete({ id });
   }
