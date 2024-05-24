@@ -35,6 +35,9 @@ importers:
       mongoose:
         specifier: ^8.2.1
         version: 8.2.1
+      mongoose-sequence:
+        specifier: ^6.0.1
+        version: 6.0.1(mongoose@8.2.1)
       openai:
         specifier: ^4.34.0
         version: 4.34.0
@@ -2697,6 +2700,11 @@ packages:
       socks:
         optional: true
 
+  mongoose-sequence@6.0.1:
+    resolution: {integrity: sha512-uXnLCW9pu2V49Xw8BmdXdeRugd2mv+ntu3nT2Bbm33pNRmmvHE2GKA+8BASKoQt960McLX4VL78wkb492f6MoQ==}
+    peerDependencies:
+      mongoose: '>=5'
+
   mongoose@8.2.1:
     resolution: {integrity: sha512-UgZZbXSJH0pdU936qj3FyVI+sBsMoGowFnL5R/RYrA50ayn6+ZYdVr8ehsRgNxRcMYwoNld5XzHIfkFRJTePEw==}
     engines: {node: '>=16.20.1'}
@@ -4891,8 +4899,7 @@ snapshots:
   assert-never@1.2.1:
     optional: true
 
-  async@3.2.5:
-    optional: true
+  async@3.2.5: {}
 
   asynckit@0.4.0: {}
 
@@ -7128,6 +7135,12 @@ snapshots:
       '@mongodb-js/saslprep': 1.1.4
       bson: 6.4.0
       mongodb-connection-string-url: 3.0.0
+
+  mongoose-sequence@6.0.1(mongoose@8.2.1):
+    dependencies:
+      async: 3.2.5
+      lodash: 4.17.21
+      mongoose: 8.2.1
 
   mongoose@8.2.1:
     dependencies:

@@ -6,9 +6,7 @@ export type toolDocument = HydratedDocument<Tool>;
 @Schema()
 export class Tool {
   @Prop({
-    // Lo comento para modificar las id's de los productos para nerlos en null y orderar los id´s
     unique: true,
-    required: true,
   })
   id: number;
 

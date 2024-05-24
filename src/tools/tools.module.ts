@@ -1,15 +1,23 @@
 import { Module } from '@nestjs/common';
 import { ToolsService } from './tools.service';
 import { ToolsController } from './tools.controller';
-import { MongooseModule } from '@nestjs/mongoose';
+import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { Tool, ToolSchema } from './schemas/tool.schema';
+import * as AutoIncrementFactory from 'mongoose-sequence';
+import databaseConfig from '@config/databaseConfig';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
+    MongooseModule.forFeatureAsync([
       {
         name: Tool.name,
-        schema: ToolSchema,
+        useFactory: (connection) => {
+          const schema = ToolSchema;
+          const AutoIncrement = AutoIncrementFactory(connection);
+          schema.plugin(AutoIncrement, { inc_field: 'id' });
+          return schema;
+        },
+        inject: [getConnectionToken(databaseConfig().database.host)],
       },
     ]),
   ],
