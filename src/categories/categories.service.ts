@@ -9,7 +9,7 @@ export class CategoriesService {
     @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
 
-  async getAllCategories(): Promise<Category[]> {
+  async getCategories(): Promise<Category[]> {
     return this.categoryModel.find();
   }
 }

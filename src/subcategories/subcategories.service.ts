@@ -9,11 +9,11 @@ export class SubcategoriesService {
     @InjectModel(Subcategory.name) private subcategoryModel: Model<Subcategory>,
   ) {}
 
-  getAllSubcategories(): Promise<Subcategory[]> {
+  getSubcategories(): Promise<Subcategory[]> {
     return this.subcategoryModel.find();
   }
 
-  getSubcategoriesForId(categoryId: number): Promise<Subcategory[]> {
+  getSubcategoriesByCategoryId(categoryId: number): Promise<Subcategory[]> {
     return this.subcategoryModel.find({ categoryId });
   }
 }
