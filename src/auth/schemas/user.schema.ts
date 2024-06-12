@@ -14,6 +14,8 @@ export class User {
     unique: true,
     text: true,
     required: true,
+    lowercase: true,
+    trim: true,
   })
   email: string;
 

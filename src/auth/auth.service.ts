@@ -9,10 +9,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { LoginUserDto } from './dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name)
+    private userModel: Model<User>,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async createUser(createUserDto: CreateUserDto) {
     try {
@@ -27,7 +33,10 @@ export class AuthService {
       // Exclude password from the response
       newUser.password = undefined;
 
-      return { message: 'User created successfully!', user: newUser };
+      return {
+        ...newUser,
+        token: this.getJwtToken({ email: newUser.email }),
+      };
       // TODO: Return a JWT token
     } catch (error) {
       handleDBErrors(error);
@@ -54,6 +63,15 @@ export class AuthService {
       );
     }
 
-    return user;
+    return {
+      ...user,
+      token: this.getJwtToken({ email: user.email }),
+    };
+    // TODO: Return a JWT token
+  }
+
+  private getJwtToken(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 }
