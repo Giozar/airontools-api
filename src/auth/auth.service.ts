@@ -35,7 +35,7 @@ export class AuthService {
 
       return {
         ...newUser,
-        token: this.getJwtToken({ email: newUser.email }),
+        token: this.getJwtToken({ id: newUser._id.toString() }),
       };
       // TODO: Return a JWT token
     } catch (error) {
@@ -49,7 +49,7 @@ export class AuthService {
     // Find user by email and select the password and email
     const user = await this.userModel
       .findOne({ email })
-      .select('password email');
+      .select('password email _id');
 
     if (!user) {
       throw new UnauthorizedException(
@@ -62,10 +62,11 @@ export class AuthService {
         'Credentials are invalid (password is incorrect)',
       );
     }
-
+    // Extract the user _id and return a string
+    console.log(user._id.toString());
     return {
       ...user,
-      token: this.getJwtToken({ email: user.email }),
+      token: this.getJwtToken({ id: user._id.toString() }),
     };
     // TODO: Return a JWT token
   }

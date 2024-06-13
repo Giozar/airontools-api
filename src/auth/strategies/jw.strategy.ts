@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -17,10 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
-  async validate(payload: any): Promise<User> {
-    const { email } = payload;
+  async validate(payload: JwtPayload): Promise<User> {
+    const { id } = payload;
 
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userModel.findOne({ _id: id });
 
     if (!user) {
       throw new UnauthorizedException('Token not valid');
