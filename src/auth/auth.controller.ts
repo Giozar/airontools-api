@@ -5,6 +5,7 @@ import {
   Get,
   UseGuards,
   Headers,
+  SetMetadata,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser, RawHeaders } from './decorators';
 import { User } from './schemas/user.schema';
 import { IncomingHttpHeaders } from 'http';
+import { UserRoleGuard } from './guards/user-role/user-role.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -45,6 +47,17 @@ export class AuthController {
       user,
       email,
       headers,
+    };
+  }
+
+  @Get('private2')
+  @SetMetadata('roles', ['admin', 'superadmin'])
+  @UseGuards(AuthGuard(), UserRoleGuard)
+  pribateRoute2(@GetUser() user: User) {
+    return {
+      ok: true,
+      message: 'This is a private route',
+      user,
     };
   }
 }
