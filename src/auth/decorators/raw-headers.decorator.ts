@@ -4,15 +4,15 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
-export const GetUser = createParamDecorator(
+export const RawHeaders = createParamDecorator(
   (data: string, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
-    const user = request.user;
+    const headers = request.rawHeaders;
 
-    if (!user) {
-      throw new InternalServerErrorException('User not found');
+    if (!headers) {
+      throw new InternalServerErrorException('Headers not found');
     }
 
-    return !data ? user : user[data];
+    return !data ? headers : headers[data];
   },
 );
