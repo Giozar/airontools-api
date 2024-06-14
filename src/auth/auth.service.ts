@@ -63,10 +63,10 @@ export class AuthService {
       );
     }
     // Extract the user _id and return a string
-    console.log(user._id.toString());
+    const userId = user._id.toString();
     return {
       ...user,
-      token: this.getJwtToken({ id: user._id.toString() }),
+      token: this.getJwtToken({ id: userId }),
     };
     // TODO: Return a JWT token
   }

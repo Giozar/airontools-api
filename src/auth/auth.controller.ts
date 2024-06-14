@@ -5,7 +5,7 @@ import {
   Get,
   UseGuards,
   Headers,
-  SetMetadata,
+  // SetMetadata,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,7 +15,8 @@ import { GetUser, RawHeaders } from './decorators';
 import { User } from './schemas/user.schema';
 import { IncomingHttpHeaders } from 'http';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
-
+import { RoleProtected } from './decorators/role-protected.decorator';
+import { ValidRoles } from './interfaces';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -51,9 +52,10 @@ export class AuthController {
   }
 
   @Get('private2')
-  @SetMetadata('roles', ['admin', 'superadmin'])
+  // @SetMetadata('roles', ['admin', 'user'])
+  @RoleProtected(ValidRoles.admin, ValidRoles.superUser, ValidRoles.user)
   @UseGuards(AuthGuard(), UserRoleGuard)
-  pribateRoute2(@GetUser() user: User) {
+  privateRoute2(@GetUser() user: User) {
     return {
       ok: true,
       message: 'This is a private route',
