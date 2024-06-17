@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GptModule } from './gpt/gpt.module';
 import { MailerModule } from './mailer/mailer.module';
 import { AuthModule } from './auth/auth.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
     GptModule,
     MailerModule,
     AuthModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [],
