@@ -13,9 +13,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFiler, fileNamer } from './helpers';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  constructor(
+    private readonly filesService: FilesService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get('product/:filename')
   findProductFile(@Param('filename') filename: string, @Res() res: Response) {
@@ -46,7 +50,9 @@ export class FilesController {
       throw new BadRequestException('File is empty');
     }
 
-    const secureUrl = `${file.filename}`;
+    // const secureUrl = `${file.filename}`;
+
+    const secureUrl = `${this.configService.get('HOST_API')}/files/product/${file.filename}`;
 
     return { secureUrl };
   }
