@@ -1,7 +1,10 @@
 import {
   BadRequestException,
   Controller,
+  Get,
+  Param,
   Post,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -9,9 +12,21 @@ import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFiler, fileNamer } from './helpers';
 import { diskStorage } from 'multer';
+import { Response } from 'express';
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
+
+  @Get('product/:filename')
+  findProductFile(@Param('filename') filename: string, @Res() res: Response) {
+    const path = this.filesService.getStaticProductFile(filename);
+    // res.status(403).json({
+    //   ok: false,
+    //   path: path,
+    // });
+
+    res.sendFile(path);
+  }
 
   @Post('product')
   @UseInterceptors(
@@ -31,6 +46,8 @@ export class FilesController {
       throw new BadRequestException('File is empty');
     }
 
-    return { fileName: file.originalname };
+    const secureUrl = `${file.filename}`;
+
+    return { secureUrl };
   }
 }
