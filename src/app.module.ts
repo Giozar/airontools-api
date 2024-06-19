@@ -1,6 +1,5 @@
 import databaseConfig from './config/databaseConfig';
 import { Module } from '@nestjs/common';
-import { ToolsModule } from './tools/tools.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
@@ -19,7 +18,6 @@ import { ProductsModule } from './products/products.module';
       isGlobal: true, // Para que todas la variables de entorno sean globales en la aplicación
     }),
     MongooseModule.forRoot(databaseConfig().database.host),
-    ToolsModule,
     CategoriesModule,
     SubcategoriesModule,
     GptModule,
