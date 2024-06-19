@@ -1,1 +1,1 @@
-export * from './tools-search.dto';
+export * from './search-products.dto';

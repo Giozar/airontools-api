@@ -1,13 +1,14 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { GptService } from './gpt.service';
-import { ToolsSearchDto } from './dtos';
+import { SearchProductsDto } from './dtos';
 
 @Controller('gpt')
 export class GptController {
   constructor(private readonly gptService: GptService) {}
 
-  @Post('tool-search')
-  async toolsSearch(@Body() toolsSearchDto: ToolsSearchDto) {
-    return await this.gptService.searchTool(toolsSearchDto);
+  @Post('search-products')
+  async searchProducts(@Body() productsSearchDto: SearchProductsDto) {
+    // console.log(productsSearchDto);
+    return await this.gptService.searchProducts(productsSearchDto);
   }
 }

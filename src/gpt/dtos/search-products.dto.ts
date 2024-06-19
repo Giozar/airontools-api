@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class ToolsSearchDto {
+export class SearchProductsDto {
   @IsString()
   readonly prompt: string;
 }

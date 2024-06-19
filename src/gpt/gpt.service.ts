@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
-import { ToolsSearchDto } from './dtos';
-import { toolSearchUseCase } from './uses-cases';
+import { SearchProductsDto } from './dtos';
+import { searchProductsUseCase } from './uses-cases';
 
 @Injectable()
 export class GptService {
@@ -10,7 +10,7 @@ export class GptService {
   });
 
   // Solo va a llamar casos de uso
-  async searchTool({ prompt }: ToolsSearchDto) {
-    return await toolSearchUseCase(this.openai, { prompt });
+  async searchProducts({ prompt }: SearchProductsDto) {
+    return await searchProductsUseCase(this.openai, { prompt });
   }
 }
