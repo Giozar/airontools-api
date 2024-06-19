@@ -15,7 +15,7 @@ import { ToolsService } from './tools.service';
 import { CreateToolDto } from './dtos/create-tool.dto';
 import { UpdateToolDto } from './dtos/update-tool.dto';
 import { ToolSearchDto } from './dtos/tool-search.dto';
-import { ToolsPaginationDto } from 'src/common/dtos/tools-pagination.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('tools')
 export class ToolsController {
@@ -24,7 +24,7 @@ export class ToolsController {
   @Post()
   async toolSearch(
     @Body() search: ToolSearchDto,
-    @Query() { limit, offset }: ToolsPaginationDto,
+    @Query() { limit, offset }: PaginationDto,
   ) {
     const response = await this.toolsService.toolSearch(
       search.keywords,

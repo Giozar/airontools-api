@@ -14,7 +14,7 @@ import databaseConfig from '@config/databaseConfig';
         useFactory: (connection) => {
           const schema = ToolSchema;
           const AutoIncrement = AutoIncrementFactory(connection);
-          schema.plugin(AutoIncrement, { inc_field: 'id', start_seq: 1 });
+          schema.plugin(AutoIncrement, { inc_field: 'toolId', start_seq: 1 });
           return schema;
         },
         inject: [getConnectionToken(databaseConfig().database.host)],
