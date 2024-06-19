@@ -1,5 +1,5 @@
 import { IsOptional, IsNumber, Min, IsPositive } from 'class-validator';
-export class ToolsPaginationDto {
+export class PaginationDto {
   @IsOptional()
   @IsNumber()
   @IsPositive()

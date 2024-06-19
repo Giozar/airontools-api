@@ -9,6 +9,7 @@ import { GptModule } from './gpt/gpt.module';
 import { MailerModule } from './mailer/mailer.module';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FilesModule } from './files/files.module';
     MailerModule,
     AuthModule,
     FilesModule,
+    ProductsModule,
   ],
   controllers: [],
   providers: [],
