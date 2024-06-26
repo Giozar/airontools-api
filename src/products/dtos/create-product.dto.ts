@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsNumber,
   IsString,
@@ -5,7 +6,33 @@ import {
   IsOptional,
   IsPositive,
   IsInt,
+  IsArray,
+  ValidationOptions,
+  ValidationArguments,
+  registerDecorator,
+  ValidateNested,
 } from 'class-validator';
+
+// Decorador personalizado para validar un objeto con campos variables
+
+function IsVariableObject(validationOptions?: ValidationOptions) {
+  return function (object: object, propertyName: string) {
+    registerDecorator({
+      name: 'isVariableObject',
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          return value && typeof value === 'object'; // Valida que sea un objeto
+        },
+        defaultMessage(args: ValidationArguments) {
+          return 'Each item in the array must be an object';
+        },
+      },
+    });
+  };
+}
 
 export class CreateProductDto {
   @IsOptional()
@@ -31,21 +58,18 @@ export class CreateProductDto {
   subsubcategoryId?: number;
 
   @IsString()
-  path?: string;
+  path: string;
 
   @IsNotEmpty()
   @IsString()
-  image?: string;
-
-  @IsString()
-  overview?: string;
+  imageUrl: string;
 
   @IsString()
   description?: string;
 
-  @IsString()
-  advantages?: string;
-
-  @IsString()
-  specification?: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Object)
+  @IsVariableObject({ each: true }) // Usa el decorador personalizado
+  specifications: Array<Record<string, any>>;
 }

@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type productDocument = HydratedDocument<Product>;
 
@@ -33,19 +33,13 @@ export class Product {
   path: string;
 
   @Prop()
-  image: string;
-
-  @Prop()
-  overview: string;
+  imageUrl: string;
 
   @Prop()
   description: string;
 
-  @Prop()
-  advantages: string;
-
-  @Prop()
-  specification: string;
+  @Prop({ type: [mongoose.Schema.Types.Mixed] }) // Usa Mixed para permitir cualquier tipo de objeto
+  specifications: Array<Record<string, any>>;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

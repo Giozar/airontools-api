@@ -10,6 +10,7 @@ import {
   HttpCode,
   NotFoundException,
   Put,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dtos/create-product.dto';
@@ -31,7 +32,9 @@ export class ProductsController {
           `Duplication error, Product ${error} already exists!`,
         );
       }
-      throw error;
+      throw new InternalServerErrorException(
+        `something went wrong, server error: ${error}`,
+      );
     }
   }
 
