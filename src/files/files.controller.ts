@@ -56,4 +56,23 @@ export class FilesController {
 
     return { secureUrl };
   }
+
+  @Post('upload-s3')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: fileFiler,
+      // limits: { fileSize: 1024 * 1024 },
+      storage: diskStorage({
+        destination: './static/uploads',
+        filename: fileNamer,
+      }),
+    }),
+  )
+  async uploadS3(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('File is empty');
+    }
+
+    return await this.filesService.uploadS3(file);
+  }
 }

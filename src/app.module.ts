@@ -9,11 +9,12 @@ import { MailerModule } from './mailer/mailer.module';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
 import { ProductsModule } from './products/products.module';
+import awsConfig from '@config/awsConfig';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig], // Para cargar el archivo de configuración
+      load: [databaseConfig, awsConfig], // Para cargar el archivo de configuración
       envFilePath: '.env', // Para leer archivo .env de variables de entorno
       isGlobal: true, // Para que todas la variables de entorno sean globales en la aplicación
     }),
