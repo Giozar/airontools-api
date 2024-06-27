@@ -57,7 +57,7 @@ export class FilesController {
     return { secureUrl };
   }
 
-  @Post('upload-s3')
+  @Post('upload-file-s3')
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
@@ -68,11 +68,15 @@ export class FilesController {
       }),
     }),
   )
-  async uploadS3(@UploadedFile() file: Express.Multer.File) {
+  async uploadFileS3(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('File is empty');
     }
 
-    return await this.filesService.uploadS3(file);
+    const res = await this.filesService.uploadFileS3(file);
+    const fileName = file.originalname;
+    const url = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
+
+    return { res, url };
   }
 }

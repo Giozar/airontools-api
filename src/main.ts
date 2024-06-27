@@ -13,7 +13,10 @@ async function bootstrap() {
       },
     }),
   );
-  app.enableCors();
+  app.enableCors({
+    origin: process.env.CLIENT_PORT, // Origen permitido
+    credentials: true, // Permitir el envío de cookies y credenciales
+  });
   await app.listen(process.env.PORT || 3000);
   logger.log(`Application listening on port ${process.env.PORT || 3000}`);
 }
