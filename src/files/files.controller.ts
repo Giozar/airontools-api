@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   Param,
@@ -68,13 +69,16 @@ export class FilesController {
       }),
     }),
   )
-  async uploadFileS3(@UploadedFile() file: Express.Multer.File) {
+  async uploadFileS3(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('customFileName') customFileName: string,
+  ) {
     if (!file) {
       throw new BadRequestException('File is empty');
     }
+    const fileName = customFileName || file.originalname;
 
-    const res = await this.filesService.uploadFileS3(file);
-    const fileName = file.originalname;
+    const res = await this.filesService.uploadFileS3(file, fileName);
     const url = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
 
     return { res, url };

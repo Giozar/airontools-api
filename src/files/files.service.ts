@@ -24,7 +24,10 @@ export class FilesService {
     return path;
   }
 
-  async uploadFileS3(@UploadedFile() file: Express.Multer.File) {
+  async uploadFileS3(
+    @UploadedFile() file: Express.Multer.File,
+    fileName: string,
+  ) {
     try {
       // Implementar lógica para subir archivo a S3
       const stream = fs.createReadStream(
@@ -34,9 +37,11 @@ export class FilesService {
       // Configurar el Content-Type según el tipo de archivo
       const contentType = file.mimetype;
 
+      const key = fileName || file.originalname;
+
       const uploadParams = {
         Bucket: awsConfig().aws.bucketName,
-        Key: file.originalname,
+        Key: key,
         Body: stream,
         ContentType: contentType,
       };
