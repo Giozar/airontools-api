@@ -3,7 +3,12 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import * as fs from 'fs';
 import awsConfig from '@config/awsConfig';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { Readable } from 'stream';
 
 @Injectable()
 export class FilesService {
@@ -56,5 +61,32 @@ export class FilesService {
         error.message,
       );
     }
+  }
+
+  async getFileS3(fileName: string): Promise<Readable> {
+    const command = new GetObjectCommand({
+      Bucket: awsConfig().aws.bucketName,
+      Key: fileName,
+    });
+    try {
+      const data = await this.clientAWS.send(command);
+      return data.Body as Readable;
+    } catch (error) {
+      // console.error(error);
+      throw new Error(`Error getting file: ${error.message}`);
+    }
+  }
+
+  async downloadFileS3(fileName: string) {
+    const command = new GetObjectCommand({
+      Bucket: awsConfig().aws.bucketName,
+      Key: fileName,
+    });
+    try {
+      const data = await this.clientAWS.send(command);
+      return (data.Body as Readable).pipe(
+        fs.createWriteStream(`./static/downloads/${fileName}`),
+      );
+    } catch (error) {}
   }
 }

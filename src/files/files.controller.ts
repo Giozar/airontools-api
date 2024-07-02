@@ -87,4 +87,24 @@ export class FilesController {
 
     return { res, url };
   }
+
+  @Get('get-file-s3/:filename')
+  async getFileS3(@Param('filename') filename: string, @Res() res: Response) {
+    try {
+      const fileStream = await this.filesService.getFileS3(filename);
+      fileStream.pipe(res);
+    } catch (error) {
+      throw new BadRequestException(
+        'Error getting file from S3',
+        error.message,
+      );
+    }
+  }
+
+  @Get('download-file-s3/:filename')
+  async downloadFileS3(@Param('filename') filename: string) {
+    try {
+      await this.filesService.downloadFileS3(filename);
+    } catch (error) {}
+  }
 }
