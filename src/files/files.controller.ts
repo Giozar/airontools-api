@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -106,5 +107,17 @@ export class FilesController {
     try {
       await this.filesService.downloadFileS3(filename);
     } catch (error) {}
+  }
+
+  @Delete('delete-file-s3/:filename')
+  async deleteFileS3(@Param('filename') filename: string) {
+    try {
+      await this.filesService.deleteFileS3(filename);
+    } catch (error) {
+      throw new BadRequestException(
+        'Error deleting file from S3',
+        error.message,
+      );
+    }
   }
 }

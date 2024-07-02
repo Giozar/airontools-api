@@ -4,6 +4,7 @@ import { join } from 'path';
 import * as fs from 'fs';
 import awsConfig from '@config/awsConfig';
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -88,5 +89,18 @@ export class FilesService {
         fs.createWriteStream(`./static/downloads/${fileName}`),
       );
     } catch (error) {}
+  }
+
+  async deleteFileS3(fileName: string) {
+    try {
+      const command = new DeleteObjectCommand({
+        Bucket: awsConfig().aws.bucketName,
+        Key: fileName,
+      });
+      return await this.clientAWS.send(command);
+    } catch (error) {
+      // console.error(error);
+      throw new Error(`Error deleting file: ${error.message}`);
+    }
   }
 }
