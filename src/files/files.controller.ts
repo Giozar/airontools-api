@@ -138,7 +138,7 @@ export class FilesController {
   async editFileS3(
     @UploadedFile() file: Express.Multer.File,
     @Body('customFileName') customFileName: string,
-    @Body('uploadedFile') uploadedFile: string,
+    @Body('uploadedFileName') uploadedFileName: string,
   ) {
     if (!file) {
       throw new BadRequestException('File is empty');
@@ -150,12 +150,12 @@ export class FilesController {
       const fileName = customFileName
         ? `${customFileName}.${extension}`
         : file.originalname;
-
-      console.log(uploadedFile);
-      const path = this.filesService.getStaticProductFile(fileName);
+      // console.log(fileName);
+      // console.log(uploadedFileName);
+      const path = this.filesService.getStaticProductFile(file.originalname);
       const buffer = fs.readFileSync(path);
-      console.log(buffer);
-      const fileExists = await this.filesService.getFileS3(uploadedFile);
+      // console.log(buffer);
+      const fileExists = await this.filesService.getFileS3(uploadedFileName);
 
       // si es el mismo archivo y el mismo nombre no se hace nada
       if (fileExists) {
@@ -165,13 +165,26 @@ export class FilesController {
         });
         fileExists.on('end', () => {
           const bufferS3 = Buffer.concat(chunks);
-          console.log(bufferS3);
+          // console.log(bufferS3);
 
           // comparamos los buffers
           if (buffer.equals(bufferS3)) {
             console.log({ message: 'The file is the same' });
+            // Si el nombre del archivo s3 es diferente al nombre del archivo a cargar
+            if (uploadedFileName !== fileName) {
+              // Se renombra el archivo s3
+              return console.log('Cambiamos el nombre del archivo en s3');
+            }
+            return console.log('No se hace nada');
           } else {
             console.log({ message: 'The file is different' });
+            // Si el archivo s3 tiene el mismo nombre que el archivo a cargar
+            if (uploadedFileName === fileName) {
+              // Se sobreescribe el archivo s3
+              return console.log('Sobreescribimos el archivo en s3');
+            }
+            // Si el archivo s3 tiene un nombre diferente al archivo a cargar
+            return console.log('Subimos el nuevo archivo a s3');
           }
         });
       }
