@@ -12,11 +12,10 @@ import {
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { fileFiler, fileNamer } from './helpers';
+import { fileFiler, originalFileNamer } from './helpers';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { originalFileNamer } from './helpers/originalFileNamer.helper';
 import * as fs from 'fs';
 @Controller('files')
 export class FilesController {
@@ -25,42 +24,6 @@ export class FilesController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Get('product/:filename')
-  findProductFile(@Param('filename') filename: string, @Res() res: Response) {
-    const path = this.filesService.getStaticProductFile(filename);
-    // res.status(403).json({
-    //   ok: false,
-    //   path: path,
-    // });
-
-    res.sendFile(path);
-  }
-
-  @Post('product')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      fileFilter: fileFiler,
-      // limits: { fileSize: 1024 * 1024 },
-      storage: diskStorage({
-        destination: './static/uploads',
-        filename: fileNamer,
-      }),
-    }),
-  )
-  uploadProductImage(@UploadedFile() file: Express.Multer.File) {
-    // console.log({ fileInController: file });
-
-    if (!file) {
-      throw new BadRequestException('File is empty');
-    }
-
-    // const secureUrl = `${file.filename}`;
-
-    const secureUrl = `${this.configService.get('HOST_API')}/files/product/${file.filename}`;
-
-    return { secureUrl };
-  }
-
   @Post('upload-file-s3')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -68,7 +31,7 @@ export class FilesController {
       // limits: { fileSize: 1024 * 1024 },
       storage: diskStorage({
         destination: './static/uploads',
-        filename: fileNamer,
+        filename: originalFileNamer,
       }),
     }),
   )
