@@ -115,7 +115,7 @@ export class FilesController {
         : file.originalname;
       // console.log(fileName);
       // console.log(uploadedFileName);
-      const path = this.filesService.getStaticProductFile(file.originalname);
+      const path = this.filesService.getStaticFile(file.originalname);
       const buffer = fs.readFileSync(path);
       // console.log(buffer);
       const fileExists = await this.filesService.getFileS3(uploadedFileName);

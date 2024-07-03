@@ -21,7 +21,7 @@ export class FilesService {
     },
   });
 
-  getStaticProductFile(fileName: string) {
+  getStaticFile(fileName: string) {
     const path = join(__dirname, '../../static/uploads', fileName);
 
     if (!existsSync(path)) {
@@ -36,9 +36,7 @@ export class FilesService {
   ) {
     try {
       // Implementar lógica para subir archivo a S3
-      const stream = fs.createReadStream(
-        this.getStaticProductFile(file.filename),
-      );
+      const stream = fs.createReadStream(this.getStaticFile(file.filename));
 
       // Configurar el Content-Type según el tipo de archivo
       const contentType = file.mimetype;
