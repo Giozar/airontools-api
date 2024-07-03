@@ -16,6 +16,8 @@ import { fileFiler, fileNamer } from './helpers';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { originalFileNamer } from './helpers/originalFileNamer.helper';
+import * as fs from 'fs';
 @Controller('files')
 export class FilesController {
   constructor(
@@ -129,13 +131,14 @@ export class FilesController {
       // limits: { fileSize: 1024 * 1024 },
       storage: diskStorage({
         destination: './static/uploads',
-        filename: fileNamer,
+        filename: originalFileNamer,
       }),
     }),
   )
   async editFileS3(
     @UploadedFile() file: Express.Multer.File,
     @Body('customFileName') customFileName: string,
+    @Body('uploadedFile') uploadedFile: string,
   ) {
     if (!file) {
       throw new BadRequestException('File is empty');
@@ -148,29 +151,30 @@ export class FilesController {
         ? `${customFileName}.${extension}`
         : file.originalname;
 
-      console.log(fileName);
-      const fileExists = await this.filesService.getFileS3(fileName);
+      console.log(uploadedFile);
+      const path = this.filesService.getStaticProductFile(fileName);
+      const buffer = fs.readFileSync(path);
+      console.log(buffer);
+      const fileExists = await this.filesService.getFileS3(uploadedFile);
 
       // si es el mismo archivo y el mismo nombre no se hace nada
       if (fileExists) {
-        // comparamos el buffer del archivo subido con el buffer del archivo en S3
-        const fileStream = await this.filesService.getFileS3(fileName);
         const chunks = [];
-        fileStream.on('data', (chunk) => {
+        fileExists.on('data', (chunk) => {
           chunks.push(chunk);
         });
-        fileStream.on('end', () => {
+        fileExists.on('end', () => {
           const bufferS3 = Buffer.concat(chunks);
           console.log(bufferS3);
-          // if (buffer.equals(bufferS3)) {
-          //   return { message: 'The file is the same' };
-          // }
-          // return { message: 'The file is different' };
+
+          // comparamos los buffers
+          if (buffer.equals(bufferS3)) {
+            console.log({ message: 'The file is the same' });
+          } else {
+            console.log({ message: 'The file is different' });
+          }
         });
-        // verificamos que el archivo sea el mismo
-        return { message: 'The file is the same' };
       }
-      return { message: 'The file is different' };
     } catch (error) {
       throw new BadRequestException(
         'Error editing file from S3',
