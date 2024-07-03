@@ -120,4 +120,61 @@ export class FilesController {
       );
     }
   }
+
+  @Post('edit-file-s3')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: fileFiler,
+      // limits: { fileSize: 1024 * 1024 },
+      storage: diskStorage({
+        destination: './static/uploads',
+        filename: fileNamer,
+      }),
+    }),
+  )
+  async editFileS3(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('customFileName') customFileName: string,
+  ) {
+    if (!file) {
+      throw new BadRequestException('File is empty');
+    }
+
+    try {
+      // Buscamos si el archivo existe en S3
+      const extension = file.originalname.split('.').pop();
+      const fileName = customFileName
+        ? `${customFileName}.${extension}`
+        : file.originalname;
+
+      console.log(fileName);
+      const fileExists = await this.filesService.getFileS3(fileName);
+
+      // si es el mismo archivo y el mismo nombre no se hace nada
+      if (fileExists) {
+        // comparamos el buffer del archivo subido con el buffer del archivo en S3
+        const fileStream = await this.filesService.getFileS3(fileName);
+        const chunks = [];
+        fileStream.on('data', (chunk) => {
+          chunks.push(chunk);
+        });
+        fileStream.on('end', () => {
+          const bufferS3 = Buffer.concat(chunks);
+          console.log(bufferS3);
+          // if (buffer.equals(bufferS3)) {
+          //   return { message: 'The file is the same' };
+          // }
+          // return { message: 'The file is different' };
+        });
+        // verificamos que el archivo sea el mismo
+        return { message: 'The file is the same' };
+      }
+      return { message: 'The file is different' };
+    } catch (error) {
+      throw new BadRequestException(
+        'Error editing file from S3',
+        error.message,
+      );
+    }
+  }
 }
