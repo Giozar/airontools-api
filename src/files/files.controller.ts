@@ -80,8 +80,9 @@ export class FilesController {
 
     // Se extrae la extensión del archivo
     const extension = file.originalname.split('.').pop();
-
-    const fileName = `${customFileName}.${extension}` || file.originalname;
+    const fileName = customFileName
+      ? `${customFileName}.${extension}`
+      : file.originalname;
 
     const res = await this.filesService.uploadFileS3(file, fileName);
     const url = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
