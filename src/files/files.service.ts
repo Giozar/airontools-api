@@ -36,6 +36,9 @@ export class FilesService {
     fileName: string,
   ) {
     try {
+      if (!file) {
+        throw new BadRequestException('File is empty');
+      }
       // Implementar lógica para subir archivo a S3
       const stream = fs.createReadStream(this.getStaticFile(file.filename));
 
@@ -63,23 +66,42 @@ export class FilesService {
     }
   }
 
-  async getFileS3(fileName: string): Promise<Readable> {
+  async getFileS3({
+    fileName,
+    isEditing,
+  }: {
+    fileName: string;
+    isEditing?: boolean;
+  }): Promise<Readable> | null {
     const command = new GetObjectCommand({
       Bucket: awsConfig().aws.bucketName,
       Key: fileName,
     });
     try {
+      if (!fileName) {
+        return null;
+      }
+      // console.log('Trying to get file from S3');
       const data = await this.clientAWS.send(command);
       return data.Body as Readable;
     } catch (error) {
-      // console.error(error);
-      throw new Error(`Error getting file: ${error.message}`);
+      // Manejar error si no se encuentra el archivo
+      if (error.name === 'NoSuchKey') {
+        if (!isEditing)
+          throw new BadRequestException(`No file found with name ${fileName}`);
+        return null;
+      }
+
+      throw new BadRequestException(
+        'Error getting file from S3',
+        error.message,
+      );
     }
   }
 
-  async editFileNameS3(fileName: string, newFileName: string) {
+  async updateFileS3(fileName: string, newFileName: string) {
     try {
-      const fileStream = await this.getFileS3(fileName);
+      const fileStream = await this.getFileS3({ fileName });
       // Subir el archivo con el nuevo nombre utilizando Upload
       const upload = new Upload({
         client: this.clientAWS,
@@ -123,6 +145,73 @@ export class FilesService {
     } catch (error) {
       // console.error(error);
       throw new Error(`Error deleting file: ${error.message}`);
+    }
+  }
+
+  async editFileS3(
+    @UploadedFile() file: Express.Multer.File,
+    customFileName: string,
+    uploadedFileName: string,
+  ) {
+    try {
+      if (!file) {
+        throw new BadRequestException('File is empty');
+      }
+      // Se extrae la extensión del archivo
+      const extension = file.originalname.split('.').pop();
+      const fileName = customFileName
+        ? `${customFileName}.${extension}`
+        : file.originalname;
+
+      const path = this.getStaticFile(file.originalname);
+      const buffer = fs.readFileSync(path);
+
+      // Se verifica si el archivo a cargar ya existe en S3
+      const fileExists = await this.getFileS3({
+        fileName: uploadedFileName,
+        isEditing: true,
+      });
+
+      if (fileExists) {
+        const chunks = [];
+        fileExists.on('data', (chunk) => {
+          chunks.push(chunk);
+        });
+        fileExists.on('end', () => {
+          const bufferS3 = Buffer.concat(chunks);
+
+          // Si el archivo a cargar es igual al archivo s3
+          if (buffer.equals(bufferS3)) {
+            // Si el nombre del archivo s3 es diferente al nombre del archivo a cargar
+            if (uploadedFileName !== fileName) {
+              // Se renombra el archivo s3
+              this.updateFileS3(uploadedFileName, fileName);
+              return console.log({ message: 'File same renamed' });
+            }
+            return console.log({ message: 'The file is the same' });
+          } else {
+            // Si el archivo s3 tiene el mismo nombre que el archivo a cargar
+            if (uploadedFileName === fileName) {
+              this.uploadFileS3(file, fileName);
+              this.deleteFileS3(uploadedFileName);
+              return console.log({
+                message: 'File different same name overwritten',
+              });
+            }
+            // Si el archivo s3 tiene un nombre diferente al archivo a cargar
+            this.uploadFileS3(file, fileName);
+            this.deleteFileS3(uploadedFileName);
+            return console.log({ message: 'File different edited' });
+          }
+        });
+      } else {
+        // Se sube el archivo a s3
+        await this.uploadFileS3(file, fileName);
+        return console.log({ message: 'File edited' });
+      }
+    } catch (error) {
+      // console.error(error);
+      throw new BadRequestException('Error editing file', error.message);
     }
   }
 }
