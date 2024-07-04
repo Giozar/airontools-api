@@ -9,6 +9,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import { Readable } from 'stream';
 
 @Injectable()
@@ -73,6 +74,29 @@ export class FilesService {
     } catch (error) {
       // console.error(error);
       throw new Error(`Error getting file: ${error.message}`);
+    }
+  }
+
+  async editFileNameS3(fileName: string, newFileName: string) {
+    try {
+      const fileStream = await this.getFileS3(fileName);
+      // Subir el archivo con el nuevo nombre utilizando Upload
+      const upload = new Upload({
+        client: this.clientAWS,
+        params: {
+          Bucket: awsConfig().aws.bucketName,
+          Key: newFileName,
+          Body: fileStream,
+        },
+      });
+      // Esperar a que se complete la subida
+      await upload.done();
+      // Eliminar el archivo con el nombre anterior
+      await this.deleteFileS3(fileName);
+      return { message: 'File name updated successfully' };
+    } catch (error) {
+      // console.error(error);
+      throw new Error(`Error editing file name: ${error.message}`);
     }
   }
 

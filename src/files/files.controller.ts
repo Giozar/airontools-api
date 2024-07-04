@@ -136,7 +136,10 @@ export class FilesController {
             // Si el nombre del archivo s3 es diferente al nombre del archivo a cargar
             if (uploadedFileName !== fileName) {
               // Se renombra el archivo s3
-              return console.log('Cambiamos el nombre del archivo en s3');
+              return this.filesService.editFileNameS3(
+                uploadedFileName,
+                fileName,
+              );
             }
             return console.log('No se hace nada');
           } else {
