@@ -56,7 +56,8 @@ export class FilesService {
 
       // Subir archivo a S3
       const command = new PutObjectCommand(uploadParams);
-      return await this.clientAWS.send(command);
+      const res = await this.clientAWS.send(command);
+      return { res, key };
     } catch (error) {
       // console.error(error);
       throw new BadRequestException(
@@ -118,7 +119,7 @@ export class FilesService {
       return { message: 'File name updated successfully' };
     } catch (error) {
       // console.error(error);
-      throw new Error(`Error editing file name: ${error.message}`);
+      throw new Error(`Error update file name: ${error.message}`);
     }
   }
 
@@ -185,33 +186,37 @@ export class FilesService {
             // Si el nombre del archivo s3 es diferente al nombre del archivo a cargar
             if (uploadedFileName !== fileName) {
               // Se renombra el archivo s3
-              this.updateFileS3(uploadedFileName, fileName);
-              return console.log({ message: 'File same renamed' });
+              const res = this.updateFileS3(uploadedFileName, fileName);
+              console.log({ message: 'File same renamed' });
+              return { res, fileName };
             }
             return console.log({ message: 'The file is the same' });
           } else {
             // Si el archivo s3 tiene el mismo nombre que el archivo a cargar
             if (uploadedFileName === fileName) {
-              this.uploadFileS3(file, fileName);
+              const res = this.uploadFileS3(file, fileName);
               this.deleteFileS3(uploadedFileName);
-              return console.log({
-                message: 'File different same name overwritten',
-              });
+              // console.log({
+              //   message: 'File different same name overwritten',
+              // });
+              return { res, fileName };
             }
             // Si el archivo s3 tiene un nombre diferente al archivo a cargar
-            this.uploadFileS3(file, fileName);
+            const res = this.uploadFileS3(file, fileName);
             this.deleteFileS3(uploadedFileName);
-            return console.log({ message: 'File different edited' });
+            // console.log({ message: 'File different edited' });
+            return { res, fileName };
           }
         });
       } else {
         // Se sube el archivo a s3
-        await this.uploadFileS3(file, fileName);
-        return console.log({ message: 'File edited' });
+        const res = await this.uploadFileS3(file, fileName);
+        // console.log({ message: 'File edited' });
+        return { res, fileName };
       }
     } catch (error) {
       // console.error(error);
-      throw new BadRequestException('Error editing file', error.message);
+      throw new BadRequestException(error.message, 'Error editing file');
     }
   }
 }

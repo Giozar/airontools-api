@@ -43,10 +43,10 @@ export class FilesController {
       ? `${customFileName}.${extension}`
       : file.originalname;
 
-    const res = await this.filesService.uploadFileS3(file, fileName);
-    const url = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
+    const { res, key } = await this.filesService.uploadFileS3(file, fileName);
+    const imageUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${key}`;
 
-    return { res, url };
+    return { res, imageUrl };
   }
 
   @Get('get-file-s3/:filename')
@@ -85,6 +85,18 @@ export class FilesController {
     @Body('customFileName') customFileName: string,
     @Body('uploadedFileName') uploadedFileName: string,
   ) {
-    await this.filesService.editFileS3(file, customFileName, uploadedFileName);
+    try {
+      const { res, fileName } = await this.filesService.editFileS3(
+        file,
+        customFileName,
+        uploadedFileName,
+      );
+      const imageUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
+
+      return { res, imageUrl };
+    } catch (error) {
+      // console.log('Si hay error', error.response);
+      return error.response;
+    }
   }
 }
