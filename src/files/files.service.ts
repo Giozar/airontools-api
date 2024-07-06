@@ -113,10 +113,11 @@ export class FilesService {
         },
       });
       // Esperar a que se complete la subida
-      await upload.done();
+      const res = await upload.done();
       // Eliminar el archivo con el nombre anterior
       await this.deleteFileS3(fileName);
-      return { message: 'File name updated successfully' };
+      // console.log({ message: 'File name updated successfully' });
+      return res;
     } catch (error) {
       // console.error(error);
       throw new Error(`Error update file name: ${error.message}`);
@@ -150,15 +151,16 @@ export class FilesService {
   }
 
   async editFileS3(
-    @UploadedFile() file: Express.Multer.File,
+    file: Express.Multer.File,
     customFileName: string,
     uploadedFileName: string,
-  ) {
+  ): Promise<{ res: any; fileName: string }> {
+    if (!file) {
+      throw new BadRequestException('File is empty');
+    }
+
     try {
-      if (!file) {
-        throw new BadRequestException('File is empty');
-      }
-      // Se extrae la extensión del archivo
+      // Extraer la extensión del archivo
       const extension = file.originalname.split('.').pop();
       const fileName = customFileName
         ? `${customFileName}.${extension}`
@@ -167,56 +169,56 @@ export class FilesService {
       const path = this.getStaticFile(file.originalname);
       const buffer = fs.readFileSync(path);
 
-      // Se verifica si el archivo a cargar ya existe en S3
+      // Verificar si el archivo ya existe en S3
       const fileExists = await this.getFileS3({
         fileName: uploadedFileName,
         isEditing: true,
       });
 
       if (fileExists) {
-        const chunks = [];
-        fileExists.on('data', (chunk) => {
-          chunks.push(chunk);
-        });
-        fileExists.on('end', () => {
-          const bufferS3 = Buffer.concat(chunks);
+        const bufferS3 = await this.getFileBuffer(fileExists);
 
-          // Si el archivo a cargar es igual al archivo s3
-          if (buffer.equals(bufferS3)) {
-            // Si el nombre del archivo s3 es diferente al nombre del archivo a cargar
-            if (uploadedFileName !== fileName) {
-              // Se renombra el archivo s3
-              const res = this.updateFileS3(uploadedFileName, fileName);
-              console.log({ message: 'File same renamed' });
-              return { res, fileName };
-            }
-            return console.log({ message: 'The file is the same' });
-          } else {
-            // Si el archivo s3 tiene el mismo nombre que el archivo a cargar
-            if (uploadedFileName === fileName) {
-              const res = this.uploadFileS3(file, fileName);
-              this.deleteFileS3(uploadedFileName);
-              // console.log({
-              //   message: 'File different same name overwritten',
-              // });
-              return { res, fileName };
-            }
-            // Si el archivo s3 tiene un nombre diferente al archivo a cargar
-            const res = this.uploadFileS3(file, fileName);
-            this.deleteFileS3(uploadedFileName);
-            // console.log({ message: 'File different edited' });
+        // Si el archivo a cargar es igual al archivo en S3
+        if (buffer.equals(bufferS3)) {
+          // Si el nombre del archivo S3 es diferente al nombre del archivo a cargar
+          if (uploadedFileName !== fileName) {
+            const res = await this.updateFileS3(uploadedFileName, fileName);
             return { res, fileName };
           }
-        });
+          return { res: 'The file is the same', fileName };
+        } else {
+          // Si el archivo S3 tiene el mismo nombre que el archivo a cargar
+          if (uploadedFileName === fileName) {
+            const res = await this.uploadFileS3(file, fileName);
+            await this.deleteFileS3(uploadedFileName);
+            return { res, fileName };
+          }
+          // Si el archivo S3 tiene un nombre diferente al archivo a cargar
+          const res = await this.uploadFileS3(file, fileName);
+          await this.deleteFileS3(uploadedFileName);
+          return { res, fileName };
+        }
       } else {
-        // Se sube el archivo a s3
+        // Subir el archivo a S3 si no existe
         const res = await this.uploadFileS3(file, fileName);
-        // console.log({ message: 'File edited' });
         return { res, fileName };
       }
     } catch (error) {
-      // console.error(error);
       throw new BadRequestException(error.message, 'Error editing file');
     }
+  }
+
+  // Función auxiliar para obtener el buffer del archivo desde el stream
+  private async getFileBuffer(fileStream: any): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      fileStream.on('data', (chunk) => {
+        chunks.push(chunk);
+      });
+      fileStream.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+      fileStream.on('error', reject);
+    });
   }
 }
