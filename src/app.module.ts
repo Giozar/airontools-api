@@ -9,6 +9,7 @@ import { MailerModule } from './mailer/mailer.module';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
 import { ProductsModule } from './products/products.module';
+import { EmployeesModule } from './employees/employees.module';
 import awsConfig from '@config/awsConfig';
 
 @Module({
@@ -26,6 +27,7 @@ import awsConfig from '@config/awsConfig';
     AuthModule,
     FilesModule,
     ProductsModule,
+    EmployeesModule,
   ],
   controllers: [],
   providers: [],
