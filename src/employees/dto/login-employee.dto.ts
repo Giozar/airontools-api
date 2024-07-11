@@ -5,11 +5,12 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-export class CreateEmployeeDto {
+
+export class LoginEmployeeDto {
   @IsString()
   @IsEmail()
-  name: string;
   email: string;
+
   @IsString()
   @MinLength(6)
   @MaxLength(50)
@@ -18,7 +19,4 @@ export class CreateEmployeeDto {
       'The password must have a Uppercase, lowercase letter and a number',
   })
   password: string;
-  roles: string[];
-  permission: string[];
-  status: boolean;
 }

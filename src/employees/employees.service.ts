@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from './interfaces';
 import { handleDBErrors } from 'src/auth/handlers/auth.errors';
+import { LoginEmployeeDto } from './dto/login-employee.dto';
 
 @Injectable()
 export class EmployeesService {
@@ -16,6 +17,7 @@ export class EmployeesService {
     private employeeModel: Model<Employee>,
     private readonly jwtService: JwtService,
   ) {}
+
   async createEmployee(createEmployeeDto: CreateEmployeeDto) {
     try {
       const { password, ...EmployeeData } = createEmployeeDto;
@@ -33,6 +35,33 @@ export class EmployeesService {
     } catch (error) {
       handleDBErrors(error);
     }
+  }
+
+  async loginEmployee(loginEmployeeDto: LoginEmployeeDto) {
+    const { password, email } = loginEmployeeDto;
+
+    const employee = await this.employeeModel
+      .findOne({ email })
+      .select('password email _id');
+
+    if (!employee) {
+      throw new UnauthorizedException(
+        'Credentials are invalid (email is incorrect)',
+      );
+    }
+
+    if (!bcrypt.compareSync(password, employee.password)) {
+      throw new UnauthorizedException(
+        'Credentials are invalid (password is incorrect)',
+      );
+    }
+
+    const employeeId = employee._id.toString();
+
+    return {
+      ...employee,
+      token: this.getJwtToken({ id: employeeId }),
+    };
   }
 
   findAll() {
