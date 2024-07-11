@@ -51,9 +51,9 @@ export class Employee {
   updated_by: string;
 
   @Prop({
-    required: true,
+    default: true,
   })
-  status: string;
+  status: boolean;
 }
 
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);
