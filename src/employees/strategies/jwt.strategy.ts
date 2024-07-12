@@ -23,6 +23,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const employee = await this.userModel.findById(id);
 
+    console.log(employee);
+
     if (!employee) {
       throw new UnauthorizedException('Token no es valido');
     }

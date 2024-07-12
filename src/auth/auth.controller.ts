@@ -64,11 +64,11 @@ export class AuthController {
   }
 
   @Get('private3')
-  @Auth(ValidRoles.admin)
+  @Auth(ValidRoles.user)
   privateRoute3(@GetUser() user: User) {
     return {
       ok: true,
-      message: 'This is a private route',
+      message: 'This is a private route for users',
       user,
     };
   }

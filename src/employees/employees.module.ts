@@ -9,8 +9,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
-  controllers: [EmployeesController],
-  providers: [EmployeesService, JwtStrategy],
   imports: [
     ConfigModule,
     MongooseModule.forFeature([
@@ -33,6 +31,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       },
     }),
   ],
+  controllers: [EmployeesController],
+  providers: [EmployeesService, JwtStrategy],
   exports: [MongooseModule, JwtStrategy, PassportModule, JwtModule],
 })
 export class EmployeesModule {}

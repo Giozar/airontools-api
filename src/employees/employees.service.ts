@@ -1,14 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Employee } from './schemas/employee.schema';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from './interfaces';
-import { handleDBErrors } from 'src/auth/handlers/auth.errors';
+
 import { LoginEmployeeDto } from './dto/login-employee.dto';
+import { handleDBErrors } from './handlers/auth.errors';
 
 @Injectable()
 export class EmployeesService {
@@ -46,13 +46,13 @@ export class EmployeesService {
 
     if (!employee) {
       throw new UnauthorizedException(
-        'Credentials are invalid (email is incorrect)',
+        'credenciales invalidad (el email es incorrecto)',
       );
     }
 
     if (!bcrypt.compareSync(password, employee.password)) {
       throw new UnauthorizedException(
-        'Credentials are invalid (password is incorrect)',
+        'Credenciales invalidas (la contraseña es incorrecta)',
       );
     }
 
@@ -64,24 +64,24 @@ export class EmployeesService {
     };
   }
 
-  findAll() {
-    return `This action returns all employees`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} employee`;
-  }
-
-  update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${id} employee ${updateEmployeeDto}`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} employee`;
-  }
-
   private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;
   }
+
+  // findAll() {
+  //   return `This action returns all employees`;
+  // }
+
+  // findOne(id: number) {
+  //   return `This action returns a #${id} employee`;
+  // }
+
+  // update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
+  //   return `This action updates a #${id} employee ${updateEmployeeDto}`;
+  // }
+
+  // remove(id: number) {
+  //   return `This action removes a #${id} employee`;
+  // }
 }

@@ -3,14 +3,17 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
+  UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { LoginEmployeeDto } from './dto/login-employee.dto';
+import { ValidRoles } from './interfaces';
+import { Employee } from './schemas/employee.schema';
+import { Auth, GetEmployee, RawHeaders } from './decorators';
+import { AuthGuard } from '@nestjs/passport';
+import { IncomingHttpHeaders } from 'http';
 
 @Controller('employees')
 export class EmployeesController {
@@ -26,26 +29,34 @@ export class EmployeesController {
     return this.employeesService.loginEmployee(loginEmployeeDto);
   }
 
-  @Get()
-  findAll() {
-    return this.employeesService.findAll();
+  @Get('admin')
+  @Auth(ValidRoles.admin)
+  adminRoute(@GetEmployee() employee: Employee) {
+    return {
+      ok: true,
+      message: 'This is a private route',
+      employee,
+    };
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employeesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateEmployeeDto: UpdateEmployeeDto,
+  @Get('private')
+  @UseGuards(AuthGuard())
+  testingPrivateRoute(
+    // @Req() request: Express.Request
+    @GetEmployee() employee: Employee,
+    @GetEmployee('email') email: string,
+    @RawHeaders() rawHeaders: string[],
+    @Headers() headers: IncomingHttpHeaders,
   ) {
-    return this.employeesService.update(+id, updateEmployeeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.employeesService.remove(+id);
+    // console.log({ user: request.user });
+    // console.log({ user });
+    // console.log({ email });
+    return {
+      ok: true,
+      message: 'This is a private route',
+      employee,
+      email,
+      headers,
+    };
   }
 }
