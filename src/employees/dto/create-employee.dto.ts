@@ -7,8 +7,8 @@ import {
 } from 'class-validator';
 export class CreateEmployeeDto {
   @IsString()
-  @IsEmail()
   name: string;
+  @IsEmail()
   email: string;
   @IsString()
   @MinLength(6)

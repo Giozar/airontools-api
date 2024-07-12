@@ -15,5 +15,5 @@ export function handleDBErrors(error: any): never {
     );
   }
   console.log(error);
-  throw new InternalServerErrorException('Please check server logs.');
+  throw new InternalServerErrorException(error.message);
 }
