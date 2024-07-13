@@ -30,9 +30,36 @@ export class User {
   isActive: boolean;
 
   @Prop({
-    default: ['user'],
+    default: ['employee'],
   })
   roles: string[];
+
+  @Prop({ default: Date.now() })
+  createdAt: Date;
+
+  @Prop({})
+  createdBy: string;
+
+  @Prop({ default: Date.now() })
+  updatedAt: Date;
+
+  @Prop({})
+  updatedBy: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Middleware para actualizar las fechas
+UserSchema.pre('save', function (next) {
+  if (this.isNew) {
+    this.createdAt = this.updatedAt = new Date();
+  } else {
+    this.updatedAt = new Date();
+  }
+  next();
+});
+
+UserSchema.pre('findOneAndUpdate', function (next) {
+  this.set({ updatedAt: new Date() });
+  next();
+});
