@@ -23,19 +23,19 @@ export class AuthService {
   async createUser(createUserDto: CreateUserDto) {
     try {
       const { password, ...UserData } = createUserDto;
-      const newUser = new this.userModel({
+      const user = new this.userModel({
         ...UserData,
         password: await bcrypt.hashSync(password, 10),
       });
 
-      await newUser.save();
+      await user.save();
 
       // Exclude password from the response
-      newUser.password = undefined;
+      user.password = undefined;
 
       return {
-        ...newUser,
-        token: this.getJwtToken({ id: newUser._id.toString() }),
+        user,
+        token: this.getJwtToken({ id: user._id.toString() }),
       };
       // TODO: Return a JWT token
     } catch (error) {
@@ -49,7 +49,7 @@ export class AuthService {
     // Find user by email and select the password and email
     const user = await this.userModel
       .findOne({ email })
-      .select('password email _id');
+      .select('password email _id roles fullName');
 
     if (!user) {
       throw new UnauthorizedException(
@@ -65,7 +65,7 @@ export class AuthService {
     // Extract the user _id and return a string
     const userId = user._id.toString();
     return {
-      ...user,
+      user,
       token: this.getJwtToken({ id: userId }),
     };
     // TODO: Return a JWT token
