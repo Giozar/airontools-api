@@ -7,11 +7,6 @@ export type productDocument = HydratedDocument<Product>;
 export class Product {
   @Prop({
     unique: true,
-  })
-  id: number;
-
-  @Prop({
-    unique: true,
     required: true,
   })
   name: string;

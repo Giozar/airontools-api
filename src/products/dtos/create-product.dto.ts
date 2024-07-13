@@ -67,9 +67,9 @@ export class CreateProductDto {
   @IsString()
   description?: string;
 
-  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Object)
   @IsVariableObject({ each: true }) // Usa el decorador personalizado
+  @IsArray()
   specifications: Array<Record<string, any>>;
 }

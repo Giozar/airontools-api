@@ -38,13 +38,6 @@ export class ProductsController {
     }
   }
 
-  // Endpoint para reiniciar el contador
-  @Post('reset-counter')
-  async resetCounter() {
-    await this.productsService.resetCounter();
-    return { message: 'Counter reset successfully' };
-  }
-
   @Delete(':id')
   @HttpCode(204)
   async deleteProduct(@Param('id') id: number) {
