@@ -24,15 +24,18 @@ export class User {
   })
   fullName: string;
 
+  @Prop({})
+  photo: string;
+
   @Prop({
     default: true,
   })
   isActive: boolean;
 
   @Prop({
-    default: ['employee'],
+    default: 'employee',
   })
-  roles: string[];
+  roles: string;
 
   @Prop({ default: Date.now() })
   createdAt: Date;
