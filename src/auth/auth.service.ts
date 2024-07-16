@@ -43,6 +43,10 @@ export class AuthService {
     }
   }
 
+  async getUsers(): Promise<User[]> {
+    return this.userModel.find();
+  }
+
   async loginUser(loginUserDto: LoginUserDto) {
     const { password, email } = loginUserDto;
 
