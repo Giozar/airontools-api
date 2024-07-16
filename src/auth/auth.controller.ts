@@ -30,6 +30,11 @@ export class AuthController {
     return this.authService.loginUser(loginUserDto);
   }
 
+  @Get('users')
+  getUsers() {
+    return this.authService.getUsers();
+  }
+
   @Get('private')
   @UseGuards(AuthGuard())
   testingPrivateRoute(
