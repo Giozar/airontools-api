@@ -61,11 +61,16 @@ export class AuthService {
     }
   }
 
-  async updateUser(id: string, user: UpdateUserDto) {
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
     try {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestException('ID de usuario no válido');
       }
+      const { password, ...UserData } = updateUserDto;
+      const user = {
+        ...UserData,
+        password: await bcrypt.hashSync(password, 10),
+      };
       const userUpdated = await this.userModel.findByIdAndUpdate(id, user, {
         new: true,
       });
