@@ -11,9 +11,17 @@ export function handleDBErrors(error: any): never {
 
   if (error.code === 11000) {
     throw new ConflictException(
-      `Duplication error, User ${error} already exists!`,
+      `Error de duplicación, el usuario ${error} ya existe,`,
     );
   }
-  console.log(error);
-  throw new InternalServerErrorException('Please check server logs.');
+  if (error?.response?.statusCode === 400)
+    throw new InternalServerErrorException(error.response);
+
+  if (error?.response?.statusCode === 404)
+    throw new InternalServerErrorException(error.response);
+
+  console.error(error);
+  throw new InternalServerErrorException(
+    'Consulte los registros del servidor.',
+  );
 }

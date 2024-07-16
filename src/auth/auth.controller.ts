@@ -5,11 +5,14 @@ import {
   Get,
   UseGuards,
   Headers,
+  Delete,
+  Param,
+  Put,
   // SetMetadata,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto';
+import { LoginUserDto, UpdateUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Auth, GetUser, RawHeaders } from './decorators';
 import { User } from './schemas/user.schema';
@@ -33,6 +36,21 @@ export class AuthController {
   @Get('users')
   getUsers() {
     return this.authService.getUsers();
+  }
+
+  @Get('user/:id')
+  getUser(@Param('id') id: string) {
+    return this.authService.getUser(id);
+  }
+
+  @Put('update/:id')
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.authService.updateUser(id, body);
+  }
+
+  @Delete('delete/:id')
+  deleteUser(@Param('id') id: string) {
+    return this.authService.deleteUser(id);
   }
 
   @Get('private')
