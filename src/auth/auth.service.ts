@@ -6,13 +6,13 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { handleDBErrors } from './handlers/auth.errors';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import { LoginUserDto, UpdateUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
+import { handleDBErrors } from 'src/handlers/error.handle';
 @Injectable()
 export class AuthService {
   constructor(
@@ -66,15 +66,22 @@ export class AuthService {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestException('ID de usuario no válido');
       }
-      const { password, ...UserData } = updateUserDto;
-      const user = {
-        ...UserData,
-        password: await bcrypt.hashSync(password, 10),
-      };
+
+      const { password, ...userData } = updateUserDto;
+      const user: any = { ...userData };
+
+      if (password) {
+        user.password = bcrypt.hashSync(password, 10);
+      }
+
       const userUpdated = await this.userModel.findByIdAndUpdate(id, user, {
         new: true,
       });
-      if (!userUpdated) throw new NotFoundException('Usuario no encontrado');
+
+      if (!userUpdated) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
       return userUpdated;
     } catch (error) {
       handleDBErrors(error);
