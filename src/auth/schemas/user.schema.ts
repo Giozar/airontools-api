@@ -25,7 +25,7 @@ export class User {
   fullName: string;
 
   @Prop({})
-  photo: string;
+  imageUrl: string;
 
   @Prop({
     default: true,
