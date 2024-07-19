@@ -36,7 +36,7 @@ export class AuthService {
 
       return {
         user,
-        token: this.getJwtToken({ id: user._id.toString() }),
+        token: this.getJwtToken({ id: user._id.toString(), user }),
       };
       // TODO: Return a JWT token
     } catch (error) {
@@ -119,7 +119,7 @@ export class AuthService {
     const id = user._id.toString();
     return {
       user,
-      token: this.getJwtToken({ id: id }),
+      token: this.getJwtToken({ id: id, user }),
     };
     // TODO: Return a JWT token
   }
