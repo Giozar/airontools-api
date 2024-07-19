@@ -102,7 +102,7 @@ export class AuthService {
     // Find user by email and select the password and email
     const user = await this.userModel
       .findOne({ email })
-      .select('password email _id roles fullName');
+      .select('password email _id roles fullName imageUrl');
 
     if (!user) {
       throw new UnauthorizedException(

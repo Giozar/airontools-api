@@ -33,7 +33,7 @@ export class User {
   isActive: boolean;
 
   @Prop({
-    default: 'employee',
+    default: 'Usuario',
   })
   roles: string;
 
