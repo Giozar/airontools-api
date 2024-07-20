@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
 import { ProductsModule } from './products/products.module';
 import { RolesModule } from './roles/roles.module';
+import { FamiliesModule } from './families/families.module';
 import awsConfig from '@config/awsConfig';
 
 @Module({
@@ -28,6 +29,7 @@ import awsConfig from '@config/awsConfig';
     FilesModule,
     ProductsModule,
     RolesModule,
+    FamiliesModule,
   ],
   controllers: [],
   providers: [],

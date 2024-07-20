@@ -19,7 +19,9 @@ export function handleDBErrors(error: any): never {
     throw new InternalServerErrorException(error.response);
 
   console.error(error);
-  throw new InternalServerErrorException(
-    'Consulte los registros del servidor.',
-  );
+  throw new InternalServerErrorException({
+    message: 'Ocurrió un problema interno de servidor',
+    error: error,
+    statusCode: 500,
+  });
 }
