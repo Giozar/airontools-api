@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
+import { QueryCategory } from './dto/query-category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -20,8 +21,9 @@ export class CategoriesService {
     }
   }
 
-  async findAll() {
-    return await this.categoryModel.find();
+  async findAll({ familyId }: QueryCategory) {
+    const filter = familyId ? { familyId } : {};
+    return await this.categoryModel.find(filter);
   }
 
   async findOne(id: string) {
