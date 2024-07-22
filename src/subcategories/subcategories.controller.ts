@@ -1,25 +1,45 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { SubcategoriesService } from './subcategories.service';
+import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
+import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 
 @Controller('subcategories')
 export class SubcategoriesController {
-  constructor(private subcategoriesService: SubcategoriesService) {}
+  constructor(private readonly subcategoriesService: SubcategoriesService) {}
 
-  @Get()
-  async getSubcategories() {
-    return this.subcategoriesService.getSubcategories();
+  @Post()
+  create(@Body() createSubcategoryDto: CreateSubcategoryDto) {
+    return this.subcategoriesService.create(createSubcategoryDto);
   }
 
-  @Get(':categoryId')
-  async getSubcategoriesByCategoryId(@Param('categoryId') categoryId: number) {
-    if (isNaN(categoryId))
-      throw new NotFoundException('categoryId is not a number.');
-    const subcategories =
-      await this.subcategoriesService.getSubcategoriesByCategoryId(categoryId);
-    if (subcategories.length === 0)
-      throw new NotFoundException(
-        'Error: No subcategories found with the provided categoryId.',
-      );
-    return subcategories;
+  @Get()
+  findAll() {
+    return this.subcategoriesService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.subcategoriesService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateSubcategoryDto: UpdateSubcategoryDto,
+  ) {
+    return this.subcategoriesService.update(id, updateSubcategoryDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.subcategoriesService.remove(id);
   }
 }

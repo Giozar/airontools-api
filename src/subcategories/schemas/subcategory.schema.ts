@@ -2,19 +2,11 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
 export type subcategoryDocument = HydratedDocument<Subcategory>;
-@Schema()
+
+@Schema({
+  timestamps: true,
+})
 export class Subcategory {
-  @Prop({
-    required: true,
-    unique: true,
-  })
-  id: number;
-
-  @Prop({
-    required: true,
-  })
-  categoryId: number;
-
   @Prop({
     required: true,
     unique: true,
@@ -25,7 +17,22 @@ export class Subcategory {
   path: string;
 
   @Prop()
+  description: string;
+
+  @Prop()
   image: string;
+
+  @Prop({ required: true })
+  createdBy: string;
+
+  @Prop()
+  updatedBy: string;
+
+  @Prop({ required: true })
+  familyId: string;
+
+  @Prop({ required: true })
+  categoryId: string;
 }
 
 export const SubcategorySchema = SchemaFactory.createForClass(Subcategory);
