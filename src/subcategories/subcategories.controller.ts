@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { SubcategoriesService } from './subcategories.service';
 import {
@@ -24,7 +25,7 @@ export class SubcategoriesController {
   }
 
   @Get()
-  findAll(query: SubcategoryQueriesDto) {
+  findAll(@Query() query: SubcategoryQueriesDto) {
     return this.subcategoriesService.findAll(query);
   }
 
