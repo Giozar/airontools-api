@@ -1,23 +1,30 @@
-import { IsNumber, IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class createCategoryDto {
-  @IsNotEmpty()
-  @IsNumber()
-  id: number;
-
+export class CreateCategoryDto {
   @IsNotEmpty()
   @IsString()
   name: string;
 
   @IsOptional()
   @IsString()
-  description: string;
+  path?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  image: string;
+  description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  path: string;
+  image?: string;
+
+  @IsOptional()
+  @IsString()
+  createdBy?: string;
+
+  @IsOptional()
+  @IsString()
+  updatedBy?: string;
+
+  @IsString()
+  familyId: string;
 }
