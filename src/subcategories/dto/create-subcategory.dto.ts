@@ -17,9 +17,8 @@ export class CreateSubcategoryDto {
   @IsString()
   image?: string;
 
-  @IsOptional()
   @IsString()
-  createdBy?: string;
+  createdBy: string;
 
   @IsOptional()
   @IsString()
