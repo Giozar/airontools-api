@@ -1,23 +1,3 @@
-import { IsOptional, IsNumber, IsString } from 'class-validator';
-
-export class createSubcategoryDto {
-  @IsOptional()
-  @IsNumber()
-  id: number;
-
-  @IsOptional()
-  @IsNumber()
-  categoryId: number;
-
-  @IsOptional()
-  @IsString()
-  name: string;
-
-  @IsOptional()
-  @IsString()
-  path: string;
-
-  @IsOptional()
-  @IsString()
-  image: string;
-}
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateSubcategoryDto } from './create-subcategory.dto';
+export class UpdateSubcategoryDto extends PartialType(CreateSubcategoryDto) {}
