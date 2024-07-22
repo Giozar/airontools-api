@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
-import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Subcategory } from './schemas/subcategory.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
-
+import {
+  CreateSubcategoryDto,
+  SubcategoryQueriesDto,
+  UpdateSubcategoryDto,
+} from './dto';
 @Injectable()
 export class SubcategoriesService {
   constructor(
@@ -20,8 +22,10 @@ export class SubcategoriesService {
     }
   }
 
-  async findAll() {
-    return await this.subcategoryModel.find();
+  async findAll(query: SubcategoryQueriesDto) {
+    const filter: any = {};
+    if (query.categoryId) filter.categoryId = query.categoryId;
+    return await this.subcategoryModel.find(filter);
   }
 
   async findOne(id: string) {

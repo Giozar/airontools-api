@@ -8,8 +8,11 @@ import {
   Delete,
 } from '@nestjs/common';
 import { SubcategoriesService } from './subcategories.service';
-import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
-import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
+import {
+  CreateSubcategoryDto,
+  SubcategoryQueriesDto,
+  UpdateSubcategoryDto,
+} from './dto';
 
 @Controller('subcategories')
 export class SubcategoriesController {
@@ -21,8 +24,8 @@ export class SubcategoriesController {
   }
 
   @Get()
-  findAll() {
-    return this.subcategoriesService.findAll();
+  findAll(query: SubcategoryQueriesDto) {
+    return this.subcategoriesService.findAll(query);
   }
 
   @Get(':id')
