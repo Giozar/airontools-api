@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
-import { CategoryQueriesDto } from './dto/category-queries.dto';
+import {
+  CategoryQueriesDto,
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from './dto';
 
 @Injectable()
 export class CategoriesService {
