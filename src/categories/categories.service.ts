@@ -34,6 +34,7 @@ export class CategoriesService {
       validateId(id);
       const categorySearched = await this.categoryModel.findById(id);
       ifNotFound({ entity: categorySearched, id });
+      return categorySearched;
     } catch (error) {
       handleDBErrors(error);
     }
@@ -61,6 +62,19 @@ export class CategoriesService {
         .findByIdAndDelete(id)
         .exec();
       ifNotFound({ entity: categoryDeleted, id });
+      return categoryDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async removeByFamilyId(id: string) {
+    try {
+      validateId(id);
+      const categoryDeleted = await this.categoryModel
+        .find({ familyId: id })
+        .deleteMany({ familyId: id })
+        .exec();
       return categoryDeleted;
     } catch (error) {
       handleDBErrors(error);

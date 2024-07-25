@@ -46,4 +46,14 @@ export class SubcategoriesController {
   remove(@Param('id') id: string) {
     return this.subcategoriesService.remove(id);
   }
+
+  @Delete('family/:id')
+  removeByFamilyId(@Param('id') id: string) {
+    return this.subcategoriesService.removeByFamilyId(id);
+  }
+
+  @Delete('category/:id')
+  removeByCategoryId(@Param('id') id: string) {
+    return this.subcategoriesService.removeByCategoryId(id);
+  }
 }

@@ -27,6 +27,7 @@ export class FamiliesService {
       validateId(id);
       const familySearched = await this.familyModel.findById(id);
       ifNotFound({ entity: familySearched, id });
+      return familySearched;
     } catch (error) {
       handleDBErrors(error);
     }
