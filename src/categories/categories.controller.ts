@@ -46,4 +46,9 @@ export class CategoriesController {
   remove(@Param('id') id: string) {
     return this.categoriesService.remove(id);
   }
+
+  @Delete('family/:id')
+  removeByFamilyId(@Param('id') id: string) {
+    return this.categoriesService.removeByFamilyId(id);
+  }
 }

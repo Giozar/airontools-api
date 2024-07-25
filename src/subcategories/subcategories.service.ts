@@ -65,4 +65,30 @@ export class SubcategoriesService {
       handleDBErrors(error);
     }
   }
+
+  async removeByFamilyId(id: string) {
+    try {
+      validateId(id);
+      const subcategoriesDeleted = await this.subcategoryModel
+        .find({ familyId: id })
+        .deleteMany({ familyId: id })
+        .exec();
+      return subcategoriesDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async removeByCategoryId(id: string) {
+    try {
+      validateId(id);
+      const subcategoriesDeleted = await this.subcategoryModel
+        .find({ categoryId: id })
+        .deleteMany({ categoryId: id })
+        .exec();
+      return subcategoriesDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
 }
