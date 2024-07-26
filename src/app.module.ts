@@ -11,6 +11,7 @@ import { FilesModule } from './files/files.module';
 import { ProductsModule } from './products/products.module';
 import { RolesModule } from './roles/roles.module';
 import { FamiliesModule } from './families/families.module';
+import { SpecificationsModule } from './specifications/specifications.module';
 import awsConfig from '@config/awsConfig';
 
 @Module({
@@ -30,6 +31,7 @@ import awsConfig from '@config/awsConfig';
     ProductsModule,
     RolesModule,
     FamiliesModule,
+    SpecificationsModule,
   ],
   controllers: [],
   providers: [],
