@@ -42,4 +42,18 @@ export class SpecificationsController {
   remove(@Param('id') id: string) {
     return this.specificationsService.remove(id);
   }
+
+  @Delete(':id')
+  removeByFamilyId(@Param('id') id: string) {
+    return this.specificationsService.removeByFamilyId(id);
+  }
+
+  @Delete(':id')
+  removeByCategoryId(@Param('id') id: string) {
+    return this.specificationsService.removeByCategoryId(id);
+  }
+  @Delete(':id')
+  removeBySubcategoryId(@Param('id') id: string) {
+    return this.specificationsService.removeBySubcategoryId(id);
+  }
 }

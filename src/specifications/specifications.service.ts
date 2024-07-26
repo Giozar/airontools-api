@@ -63,4 +63,44 @@ export class SpecificationsService {
       handleDBErrors(error);
     }
   }
+
+  async removeByFamilyId(id: string) {
+    try {
+      validateId(id);
+      const specificationDeleted = await this.specificationModel
+        .find({ familyId: id })
+        .deleteMany({ familyId: id })
+        .exec();
+      return specificationDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async removeByCategoryId(id: string) {
+    try {
+      validateId(id);
+      const specificationDeleted = await this.specificationModel
+        .find({ categoryId: id })
+        .deleteMany({ categoryId: id })
+        .exec();
+      return specificationDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async removeBySubcategoryId(id: string) {
+    try {
+      validateId(id);
+      const specificationDeleted = await this.specificationModel
+        .find({ subcategoryId: id })
+        .deleteMany({ subcategoryId: id })
+        .exec();
+      ifNotFound({ entity: specificationDeleted, id });
+      return specificationDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
 }
