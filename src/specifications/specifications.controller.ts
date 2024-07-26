@@ -43,16 +43,16 @@ export class SpecificationsController {
     return this.specificationsService.remove(id);
   }
 
-  @Delete(':id')
+  @Delete('family:id')
   removeByFamilyId(@Param('id') id: string) {
     return this.specificationsService.removeByFamilyId(id);
   }
 
-  @Delete(':id')
+  @Delete('category:id')
   removeByCategoryId(@Param('id') id: string) {
     return this.specificationsService.removeByCategoryId(id);
   }
-  @Delete(':id')
+  @Delete('subcategory:id')
   removeBySubcategoryId(@Param('id') id: string) {
     return this.specificationsService.removeBySubcategoryId(id);
   }
