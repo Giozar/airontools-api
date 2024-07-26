@@ -10,22 +10,22 @@ export class Specification {
   @Prop({ trim: true })
   description: string;
 
-  @Prop()
+  @Prop({})
   units: string;
 
-  @Prop()
+  @Prop({})
   familyId: string;
 
-  @Prop()
+  @Prop({})
   categoryId: string;
 
-  @Prop()
-  subcategoryId;
+  @Prop({})
+  subcategoryId: string;
 
   @Prop({ required: true })
   createdBy: string;
 
-  @Prop()
+  @Prop({})
   updatedBy: string;
 }
 
