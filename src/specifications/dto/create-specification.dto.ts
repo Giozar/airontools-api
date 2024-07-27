@@ -14,6 +14,10 @@ export class CreateSpecificationDto {
   @IsString()
   description: string;
 
+  @IsOptional()
+  @IsString()
+  unit: string;
+
   @IsAlphanumeric()
   @IsOptional()
   units: string;

@@ -11,7 +11,7 @@ export class Specification {
   description: string;
 
   @Prop({})
-  units: string;
+  unit: string;
 
   @Prop({})
   familyId: string;
