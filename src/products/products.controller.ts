@@ -7,7 +7,6 @@ import {
   Delete,
   Query,
   ConflictException,
-  HttpCode,
   NotFoundException,
   Patch,
   InternalServerErrorException,
@@ -23,9 +22,9 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  async createProduct(@Body() body: CreateProductDto) {
+  async create(@Body() body: CreateProductDto) {
     try {
-      return await this.productsService.createProduct(body);
+      return await this.productsService.create(body);
     } catch (error) {
       if (error.code === 11000) {
         throw new ConflictException(
@@ -39,17 +38,16 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
-  async deleteProduct(@Param('id') id: string) {
-    const product = await this.productsService.deleteProduct(id);
+  async remove(@Param('id') id: string) {
+    const product = await this.productsService.remove(id);
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }
 
   @Patch(':id')
-  async updateProduct(@Param('id') id: string, @Body() body: UpdateProductDto) {
+  async update(@Param('id') id: string, @Body() body: UpdateProductDto) {
     try {
-      const product = await this.productsService.updateProduct(id, body);
+      const product = await this.productsService.update(id, body);
       if (!product) throw new NotFoundException('Product not found');
       return product;
     } catch (error) {
@@ -76,13 +74,13 @@ export class ProductsController {
   }
 
   @Get(':id')
-  async findOneToolById(@Param('id') id: string) {
-    const product = await this.productsService.findOneProductById(id);
+  async findOne(@Param('id') id: string) {
+    const product = await this.productsService.findOne(id);
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }
 
-  @Get(':id')
+  @Get()
   findAll() {
     const products = this.productsService.findAll();
     return products;

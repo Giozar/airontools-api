@@ -1,11 +1,8 @@
 import { Type } from 'class-transformer';
 import {
-  IsNumber,
   IsString,
   IsNotEmpty,
   IsOptional,
-  IsPositive,
-  IsInt,
   IsArray,
   ValidationOptions,
   ValidationArguments,
@@ -35,41 +32,57 @@ function IsVariableObject(validationOptions?: ValidationOptions) {
 }
 
 export class CreateProductDto {
-  @IsOptional()
-  @IsPositive()
-  @IsInt()
-  @IsNumber()
-  id: number;
-
   @IsNotEmpty()
   @IsString()
   name: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  categoryId?: number;
+  @IsString()
+  model: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  subcategoryId?: number;
+  @IsString()
+  familyId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  categoryId: string;
 
   @IsOptional()
-  @IsNumber()
-  subsubcategoryId?: number;
+  @IsString()
+  subcategoryId?: string;
+
+  @IsOptional()
+  @IsString()
+  imagesUrl: [];
+
+  @IsOptional()
+  @IsString()
+  manuals: [];
+
+  @IsOptional()
+  @IsString()
+  videos: [string];
 
   @IsString()
-  path: string;
-
-  @IsNotEmpty()
-  @IsString()
-  imageUrl: string;
+  @IsOptional()
+  description: string;
 
   @IsString()
-  description?: string;
+  @IsOptional()
+  characteristics: string;
 
   @ValidateNested({ each: true })
   @Type(() => Object)
   @IsVariableObject({ each: true }) // Usa el decorador personalizado
   @IsArray()
   specifications: Array<Record<string, any>>;
+
+  @IsString()
+  @IsNotEmpty()
+  createdBy: string;
+
+  @IsString()
+  @IsOptional()
+  updatedBy: string;
 }

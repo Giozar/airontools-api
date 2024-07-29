@@ -3,7 +3,9 @@ import mongoose, { HydratedDocument } from 'mongoose';
 
 export type productDocument = HydratedDocument<Product>;
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class Product {
   @Prop({
     unique: true,
@@ -17,13 +19,13 @@ export class Product {
   model: string;
 
   @Prop({ required: true })
-  familyId: number;
+  familyId: string;
 
   @Prop({ required: true })
-  categoryId: number;
+  categoryId: string;
 
   @Prop({})
-  subcategoryId: number;
+  subcategoryId: string;
 
   @Prop({ required: true })
   description: string;
@@ -42,6 +44,12 @@ export class Product {
 
   @Prop({})
   videos: string[];
+
+  @Prop({ required: true })
+  createdBy: string;
+
+  @Prop({})
+  updatedBy: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
