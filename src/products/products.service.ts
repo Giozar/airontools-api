@@ -16,16 +16,20 @@ export class ProductsService {
     return newPorduct.save();
   }
 
-  async updateProduct(id: number, product: UpdateProductDto) {
+  async updateProduct(id: string, product: UpdateProductDto) {
     return this.productModel.findOneAndUpdate({ id }, product, { new: true });
   }
 
-  async deleteProduct(id: number) {
+  async deleteProduct(id: string) {
     return this.productModel.findOneAndDelete({ id });
   }
 
-  async findOneProductById(id: number) {
+  async findOneProductById(id: string) {
     return this.productModel.findOne({ id });
+  }
+
+  async findAll() {
+    return await this.productModel.find();
   }
 
   async searchProduct(

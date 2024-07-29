@@ -9,7 +9,7 @@ import {
   ConflictException,
   HttpCode,
   NotFoundException,
-  Put,
+  Patch,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -22,7 +22,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post('create')
+  @Post()
   async createProduct(@Body() body: CreateProductDto) {
     try {
       return await this.productsService.createProduct(body);
@@ -40,14 +40,14 @@ export class ProductsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteProduct(@Param('id') id: number) {
+  async deleteProduct(@Param('id') id: string) {
     const product = await this.productsService.deleteProduct(id);
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }
 
-  @Put(':id')
-  async updateProduct(@Param('id') id: number, @Body() body: UpdateProductDto) {
+  @Patch(':id')
+  async updateProduct(@Param('id') id: string, @Body() body: UpdateProductDto) {
     try {
       const product = await this.productsService.updateProduct(id, body);
       if (!product) throw new NotFoundException('Product not found');
@@ -62,7 +62,7 @@ export class ProductsController {
     }
   }
 
-  @Post()
+  @Post('search')
   async searchProduct(
     @Body() search: SearchProductDto,
     @Query() { limit, offset }: PaginationDto,
@@ -75,10 +75,16 @@ export class ProductsController {
     return response;
   }
 
-  @Get(':productId')
-  async findOneToolById(@Param('productId') productId: number) {
-    const product = await this.productsService.findOneProductById(productId);
+  @Get(':id')
+  async findOneToolById(@Param('id') id: string) {
+    const product = await this.productsService.findOneProductById(id);
     if (!product) throw new NotFoundException('Product not found');
     return product;
+  }
+
+  @Get(':id')
+  findAll() {
+    const products = this.productsService.findAll();
+    return products;
   }
 }
