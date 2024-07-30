@@ -14,6 +14,7 @@ export class Product {
   name: string;
 
   @Prop({
+    unique: true,
     required: true,
   })
   model: string;
@@ -31,7 +32,7 @@ export class Product {
   description: string;
 
   @Prop({ required: true })
-  characteristics: string;
+  characteristics: string[];
 
   @Prop({ type: [mongoose.Schema.Types.Mixed] }) // Usa Mixed para permitir cualquier tipo de objeto
   specifications: Array<Record<string, any>>;
