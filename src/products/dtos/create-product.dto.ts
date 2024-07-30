@@ -12,7 +12,7 @@ import {
 
 // Decorador personalizado para validar un objeto con campos variables
 
-function IsVariableObject(validationOptions?: ValidationOptions) {
+function IsVariableObject(validationOptions: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isVariableObject',
@@ -50,27 +50,26 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsString()
-  subcategoryId?: string;
+  subcategoryId: string;
 
   @IsOptional()
-  @IsString()
-  imagesUrl: [];
+  @IsArray()
+  imagesUrl: [string];
 
   @IsOptional()
-  @IsString()
-  manuals: [];
+  @IsArray()
+  manuals: [string];
 
   @IsOptional()
-  @IsString()
+  @IsArray()
   videos: [string];
 
   @IsString()
   @IsOptional()
   description: string;
 
-  @IsString()
   @IsOptional()
-  characteristics: string;
+  characteristics: [string];
 
   @ValidateNested({ each: true })
   @Type(() => Object)
