@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 export type UserDocument = HydratedDocument<User>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop({
     unique: true,
@@ -32,37 +31,14 @@ export class User {
   })
   isActive: boolean;
 
-  @Prop({
-    default: 'Usuario',
-  })
-  roles: string;
-
-  @Prop({ default: Date.now() })
-  createdAt: Date;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Role', required: true })
+  role: MongooseSchema.Types.ObjectId;
 
   @Prop({})
   createdBy: string;
-
-  @Prop({ default: Date.now() })
-  updatedAt: Date;
 
   @Prop({})
   updatedBy: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-// Middleware para actualizar las fechas
-UserSchema.pre('save', function (next) {
-  if (this.isNew) {
-    this.createdAt = this.updatedAt = new Date();
-  } else {
-    this.updatedAt = new Date();
-  }
-  next();
-});
-
-UserSchema.pre('findOneAndUpdate', function (next) {
-  this.set({ updatedAt: new Date() });
-  next();
-});

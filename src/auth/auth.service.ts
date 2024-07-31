@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   async getUsers(): Promise<User[]> {
-    return await this.userModel.find();
+    return await this.userModel.find().populate('role').exec();
   }
 
   async getUser(id: string): Promise<User> {
