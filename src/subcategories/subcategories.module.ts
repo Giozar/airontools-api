@@ -3,6 +3,10 @@ import { SubcategoriesService } from './subcategories.service';
 import { SubcategoriesController } from './subcategories.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Subcategory, SubcategorySchema } from './schemas/subcategory.schema';
+import {
+  Specification,
+  SpecificationSchema,
+} from 'src/specifications/schemas/specification.schema';
 
 @Module({
   imports: [
@@ -10,6 +14,10 @@ import { Subcategory, SubcategorySchema } from './schemas/subcategory.schema';
       {
         name: Subcategory.name,
         schema: SubcategorySchema,
+      },
+      {
+        name: Specification.name,
+        schema: SpecificationSchema,
       },
     ]),
   ],
