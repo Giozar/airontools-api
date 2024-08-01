@@ -7,6 +7,14 @@ import {
   Category,
   CategorySchema,
 } from 'src/categories/schemas/category.schema';
+import {
+  Subcategory,
+  SubcategorySchema,
+} from 'src/subcategories/schemas/subcategory.schema';
+import {
+  Specification,
+  SpecificationSchema,
+} from 'src/specifications/schemas/specification.schema';
 
 @Module({
   controllers: [FamiliesController],
@@ -20,6 +28,14 @@ import {
       {
         name: Category.name,
         schema: CategorySchema,
+      },
+      {
+        name: Subcategory.name,
+        schema: SubcategorySchema,
+      },
+      {
+        name: Specification.name,
+        schema: SpecificationSchema,
       },
     ]),
   ],

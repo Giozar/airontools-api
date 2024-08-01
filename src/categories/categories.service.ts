@@ -1,18 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 import {
   CategoryQueriesDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from './dto';
+import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
+import { Specification } from 'src/specifications/schemas/specification.schema';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<Category>,
+    @InjectModel(Subcategory.name) private subcategoryModel: Model<Subcategory>,
+    @InjectModel(Specification.name)
+    private specificationModel: Model<Specification>,
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
     try {
@@ -60,6 +65,33 @@ export class CategoriesService {
       validateId(id);
       const categoryDeleted = await this.categoryModel
         .findByIdAndDelete(id)
+        .exec();
+
+      const subcategories = await this.subcategoryModel.find({
+        categoryId: id,
+      });
+      const subcategoryIds = subcategories.map((subcategory) =>
+        subcategory._id.toString(),
+      );
+      await this.subcategoryModel
+        .deleteMany({
+          _id: {
+            $in: subcategoryIds.map((id) => new mongoose.Types.ObjectId(id)),
+          },
+        })
+        .exec();
+      const specifications = await this.specificationModel.find({
+        categoryId: id,
+      });
+      const specificationsIds = specifications.map((specs) =>
+        specs._id.toString(),
+      );
+      await this.specificationModel
+        .deleteMany({
+          _id: {
+            $in: specificationsIds.map((id) => new mongoose.Types.ObjectId(id)),
+          },
+        })
         .exec();
       ifNotFound({ entity: categoryDeleted, id });
       return categoryDeleted;

@@ -1,6 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
-import { CategorySchema } from 'src/categories/schemas/category.schema';
+import { HydratedDocument } from 'mongoose';
 
 export type familyDocument = HydratedDocument<Family>;
 
@@ -33,16 +32,22 @@ export class Family {
 export const FamilySchema = SchemaFactory.createForClass(Family);
 
 // Middleware para eliminar categorías relacionadas
-FamilySchema.pre('findOne', async function (next) {
+/*FamilySchema.pre('findOne', async function (next) {
   const familyId = this.getQuery()['_id'];
 
   try {
     // Aquí buscamos todas las categorías relacionadas con la familia
     const Category = mongoose.model('Category', CategorySchema);
 
-    const category = Category.exists({ familyId });
+    const x = Category;
 
-    console.log(category);
+    x.find();
+
+    // console.log(x.findOne({ familyId }));
+
+    //const category = await Category.exists({ familyId });
+
+    // console.log(category);
 
     console.log(`Buscamos todas las categorías con la familia ${familyId}`);
     next();
@@ -54,3 +59,4 @@ FamilySchema.pre('findOne', async function (next) {
     next(error);
   }
 });
+*/
