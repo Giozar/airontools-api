@@ -7,7 +7,7 @@ import {
   Headers,
   Delete,
   Param,
-  Put,
+  Patch,
   // SetMetadata,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -24,33 +24,33 @@ import { ValidRoles } from './interfaces';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.authService.createUser(createUserDto);
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.authService.create(createUserDto);
   }
   @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.loginUser(loginUserDto);
   }
 
-  @Get('users')
-  getUsers() {
-    return this.authService.getUsers();
+  @Get()
+  findAll() {
+    return this.authService.findAll();
   }
 
-  @Get('user/:id')
-  getUser(@Param('id') id: string) {
-    return this.authService.getUser(id);
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.authService.findOne(id);
   }
 
-  @Put('update/:id')
-  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
-    return this.authService.updateUser(id, body);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.authService.update(id, body);
   }
 
-  @Delete('delete/:id')
-  deleteUser(@Param('id') id: string) {
-    return this.authService.deleteUser(id);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.authService.remove(id);
   }
 
   @Get('private')

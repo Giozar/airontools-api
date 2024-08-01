@@ -22,7 +22,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     try {
       const { password, ...UserData } = createUserDto;
       const createdUser = new this.userModel({
@@ -49,11 +49,11 @@ export class AuthService {
     }
   }
 
-  async getUsers(): Promise<User[]> {
+  async findAll(): Promise<User[]> {
     return await this.userModel.find().populate(this.ROLE).exec();
   }
 
-  async getUser(id: string): Promise<User> {
+  async findOne(id: string): Promise<User> {
     try {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestException('ID de usuario no válido');
@@ -69,7 +69,7 @@ export class AuthService {
     }
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     try {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestException('ID de usuario no válido');
@@ -99,7 +99,7 @@ export class AuthService {
     }
   }
 
-  async deleteUser(id: string) {
+  async remove(id: string) {
     const deletedUser = await this.userModel
       .findByIdAndDelete(id)
       .populate(this.ROLE)
