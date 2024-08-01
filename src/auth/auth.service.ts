@@ -15,22 +15,27 @@ import { JwtService } from '@nestjs/jwt';
 import { handleDBErrors } from 'src/handlers/error.handle';
 @Injectable()
 export class AuthService {
+  private ROLE = 'role';
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,
     private readonly jwtService: JwtService,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     try {
       const { password, ...UserData } = createUserDto;
-      const user = new this.userModel({
+      const createdUser = new this.userModel({
         ...UserData,
         password: await bcrypt.hashSync(password, 10),
       });
 
-      await user.save();
+      await createdUser.save();
 
+      const user = await this.userModel
+        .findById(createdUser._id)
+        .populate(this.ROLE)
+        .exec();
       // Exclude password from the response
       user.password = undefined;
 
@@ -44,16 +49,19 @@ export class AuthService {
     }
   }
 
-  async getUsers(): Promise<User[]> {
-    return await this.userModel.find();
+  async findAll(): Promise<User[]> {
+    return await this.userModel.find().populate(this.ROLE).exec();
   }
 
-  async getUser(id: string): Promise<User> {
+  async findOne(id: string): Promise<User> {
     try {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestException('ID de usuario no válido');
       }
-      const userFound = await this.userModel.findById(id);
+      const userFound = await this.userModel
+        .findById(id)
+        .populate(this.ROLE)
+        .exec();
       if (!userFound) throw new NotFoundException('Usuario no encontrado');
       return userFound;
     } catch (error) {
@@ -61,7 +69,7 @@ export class AuthService {
     }
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     try {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestException('ID de usuario no válido');
@@ -74,9 +82,12 @@ export class AuthService {
         user.password = bcrypt.hashSync(password, 10);
       }
 
-      const userUpdated = await this.userModel.findByIdAndUpdate(id, user, {
-        new: true,
-      });
+      const userUpdated = await this.userModel
+        .findByIdAndUpdate(id, user, {
+          new: true,
+        })
+        .populate(this.ROLE)
+        .exec();
 
       if (!userUpdated) {
         throw new NotFoundException('Usuario no encontrado');
@@ -88,9 +99,10 @@ export class AuthService {
     }
   }
 
-  async deleteUser(id: string) {
+  async remove(id: string) {
     const deletedUser = await this.userModel
-      .findByIdAndDelete({ _id: id })
+      .findByIdAndDelete(id)
+      .populate(this.ROLE)
       .exec();
     if (!deletedUser) throw new NotFoundException('Usuario no encontrado');
     return deletedUser;
@@ -102,7 +114,9 @@ export class AuthService {
     // Find user by email and select the password and email
     const user = await this.userModel
       .findOne({ email })
-      .select('password email _id roles fullName imageUrl');
+      .populate(this.ROLE)
+      .select('password email _id role fullName imageUrl')
+      .exec();
 
     if (!user) {
       throw new UnauthorizedException(

@@ -7,6 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { Role, RoleSchema } from 'src/roles/schemas/role.schema';
 
 @Module({
   imports: [
@@ -15,6 +16,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Role.name,
+        schema: RoleSchema,
       },
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
