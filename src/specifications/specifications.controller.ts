@@ -56,4 +56,8 @@ export class SpecificationsController {
   removeBySubcategoryId(@Param('id') id: string) {
     return this.specificationsService.removeBySubcategoryId(id);
   }
+  @Get('category/:categoryId')
+  findAllByCategoryId(@Param('categoryId') categoryId: string) {
+    return this.specificationsService.findAllByCategoryId(categoryId);
+  }
 }

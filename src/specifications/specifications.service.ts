@@ -103,4 +103,15 @@ export class SpecificationsService {
       handleDBErrors(error);
     }
   }
+  async findAllByCategoryId(categoryId: string) {
+    try {
+      validateId(categoryId);
+      const specifications = await this.specificationModel
+        .find({ categoryId })
+        .exec();
+      return specifications;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
 }
