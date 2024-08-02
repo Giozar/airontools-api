@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 export type familyDocument = HydratedDocument<Family>;
 
@@ -22,11 +22,11 @@ export class Family {
   @Prop()
   image: string;
 
-  @Prop({ required: true })
-  createdBy: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  createdBy: MongooseSchema.Types.ObjectId;
 
-  @Prop()
-  updatedBy: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  updatedBy: MongooseSchema.Types.ObjectId;
 }
 
 export const FamilySchema = SchemaFactory.createForClass(Family);

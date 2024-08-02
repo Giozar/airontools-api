@@ -10,13 +10,26 @@ import {
 } from './dto';
 @Injectable()
 export class SubcategoriesService {
+  private FAMILY = 'family';
+  private CATEGORY = 'category';
+  private CREATEDBY = 'createdBy';
+  private UPDATEDBY = 'updatedBy';
   constructor(
     @InjectModel(Subcategory.name) private subcategoryModel: Model<Subcategory>,
   ) {}
   async create(createSubcategoryDto: CreateSubcategoryDto) {
     try {
-      const subcategory = new this.subcategoryModel(createSubcategoryDto);
-      return await subcategory.save();
+      const createdSubcategory = new this.subcategoryModel(
+        createSubcategoryDto,
+      );
+      await createdSubcategory.save();
+
+      const subcategory = this.subcategoryModel
+        .findById(createdSubcategory._id)
+        .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
+        .exec();
+
+      return subcategory;
     } catch (error) {
       handleDBErrors(error);
     }
@@ -25,13 +38,19 @@ export class SubcategoriesService {
   async findAll(query: SubcategoryQueriesDto) {
     const filter: any = {};
     if (query.categoryId) filter.categoryId = query.categoryId;
-    return await this.subcategoryModel.find(filter);
+    return await this.subcategoryModel
+      .find(filter)
+      .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
+      .exec();
   }
 
   async findOne(id: string) {
     try {
       validateId(id);
-      const subcategorySearched = await this.subcategoryModel.findById(id);
+      const subcategorySearched = await this.subcategoryModel
+        .findById(id)
+        .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
+        .exec();
       ifNotFound({ entity: subcategorySearched, id });
     } catch (error) {
       handleDBErrors(error);
@@ -42,10 +61,10 @@ export class SubcategoriesService {
     try {
       validateId(id);
 
-      const subcategoryUpdated = await this.subcategoryModel.findByIdAndUpdate(
-        id,
-        updateSubcategoryDto,
-      );
+      const subcategoryUpdated = await this.subcategoryModel
+        .findByIdAndUpdate(id, updateSubcategoryDto)
+        .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
+        .exec();
       ifNotFound({ entity: subcategoryUpdated, id });
       return subcategoryUpdated;
     } catch (error) {
@@ -58,6 +77,7 @@ export class SubcategoriesService {
       validateId(id);
       const subcategoryDeleted = await this.subcategoryModel
         .findByIdAndDelete(id)
+        .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       ifNotFound({ entity: subcategoryDeleted, id });
       return subcategoryDeleted;

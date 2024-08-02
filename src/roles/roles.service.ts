@@ -12,26 +12,40 @@ import { handleDBErrors } from 'src/handlers/error.handle';
 
 @Injectable()
 export class RolesService {
+  private CREATEDBY = 'createdBy';
+  private UPDATEDBY = 'updatedBy';
   constructor(@InjectModel(Role.name) private roleModel: Model<Role>) {}
   async createRole(createRoleDto: CreateRoleDto) {
     try {
-      const role = new this.roleModel(createRoleDto);
-      return await role.save();
+      const createdRole = new this.roleModel(createRoleDto);
+      await createdRole.save();
+      const role = this.roleModel
+        .findById(createdRole._id)
+        .populate([this.CREATEDBY, this.UPDATEDBY])
+        .exec();
+
+      return role;
     } catch (error) {
       handleDBErrors(error);
     }
   }
 
-  async getRoles(): Promise<Role[]> {
-    return await this.roleModel.find();
+  async findAll(): Promise<Role[]> {
+    return await this.roleModel
+      .find()
+      .populate([this.CREATEDBY, this.UPDATEDBY])
+      .exec();
   }
 
-  async getRole(id: string) {
+  async findOne(id: string) {
     try {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestException('ID del rol no válido');
       }
-      const roleFound = await this.roleModel.findById(id);
+      const roleFound = await this.roleModel
+        .findById(id)
+        .populate([this.CREATEDBY, this.UPDATEDBY])
+        .exec();
       if (!roleFound) throw new NotFoundException('Rol no encontrado');
       return roleFound;
     } catch (error) {
@@ -39,19 +53,18 @@ export class RolesService {
     }
   }
 
-  async updateRole(id: string, updateRoleDto: UpdateRoleDto) {
+  async update(id: string, updateRoleDto: UpdateRoleDto) {
     try {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestException('ID del rol no válido');
       }
 
-      const roleUpdated = await this.roleModel.findByIdAndUpdate(
-        id,
-        updateRoleDto,
-        {
+      const roleUpdated = await this.roleModel
+        .findByIdAndUpdate(id, updateRoleDto, {
           new: true,
-        },
-      );
+        })
+        .populate([this.CREATEDBY, this.UPDATEDBY])
+        .exec();
       if (!roleUpdated) throw new NotFoundException('Rol no encontrado');
       return roleUpdated;
     } catch (error) {
@@ -59,9 +72,10 @@ export class RolesService {
     }
   }
 
-  async deleteRole(id: string) {
+  async remove(id: string) {
     const roleDeleted = await this.roleModel
       .findByIdAndDelete({ _id: id })
+      .populate([this.CREATEDBY, this.UPDATEDBY])
       .exec();
     if (!roleDeleted) throw new NotFoundException('Rol no encontrado');
     return roleDeleted;

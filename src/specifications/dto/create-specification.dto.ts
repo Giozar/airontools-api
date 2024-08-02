@@ -25,15 +25,15 @@ export class CreateSpecificationDto {
 
   @IsString()
   @IsNotEmpty()
-  family: string;
+  family: Types.ObjectId;
 
   @IsString()
   @IsNotEmpty()
-  category: string;
+  category: Types.ObjectId;
 
   @IsString()
   @IsNotEmpty()
-  subcategory;
+  subcategory: Types.ObjectId;
 
   @IsString()
   @IsNotEmpty()

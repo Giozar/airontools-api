@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Schema as MongooseSchema } from 'mongoose';
 
 export type productDocument = HydratedDocument<Product>;
 
@@ -19,14 +20,22 @@ export class Product {
   })
   model: string;
 
-  @Prop({ required: true })
-  familyId: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
+  family: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
-  categoryId: string;
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  })
+  category: MongooseSchema.Types.ObjectId;
 
-  @Prop({})
-  subcategoryId: string;
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Subcategory',
+    required: true,
+  })
+  subcategory: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true })
   description: string;

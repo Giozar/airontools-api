@@ -22,21 +22,21 @@ export class RolesController {
 
   @Get()
   findAll() {
-    return this.rolesService.getRoles();
+    return this.rolesService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.rolesService.getRole(id);
+    return this.rolesService.findOne(id);
   }
 
   @Put('update/:id')
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.rolesService.updateRole(id, updateRoleDto);
+    return this.rolesService.update(id, updateRoleDto);
   }
 
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
-    return this.rolesService.deleteRole(id);
+    return this.rolesService.remove(id);
   }
 }
