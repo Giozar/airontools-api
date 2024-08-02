@@ -56,4 +56,15 @@ export class SubcategoriesController {
   removeByCategoryId(@Param('id') id: string) {
     return this.subcategoriesService.removeByCategoryId(id);
   }
+  //Arreglar a queries
+  @Get('count/:familyId')
+  async countByFamilyId(@Param('familyId') familyId: string): Promise<number> {
+    return this.subcategoriesService.countByFamilyId(familyId);
+  }
+  @Get('countByCategory/:categoryId')
+  async countByCategoryId(
+    @Param('categoryId') categoryId: string,
+  ): Promise<number> {
+    return this.subcategoriesService.countByCategoryId(categoryId);
+  }
 }
