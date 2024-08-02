@@ -23,9 +23,16 @@ export class SpecificationsService {
         createSpecificationDto,
       );
       await createdSpecification.save();
-      const specification = this.specificationModel.findById(
-        createdSpecification._id,
-      );
+      const specification = this.specificationModel
+        .findById(createdSpecification._id)
+        .populate([
+          this.FAMILY,
+          this.CATEGORY,
+          this.SUBCATEGORY,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
+        .exec();
       return specification;
     } catch (error) {
       handleDBErrors(error);
