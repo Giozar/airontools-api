@@ -19,8 +19,14 @@ export class SpecificationsService {
   ) {}
   async create(createSpecificationDto: CreateSpecificationDto) {
     try {
-      const specification = new this.specificationModel(createSpecificationDto);
-      return await specification.save();
+      const createdSpecification = new this.specificationModel(
+        createSpecificationDto,
+      );
+      await createdSpecification.save();
+      const specification = this.specificationModel.findById(
+        createdSpecification._id,
+      );
+      return specification;
     } catch (error) {
       handleDBErrors(error);
     }
