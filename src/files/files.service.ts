@@ -22,10 +22,10 @@ export class FilesService {
     },
   });
 
-  getStaticFile(fileName: string, type?: string) {
+  getStaticFile(fileName: string, type?: string, id?: string) {
     const path = join(
       __dirname,
-      `../../static/uploads/${type ? type + '/' : ''}`,
+      `../../static/uploads/${type ? type + '/' : ''}/${id ? id + '/' : ''}`,
       fileName,
     );
 
