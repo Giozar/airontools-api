@@ -1,4 +1,5 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsArray } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateCategoryDto {
   @IsNotEmpty()
@@ -14,16 +15,18 @@ export class CreateCategoryDto {
   description?: string;
 
   @IsOptional()
-  @IsString()
-  image?: string;
+  @IsArray()
+  image?: string[];
 
   @IsString()
-  createdBy: string;
+  @IsNotEmpty()
+  family: Types.ObjectId;
 
+  @IsString()
+  @IsNotEmpty()
+  createdBy: Types.ObjectId;
+
+  @IsString()
   @IsOptional()
-  @IsString()
-  updatedBy?: string;
-
-  @IsString()
-  familyId: string;
+  updatedBy: Types.ObjectId;
 }

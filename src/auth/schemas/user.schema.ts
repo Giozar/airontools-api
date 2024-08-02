@@ -34,11 +34,11 @@ export class User {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Role', required: true })
   role: MongooseSchema.Types.ObjectId;
 
-  @Prop({})
-  createdBy: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  createdBy: MongooseSchema.Types.ObjectId;
 
-  @Prop({})
-  updatedBy: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  updatedBy: MongooseSchema.Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

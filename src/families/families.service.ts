@@ -11,6 +11,9 @@ import { Specification } from 'src/specifications/schemas/specification.schema';
 
 @Injectable()
 export class FamiliesService {
+  private CREATEDBY = 'createdBy';
+  private UPDATEDBY = 'updatedBy';
+  constructor(@InjectModel(Family.name) private familyModel: Model<Family>) {}
   constructor(
     @InjectModel(Family.name) private familyModel: Model<Family>,
     @InjectModel(Category.name) private categoryModel: Model<Category>,
@@ -20,21 +23,32 @@ export class FamiliesService {
   ) {}
   async create(createFamilyDto: CreateFamilyDto) {
     try {
-      const family = new this.familyModel(createFamilyDto);
-      return await family.save();
+      const createdFamily = new this.familyModel(createFamilyDto);
+      await createdFamily.save();
+      const family = this.familyModel
+        .findById(createdFamily._id)
+        .populate([this.CREATEDBY, this.UPDATEDBY])
+        .exec();
+      return family;
     } catch (error) {
       handleDBErrors(error);
     }
   }
 
   async findAll() {
-    return await this.familyModel.find();
+    return await this.familyModel
+      .find()
+      .populate([this.CREATEDBY, this.UPDATEDBY])
+      .exec();
   }
 
   async findOne(id: string) {
     try {
       validateId(id);
-      const familySearched = await this.familyModel.findById(id);
+      const familySearched = await this.familyModel
+        .findById(id)
+        .populate([this.CREATEDBY, this.UPDATEDBY])
+        .exec();
       ifNotFound({ entity: familySearched, id });
       return familySearched;
     } catch (error) {
@@ -46,10 +60,10 @@ export class FamiliesService {
     try {
       validateId(id);
 
-      const familyUpdated = await this.familyModel.findByIdAndUpdate(
-        id,
-        updateFamilyDto,
-      );
+      const familyUpdated = await this.familyModel
+        .findByIdAndUpdate(id, updateFamilyDto)
+        .populate([this.CREATEDBY, this.UPDATEDBY])
+        .exec();
       ifNotFound({ entity: familyUpdated, id });
       return familyUpdated;
     } catch (error) {
@@ -60,7 +74,9 @@ export class FamiliesService {
   async remove(id: string) {
     try {
       validateId(id);
-      const familyDeleted = await this.familyModel.findByIdAndDelete(id).exec();
+      const familyDeleted = await this.familyModel
+        .findByIdAndDelete(id)
+        .populate([this.CREATEDBY, this.UPDATEDBY])
       const categories = await this.categoryModel.find({ familyId: id });
       const categoryIds = categories.map((category) => category._id.toString());
       await this.categoryModel

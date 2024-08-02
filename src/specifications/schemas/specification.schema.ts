@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 export type specificationDocument = HydratedDocument<Specification>;
 
@@ -13,20 +13,28 @@ export class Specification {
   @Prop({})
   unit: string;
 
-  @Prop({})
-  familyId: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
+  family: MongooseSchema.Types.ObjectId;
 
-  @Prop({})
-  categoryId: string;
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  })
+  category: MongooseSchema.Types.ObjectId;
 
-  @Prop({})
-  subcategoryId: string;
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Subcategory',
+    required: true,
+  })
+  subcategory: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
-  createdBy: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  createdBy: MongooseSchema.Types.ObjectId;
 
-  @Prop({})
-  updatedBy: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  updatedBy: MongooseSchema.Types.ObjectId;
 }
 
 export const SpecificationSchema = SchemaFactory.createForClass(Specification);

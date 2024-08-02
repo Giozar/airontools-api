@@ -3,6 +3,7 @@ import { FamiliesService } from './families.service';
 import { FamiliesController } from './families.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Family, FamilySchema } from './schemas/family.schema';
+import { User, UserSchema } from 'src/auth/schemas/user.schema';
 import {
   Category,
   CategorySchema,
@@ -24,6 +25,10 @@ import {
       {
         name: Family.name,
         schema: FamilySchema,
+      },
+      {
+        name: User.name,
+        schema: UserSchema,
       },
       {
         name: Category.name,

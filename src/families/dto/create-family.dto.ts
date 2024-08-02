@@ -1,4 +1,5 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsArray, IsNotEmpty } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateFamilyDto {
   @IsString()
@@ -13,6 +14,14 @@ export class CreateFamilyDto {
   description?: string;
 
   @IsOptional()
+  @IsArray()
+  image?: string[];
+
   @IsString()
-  image?: string;
+  @IsNotEmpty()
+  createdBy: Types.ObjectId;
+
+  @IsString()
+  @IsOptional()
+  updatedBy: Types.ObjectId;
 }

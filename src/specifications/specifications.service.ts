@@ -8,6 +8,11 @@ import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 
 @Injectable()
 export class SpecificationsService {
+  private FAMILY = 'family';
+  private CATEGORY = 'category';
+  private SUBCATEGORY = 'subcategory';
+  private CREATEDBY = 'createdBy';
+  private UPDATEDBY = 'updatedBy';
   constructor(
     @InjectModel(Specification.name)
     private specificationModel: Model<Specification>,
@@ -22,13 +27,31 @@ export class SpecificationsService {
   }
 
   async findAll() {
-    return await this.specificationModel.find();
+    return await this.specificationModel
+      .find()
+      .populate([
+        this.FAMILY,
+        this.CATEGORY,
+        this.SUBCATEGORY,
+        this.CREATEDBY,
+        this.UPDATEDBY,
+      ])
+      .exec();
   }
 
   async findOne(id: string) {
     try {
       validateId(id);
-      const specificationSearched = await this.specificationModel.findById(id);
+      const specificationSearched = await this.specificationModel
+        .findById(id)
+        .populate([
+          this.FAMILY,
+          this.CATEGORY,
+          this.SUBCATEGORY,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
+        .exec();
       ifNotFound({ entity: specificationSearched, id });
     } catch (error) {
       handleDBErrors(error);
@@ -39,11 +62,16 @@ export class SpecificationsService {
     try {
       validateId(id);
 
-      const specificationUpdated =
-        await this.specificationModel.findByIdAndUpdate(
-          id,
-          updateSpecificationDto,
-        );
+      const specificationUpdated = await this.specificationModel
+        .findByIdAndUpdate(id, updateSpecificationDto)
+        .populate([
+          this.FAMILY,
+          this.CATEGORY,
+          this.SUBCATEGORY,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
+        .exec();
       ifNotFound({ entity: specificationUpdated, id });
       return specificationUpdated;
     } catch (error) {
@@ -56,6 +84,13 @@ export class SpecificationsService {
       validateId(id);
       const specificationDeleted = await this.specificationModel
         .findByIdAndDelete(id)
+        .populate([
+          this.FAMILY,
+          this.CATEGORY,
+          this.SUBCATEGORY,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
         .exec();
       ifNotFound({ entity: specificationDeleted, id });
       return specificationDeleted;

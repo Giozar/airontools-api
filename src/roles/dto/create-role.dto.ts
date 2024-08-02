@@ -1,4 +1,5 @@
-import { IsObject, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateRoleDto {
   @IsString()
@@ -12,9 +13,10 @@ export class CreateRoleDto {
   permissions: object;
 
   @IsString()
-  createdBy: string;
+  @IsNotEmpty()
+  createdBy: Types.ObjectId;
 
   @IsString()
   @IsOptional()
-  updatedBy: string;
+  updatedBy: Types.ObjectId;
 }
