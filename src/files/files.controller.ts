@@ -24,13 +24,14 @@ export class FilesController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Get(['/:filename', '/:type/:filename'])
+  @Get(['/:filename', '/:type/:id/:filename'])
   findProductFile(
     @Param('filename') filename: string,
     @Param('type') type: string,
+    @Param('id') id: string,
     @Res() res: Response,
   ) {
-    const path = this.filesService.getStaticFile(filename, type);
+    const path = this.filesService.getStaticFile(filename, type, id);
     // res.status(403).json({
     //   ok: false,
     //   path: path,
@@ -39,14 +40,15 @@ export class FilesController {
     res.sendFile(path);
   }
 
-  @Post(['upload', 'upload/:type'])
+  @Post(['upload', 'upload/:type/:id'])
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
       storage: diskStorage({
         destination: (req, file, cb) => {
           const type = req.params.type || '';
-          const uploadPath = `./static/uploads/${type}`;
+          const id = req.params.id || '';
+          const uploadPath = `./static/uploads/${type}/${id}`;
 
           // Asegúrate de que el directorio existe, si no, créalo
           if (!fs.existsSync(uploadPath)) {
@@ -61,14 +63,14 @@ export class FilesController {
   )
   uploadProductImage(
     @Param('type') type: string,
+    @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
       throw new BadRequestException('File is empty');
     }
 
-    const secureUrl = `${this.configService.get('HOST_API')}/files/${type ? type + '/' : ''}${file.filename}`;
-
+    const secureUrl = `${this.configService.get('HOST_API')}/files/${type}/${id}/${file.filename}`;
     return { secureUrl };
   }
 
