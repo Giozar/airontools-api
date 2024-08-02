@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateSpecificationDto {
   @IsString()
@@ -24,21 +25,21 @@ export class CreateSpecificationDto {
 
   @IsString()
   @IsNotEmpty()
-  familyId: string;
+  family: string;
 
   @IsString()
   @IsNotEmpty()
-  categoryId: string;
-
-  @IsString()
-  @IsOptional()
-  subcategoryId;
+  category: string;
 
   @IsString()
   @IsNotEmpty()
-  createdBy: string;
+  subcategory;
+
+  @IsString()
+  @IsNotEmpty()
+  createdBy: Types.ObjectId;
 
   @IsString()
   @IsOptional()
-  updatedBy: string;
+  updatedBy: Types.ObjectId;
 }

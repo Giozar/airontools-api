@@ -16,6 +16,8 @@ import { handleDBErrors } from 'src/handlers/error.handle';
 @Injectable()
 export class AuthService {
   private ROLE = 'role';
+  private CREATEDBY = 'createdBy';
+  private UPDATEDBY = 'updatedBy';
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,
@@ -34,7 +36,7 @@ export class AuthService {
 
       const user = await this.userModel
         .findById(createdUser._id)
-        .populate(this.ROLE)
+        .populate([this.ROLE, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       // Exclude password from the response
       user.password = undefined;
@@ -50,7 +52,10 @@ export class AuthService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userModel.find().populate(this.ROLE).exec();
+    return await this.userModel
+      .find()
+      .populate([this.ROLE, this.CREATEDBY, this.UPDATEDBY])
+      .exec();
   }
 
   async findOne(id: string): Promise<User> {
@@ -60,7 +65,7 @@ export class AuthService {
       }
       const userFound = await this.userModel
         .findById(id)
-        .populate(this.ROLE)
+        .populate([this.ROLE, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       if (!userFound) throw new NotFoundException('Usuario no encontrado');
       return userFound;
@@ -86,7 +91,7 @@ export class AuthService {
         .findByIdAndUpdate(id, user, {
           new: true,
         })
-        .populate(this.ROLE)
+        .populate([this.ROLE, this.CREATEDBY, this.UPDATEDBY])
         .exec();
 
       if (!userUpdated) {
@@ -102,7 +107,7 @@ export class AuthService {
   async remove(id: string) {
     const deletedUser = await this.userModel
       .findByIdAndDelete(id)
-      .populate(this.ROLE)
+      .populate([this.ROLE, this.CREATEDBY, this.UPDATEDBY])
       .exec();
     if (!deletedUser) throw new NotFoundException('Usuario no encontrado');
     return deletedUser;
@@ -114,7 +119,7 @@ export class AuthService {
     // Find user by email and select the password and email
     const user = await this.userModel
       .findOne({ email })
-      .populate(this.ROLE)
+      .populate([this.ROLE, this.CREATEDBY, this.UPDATEDBY])
       .select('password email _id role fullName imageUrl')
       .exec();
 

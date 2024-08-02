@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
@@ -24,7 +25,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  roleId: Types.ObjectId;
+  role: Types.ObjectId;
 
   @IsString()
   @MinLength(3)
@@ -33,4 +34,12 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   imageUrl: string;
+
+  @IsString()
+  @IsNotEmpty()
+  createdBy: Types.ObjectId;
+
+  @IsString()
+  @IsOptional()
+  updatedBy: Types.ObjectId;
 }
