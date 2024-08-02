@@ -107,4 +107,10 @@ export class SubcategoriesService {
       handleDBErrors(error);
     }
   }
+  async countByFamilyId(familyId: string): Promise<number> {
+    return this.subcategoryModel.countDocuments({ familyId });
+  }
+  async countByCategoryId(categoryId: string): Promise<number> {
+    return this.subcategoryModel.countDocuments({ categoryId });
+  }
 }

@@ -114,4 +114,13 @@ export class SpecificationsService {
       handleDBErrors(error);
     }
   }
+  async countByFamilyId(familyId: string): Promise<number> {
+    return this.specificationModel.countDocuments({ familyId });
+  }
+  async countByCategoryId(categoryId: string): Promise<number> {
+    return this.specificationModel.countDocuments({ categoryId });
+  }
+  async countBySubcategoryId(subcategoryId: string): Promise<number> {
+    return this.specificationModel.countDocuments({ subcategoryId });
+  }
 }
