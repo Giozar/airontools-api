@@ -13,7 +13,6 @@ import { Specification } from 'src/specifications/schemas/specification.schema';
 export class FamiliesService {
   private CREATEDBY = 'createdBy';
   private UPDATEDBY = 'updatedBy';
-  constructor(@InjectModel(Family.name) private familyModel: Model<Family>) {}
   constructor(
     @InjectModel(Family.name) private familyModel: Model<Family>,
     @InjectModel(Category.name) private categoryModel: Model<Category>,
@@ -76,7 +75,7 @@ export class FamiliesService {
       validateId(id);
       const familyDeleted = await this.familyModel
         .findByIdAndDelete(id)
-        .populate([this.CREATEDBY, this.UPDATEDBY])
+        .populate([this.CREATEDBY, this.UPDATEDBY]);
       const categories = await this.categoryModel.find({ familyId: id });
       const categoryIds = categories.map((category) => category._id.toString());
       await this.categoryModel
