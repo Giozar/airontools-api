@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Subcategory } from './schemas/subcategory.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 import {
   CreateSubcategoryDto,
   SubcategoryQueriesDto,
   UpdateSubcategoryDto,
 } from './dto';
+import { Specification } from 'src/specifications/schemas/specification.schema';
 @Injectable()
 export class SubcategoriesService {
   private FAMILY = 'family';
@@ -16,6 +17,8 @@ export class SubcategoriesService {
   private UPDATEDBY = 'updatedBy';
   constructor(
     @InjectModel(Subcategory.name) private subcategoryModel: Model<Subcategory>,
+    @InjectModel(Specification.name)
+    private specificationModel: Model<Specification>,
   ) {}
   async create(createSubcategoryDto: CreateSubcategoryDto) {
     try {
@@ -79,6 +82,19 @@ export class SubcategoriesService {
         .findByIdAndDelete(id)
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
+      const specifications = await this.specificationModel.find({
+        subcategoryId: id,
+      });
+      const specificationsIds = specifications.map((specs) =>
+        specs._id.toString(),
+      );
+      await this.specificationModel
+        .deleteMany({
+          _id: {
+            $in: specificationsIds.map((id) => new mongoose.Types.ObjectId(id)),
+          },
+        })
+        .exec();
       ifNotFound({ entity: subcategoryDeleted, id });
       return subcategoryDeleted;
     } catch (error) {
@@ -110,5 +126,11 @@ export class SubcategoriesService {
     } catch (error) {
       handleDBErrors(error);
     }
+  }
+  async countByFamilyId(familyId: string): Promise<number> {
+    return this.subcategoryModel.countDocuments({ familyId });
+  }
+  async countByCategoryId(categoryId: string): Promise<number> {
+    return this.subcategoryModel.countDocuments({ categoryId });
   }
 }

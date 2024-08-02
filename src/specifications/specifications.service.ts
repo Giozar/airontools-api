@@ -138,4 +138,24 @@ export class SpecificationsService {
       handleDBErrors(error);
     }
   }
+  async findAllByCategoryId(categoryId: string) {
+    try {
+      validateId(categoryId);
+      const specifications = await this.specificationModel
+        .find({ categoryId })
+        .exec();
+      return specifications;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+  async countByFamilyId(familyId: string): Promise<number> {
+    return this.specificationModel.countDocuments({ familyId });
+  }
+  async countByCategoryId(categoryId: string): Promise<number> {
+    return this.specificationModel.countDocuments({ categoryId });
+  }
+  async countBySubcategoryId(subcategoryId: string): Promise<number> {
+    return this.specificationModel.countDocuments({ subcategoryId });
+  }
 }

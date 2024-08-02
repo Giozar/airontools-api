@@ -16,6 +16,7 @@ import { fileFiler, fileNamer, originalFileNamer } from './helpers';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
 @Controller('files')
 export class FilesController {
   constructor(
@@ -23,9 +24,13 @@ export class FilesController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Get('/:filename')
-  findProductFile(@Param('filename') filename: string, @Res() res: Response) {
-    const path = this.filesService.getStaticFile(filename);
+  @Get(['/:filename', '/:type/:filename'])
+  findProductFile(
+    @Param('filename') filename: string,
+    @Param('type') type: string,
+    @Res() res: Response,
+  ) {
+    const path = this.filesService.getStaticFile(filename, type);
     // res.status(403).json({
     //   ok: false,
     //   path: path,
@@ -34,27 +39,35 @@ export class FilesController {
     res.sendFile(path);
   }
 
-  @Post('upload')
+  @Post(['upload', 'upload/:type'])
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
-      // limits: { fileSize: 1024 * 1024 },
       storage: diskStorage({
-        destination: './static/uploads',
+        destination: (req, file, cb) => {
+          const type = req.params.type || '';
+          const uploadPath = `./static/uploads/${type}`;
+
+          // Asegúrate de que el directorio existe, si no, créalo
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+
+          cb(null, uploadPath);
+        },
         filename: fileNamer,
       }),
     }),
   )
-  uploadProductImage(@UploadedFile() file: Express.Multer.File) {
-    // console.log({ fileInController: file });
-
+  uploadProductImage(
+    @Param('type') type: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     if (!file) {
       throw new BadRequestException('File is empty');
     }
 
-    // const secureUrl = `${file.filename}`;
-
-    const secureUrl = `${this.configService.get('HOST_API')}/files/${file.filename}`;
+    const secureUrl = `${this.configService.get('HOST_API')}/files/${type ? type + '/' : ''}${file.filename}`;
 
     return { secureUrl };
   }

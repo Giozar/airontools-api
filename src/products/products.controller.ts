@@ -85,4 +85,21 @@ export class ProductsController {
     const products = this.productsService.findAll();
     return products;
   }
+  @Get('count/:familyId')
+  async countByFamilyId(@Param('familyId') familyId: string): Promise<number> {
+    return this.productsService.countByFamilyId(familyId);
+  }
+  //Cambiar por queries
+  @Get('countByCategory/:categoryId')
+  async countByCategoryId(
+    @Param('categoryId') categoryId: string,
+  ): Promise<number> {
+    return this.productsService.countByCategoryId(categoryId);
+  }
+  @Get('countBySubcategory/:subcategoryId')
+  async countBySubcategoryId(
+    @Param('subcategoryId') subcategoryId: string,
+  ): Promise<number> {
+    return this.productsService.countBySubcategoryId(subcategoryId);
+  }
 }

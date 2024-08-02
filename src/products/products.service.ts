@@ -77,4 +77,13 @@ export class ProductsService {
 
     return productSearchResults;
   }
+  async countByFamilyId(familyId: string): Promise<number> {
+    return this.productModel.countDocuments({ familyId });
+  }
+  async countByCategoryId(categoryId: string): Promise<number> {
+    return this.productModel.countDocuments({ categoryId });
+  }
+  async countBySubcategoryId(subcategoryId: string): Promise<number> {
+    return this.productModel.countDocuments({ subcategoryId });
+  }
 }

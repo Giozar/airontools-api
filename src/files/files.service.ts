@@ -22,8 +22,12 @@ export class FilesService {
     },
   });
 
-  getStaticFile(fileName: string) {
-    const path = join(__dirname, '../../static/uploads', fileName);
+  getStaticFile(fileName: string, type?: string) {
+    const path = join(
+      __dirname,
+      `../../static/uploads/${type ? type + '/' : ''}`,
+      fileName,
+    );
 
     if (!existsSync(path)) {
       throw new BadRequestException(`No file found with name ${fileName}`);
