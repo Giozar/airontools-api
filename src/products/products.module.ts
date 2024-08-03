@@ -13,6 +13,10 @@ import {
   Subcategory,
   SubcategorySchema,
 } from 'src/subcategories/schemas/subcategory.schema';
+import {
+  Specification,
+  SpecificationSchema,
+} from 'src/specifications/schemas/specification.schema';
 @Module({
   controllers: [ProductsController],
   providers: [ProductsService],
@@ -37,6 +41,10 @@ import {
       {
         name: Subcategory.name,
         schema: SubcategorySchema,
+      },
+      {
+        name: Specification.name,
+        schema: SpecificationSchema,
       },
     ]),
   ],
