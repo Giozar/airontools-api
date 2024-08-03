@@ -40,7 +40,7 @@ export class CategoriesService {
 
   async findAll(query: CategoryQueriesDto) {
     const filter: any = {};
-    if (query.familyId) filter.familyId = query.familyId;
+    if (query.family) filter.family = query.family;
     return await this.categoryModel
       .find(filter)
       .populate([this.FAMILY, this.CREATEDBY, this.UPDATEDBY])
@@ -85,7 +85,7 @@ export class CategoriesService {
         .exec();
 
       const subcategories = await this.subcategoryModel.find({
-        categoryId: id,
+        category: id,
       });
       const subcategoryIds = subcategories.map((subcategory) =>
         subcategory._id.toString(),
@@ -98,7 +98,7 @@ export class CategoriesService {
         })
         .exec();
       const specifications = await this.specificationModel.find({
-        categoryId: id,
+        category: id,
       });
       const specificationsIds = specifications.map((specs) =>
         specs._id.toString(),
@@ -129,7 +129,7 @@ export class CategoriesService {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(familyId: string): Promise<number> {
-    return this.categoryModel.countDocuments({ familyId });
+  async countByFamilyId(family: string): Promise<number> {
+    return this.categoryModel.countDocuments({ family });
   }
 }

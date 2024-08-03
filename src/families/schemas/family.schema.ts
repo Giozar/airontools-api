@@ -33,7 +33,7 @@ export const FamilySchema = SchemaFactory.createForClass(Family);
 
 // Middleware para eliminar categorías relacionadas
 /*FamilySchema.pre('findOne', async function (next) {
-  const familyId = this.getQuery()['_id'];
+  const family = this.getQuery()['_id'];
 
   try {
     // Aquí buscamos todas las categorías relacionadas con la familia
@@ -43,17 +43,17 @@ export const FamilySchema = SchemaFactory.createForClass(Family);
 
     x.find();
 
-    // console.log(x.findOne({ familyId }));
+    // console.log(x.findOne({ family }));
 
-    //const category = await Category.exists({ familyId });
+    //const category = await Category.exists({ family });
 
     // console.log(category);
 
-    console.log(`Buscamos todas las categorías con la familia ${familyId}`);
+    console.log(`Buscamos todas las categorías con la familia ${family}`);
     next();
   } catch (error) {
     console.error(
-      `Error al buscar categorías para la familia ${familyId}:`,
+      `Error al buscar categorías para la familia ${family}:`,
       error,
     );
     next(error);

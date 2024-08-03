@@ -136,13 +136,13 @@ export class ProductsService {
 
     return productSearchResults;
   }
-  async countByFamilyId(familyId: string): Promise<number> {
-    return this.productModel.countDocuments({ familyId });
+  async countByFamilyId(family: string): Promise<number> {
+    return this.productModel.countDocuments({ family });
   }
-  async countByCategoryId(categoryId: string): Promise<number> {
-    return this.productModel.countDocuments({ categoryId });
+  async countByCategoryId(category: string): Promise<number> {
+    return this.productModel.countDocuments({ category });
   }
-  async countBySubcategoryId(subcategoryId: string): Promise<number> {
-    return this.productModel.countDocuments({ subcategoryId });
+  async countBySubcategoryId(subcategory: string): Promise<number> {
+    return this.productModel.countDocuments({ subcategory });
   }
 }

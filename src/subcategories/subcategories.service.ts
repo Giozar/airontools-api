@@ -40,7 +40,7 @@ export class SubcategoriesService {
 
   async findAll(query: SubcategoryQueriesDto) {
     const filter: any = {};
-    if (query.categoryId) filter.categoryId = query.categoryId;
+    if (query.category) filter.category = query.category;
     return await this.subcategoryModel
       .find(filter)
       .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
@@ -83,7 +83,7 @@ export class SubcategoriesService {
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       const specifications = await this.specificationModel.find({
-        subcategoryId: id,
+        subcategory: id,
       });
       const specificationsIds = specifications.map((specs) =>
         specs._id.toString(),
@@ -106,8 +106,8 @@ export class SubcategoriesService {
     try {
       validateId(id);
       const subcategoriesDeleted = await this.subcategoryModel
-        .find({ familyId: id })
-        .deleteMany({ familyId: id })
+        .find({ family: id })
+        .deleteMany({ family: id })
         .exec();
       return subcategoriesDeleted;
     } catch (error) {
@@ -119,18 +119,18 @@ export class SubcategoriesService {
     try {
       validateId(id);
       const subcategoriesDeleted = await this.subcategoryModel
-        .find({ categoryId: id })
-        .deleteMany({ categoryId: id })
+        .find({ category: id })
+        .deleteMany({ category: id })
         .exec();
       return subcategoriesDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(familyId: string): Promise<number> {
-    return this.subcategoryModel.countDocuments({ familyId });
+  async countByFamilyId(family: string): Promise<number> {
+    return this.subcategoryModel.countDocuments({ family });
   }
-  async countByCategoryId(categoryId: string): Promise<number> {
-    return this.subcategoryModel.countDocuments({ categoryId });
+  async countByCategoryId(category: string): Promise<number> {
+    return this.subcategoryModel.countDocuments({ category });
   }
 }

@@ -56,25 +56,25 @@ export class SpecificationsController {
   removeBySubcategoryId(@Param('id') id: string) {
     return this.specificationsService.removeBySubcategoryId(id);
   }
-  @Get('category/:categoryId')
-  findAllByCategoryId(@Param('categoryId') categoryId: string) {
-    return this.specificationsService.findAllByCategoryId(categoryId);
+  @Get('category/:category')
+  findAllByCategoryId(@Param('category') category: string) {
+    return this.specificationsService.findAllByCategoryId(category);
   }
-  @Get('count/:familyId')
-  async countByFamilyId(@Param('familyId') familyId: string): Promise<number> {
-    return this.specificationsService.countByFamilyId(familyId);
+  @Get('count/:family')
+  async countByFamilyId(@Param('family') family: string): Promise<number> {
+    return this.specificationsService.countByFamilyId(family);
   }
   //Cambiar por queries TODO:
-  @Get('countByCategory/:categoryId')
+  @Get('countByCategory/:category')
   async countByCategoryId(
-    @Param('categoryId') categoryId: string,
+    @Param('category') category: string,
   ): Promise<number> {
-    return this.specificationsService.countByCategoryId(categoryId);
+    return this.specificationsService.countByCategoryId(category);
   }
-  @Get('countBySubcategory/:subcategoryId')
+  @Get('countBySubcategory/:subcategory')
   async countBySubcategoryId(
-    @Param('subcategoryId') subcategoryId: string,
+    @Param('subcategory') subcategory: string,
   ): Promise<number> {
-    return this.specificationsService.countBySubcategoryId(subcategoryId);
+    return this.specificationsService.countBySubcategoryId(subcategory);
   }
 }

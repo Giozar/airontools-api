@@ -57,14 +57,14 @@ export class SubcategoriesController {
     return this.subcategoriesService.removeByCategoryId(id);
   }
   //Arreglar a queries
-  @Get('count/:familyId')
-  async countByFamilyId(@Param('familyId') familyId: string): Promise<number> {
-    return this.subcategoriesService.countByFamilyId(familyId);
+  @Get('count/:family')
+  async countByFamilyId(@Param('family') family: string): Promise<number> {
+    return this.subcategoriesService.countByFamilyId(family);
   }
-  @Get('countByCategory/:categoryId')
+  @Get('countByCategory/:category')
   async countByCategoryId(
-    @Param('categoryId') categoryId: string,
+    @Param('category') category: string,
   ): Promise<number> {
-    return this.subcategoriesService.countByCategoryId(categoryId);
+    return this.subcategoriesService.countByCategoryId(category);
   }
 }

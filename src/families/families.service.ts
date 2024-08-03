@@ -76,7 +76,7 @@ export class FamiliesService {
       const familyDeleted = await this.familyModel
         .findByIdAndDelete(id)
         .populate([this.CREATEDBY, this.UPDATEDBY]);
-      const categories = await this.categoryModel.find({ familyId: id });
+      const categories = await this.categoryModel.find({ family: id });
       const categoryIds = categories.map((category) => category._id.toString());
       await this.categoryModel
         .deleteMany({
@@ -86,7 +86,7 @@ export class FamiliesService {
         })
         .exec();
       const subcategories = await this.subcategoryModel.find({
-        familyId: id,
+        family: id,
       });
       const subcategoryIds = subcategories.map((subcategory) =>
         subcategory._id.toString(),
@@ -99,7 +99,7 @@ export class FamiliesService {
         })
         .exec();
       const specifications = await this.specificationModel.find({
-        familyId: id,
+        family: id,
       });
       const specificationsIds = specifications.map((specs) =>
         specs._id.toString(),

@@ -1,3 +1,3 @@
 export interface SubcategoryQueriesDto {
-  categoryId?: string;
+  category?: string;
 }

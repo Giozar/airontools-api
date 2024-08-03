@@ -52,8 +52,8 @@ export class CategoriesController {
   removeByFamilyId(@Param('id') id: Types.ObjectId) {
     return this.categoriesService.removeByFamilyId(id);
   }
-  @Get('count/:familyId')
-  async countByFamilyId(@Param('familyId') familyId: string): Promise<number> {
-    return this.categoriesService.countByFamilyId(familyId);
+  @Get('count/:family')
+  async countByFamilyId(@Param('family') family: string): Promise<number> {
+    return this.categoriesService.countByFamilyId(family);
   }
 }

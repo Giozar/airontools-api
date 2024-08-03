@@ -116,8 +116,8 @@ export class SpecificationsService {
     try {
       validateId(id);
       const specificationDeleted = await this.specificationModel
-        .find({ familyId: id })
-        .deleteMany({ familyId: id })
+        .find({ family: id })
+        .deleteMany({ family: id })
         .exec();
       return specificationDeleted;
     } catch (error) {
@@ -129,8 +129,8 @@ export class SpecificationsService {
     try {
       validateId(id);
       const specificationDeleted = await this.specificationModel
-        .find({ categoryId: id })
-        .deleteMany({ categoryId: id })
+        .find({ category: id })
+        .deleteMany({ category: id })
         .exec();
       return specificationDeleted;
     } catch (error) {
@@ -142,8 +142,8 @@ export class SpecificationsService {
     try {
       validateId(id);
       const specificationDeleted = await this.specificationModel
-        .find({ subcategoryId: id })
-        .deleteMany({ subcategoryId: id })
+        .find({ subcategory: id })
+        .deleteMany({ subcategory: id })
         .exec();
       ifNotFound({ entity: specificationDeleted, id });
       return specificationDeleted;
@@ -151,24 +151,24 @@ export class SpecificationsService {
       handleDBErrors(error);
     }
   }
-  async findAllByCategoryId(categoryId: string) {
+  async findAllByCategoryId(category: string) {
     try {
-      validateId(categoryId);
+      validateId(category);
       const specifications = await this.specificationModel
-        .find({ categoryId })
+        .find({ category })
         .exec();
       return specifications;
     } catch (error) {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(familyId: string): Promise<number> {
-    return this.specificationModel.countDocuments({ familyId });
+  async countByFamilyId(family: string): Promise<number> {
+    return this.specificationModel.countDocuments({ family });
   }
-  async countByCategoryId(categoryId: string): Promise<number> {
-    return this.specificationModel.countDocuments({ categoryId });
+  async countByCategoryId(category: string): Promise<number> {
+    return this.specificationModel.countDocuments({ category });
   }
-  async countBySubcategoryId(subcategoryId: string): Promise<number> {
-    return this.specificationModel.countDocuments({ subcategoryId });
+  async countBySubcategoryId(subcategory: string): Promise<number> {
+    return this.specificationModel.countDocuments({ subcategory });
   }
 }
