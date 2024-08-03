@@ -46,7 +46,7 @@ export class UserRoleGuard implements CanActivate {
     }
 
     throw new ForbiddenException(
-      `User ${user.fullName} needs roles: [${validRoles}]`,
+      `User ${user.name} needs roles: [${validRoles}]`,
     );
   }
 }

@@ -21,7 +21,7 @@ export class User {
   @Prop({
     required: true,
   })
-  fullName: string;
+  name: string;
 
   @Prop({})
   imageUrl: string;
