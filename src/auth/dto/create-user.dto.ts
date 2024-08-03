@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -23,23 +24,23 @@ export class CreateUserDto {
   })
   password: string;
 
-  @IsString()
+  @IsMongoId()
   @IsOptional()
   role: Types.ObjectId;
 
   @IsString()
   @MinLength(3)
-  fullName: string;
+  name: string;
 
   @IsString()
   @IsOptional()
   imageUrl: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   createdBy: Types.ObjectId;
 
-  @IsString()
+  @IsMongoId()
   @IsOptional()
   updatedBy: Types.ObjectId;
 }
