@@ -36,19 +36,59 @@ export class ProductsService {
   }
 
   async update(id: string, product: UpdateProductDto) {
-    return this.productModel.findByIdAndUpdate(id, product, { new: true });
+    return this.productModel
+      .findByIdAndUpdate(id, product, { new: true })
+      .populate([
+        this.FAMILY,
+        this.CATEGORY,
+        this.SUBCATEGORY,
+        this.CREATEDBY,
+        this.UPDATEDBY,
+        this.SPECIFICATIONS,
+      ])
+      .exec();
   }
 
   async remove(id: string) {
-    return this.productModel.findByIdAndDelete(id);
+    return this.productModel
+      .findByIdAndDelete(id)
+      .populate([
+        this.FAMILY,
+        this.CATEGORY,
+        this.SUBCATEGORY,
+        this.CREATEDBY,
+        this.UPDATEDBY,
+        this.SPECIFICATIONS,
+      ])
+      .exec();
   }
 
   async findOne(id: string) {
-    return this.productModel.findById(id);
+    return this.productModel
+      .findById(id)
+      .populate([
+        this.FAMILY,
+        this.CATEGORY,
+        this.SUBCATEGORY,
+        this.CREATEDBY,
+        this.UPDATEDBY,
+        this.SPECIFICATIONS,
+      ])
+      .exec();
   }
 
   async findAll() {
-    return await this.productModel.find();
+    return await this.productModel
+      .find()
+      .populate([
+        this.FAMILY,
+        this.CATEGORY,
+        this.SUBCATEGORY,
+        this.CREATEDBY,
+        this.UPDATEDBY,
+        this.SPECIFICATIONS,
+      ])
+      .exec();
   }
 
   async searchProduct(
