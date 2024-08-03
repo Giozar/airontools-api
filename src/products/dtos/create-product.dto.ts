@@ -4,32 +4,11 @@ import {
   IsNotEmpty,
   IsOptional,
   IsArray,
-  ValidationOptions,
-  ValidationArguments,
-  registerDecorator,
   ValidateNested,
+  IsMongoId,
 } from 'class-validator';
-
-// Decorador personalizado para validar un objeto con campos variables
-
-function IsVariableObject(validationOptions: ValidationOptions) {
-  return function (object: object, propertyName: string) {
-    registerDecorator({
-      name: 'isVariableObject',
-      target: object.constructor,
-      propertyName: propertyName,
-      options: validationOptions,
-      validator: {
-        validate(value: any, args: ValidationArguments) {
-          return value && typeof value === 'object'; // Valida que sea un objeto
-        },
-        defaultMessage(args: ValidationArguments) {
-          return 'Each item in the array must be an object';
-        },
-      },
-    });
-  };
-}
+import { Types } from 'mongoose';
+import { ProductSpecificationDto } from './productSpecification.dto';
 
 export class CreateProductDto {
   @IsNotEmpty()
@@ -41,47 +20,51 @@ export class CreateProductDto {
   model: string;
 
   @IsNotEmpty()
-  @IsString()
-  familyId: string;
+  @IsMongoId()
+  family: Types.ObjectId;
 
   @IsNotEmpty()
-  @IsString()
-  categoryId: string;
+  @IsMongoId()
+  category: Types.ObjectId;
 
   @IsOptional()
-  @IsString()
-  subcategoryId: string;
-
-  @IsOptional()
-  @IsArray()
-  imagesUrl: [string];
+  @IsMongoId()
+  subcategory: Types.ObjectId;
 
   @IsOptional()
   @IsArray()
-  manuals: [string];
+  @IsString({ each: true })
+  images: [string];
 
   @IsOptional()
   @IsArray()
-  videos: [string];
+  @IsString({ each: true })
+  manuals: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  videos: string[];
 
   @IsString()
   @IsOptional()
   description: string;
 
   @IsOptional()
-  characteristics: [string];
+  @IsArray()
+  @IsString({ each: true })
+  characteristics: string[];
 
   @ValidateNested({ each: true })
-  @Type(() => Object)
-  @IsVariableObject({ each: true }) // Usa el decorador personalizado
+  @Type(() => ProductSpecificationDto)
   @IsArray()
-  specifications: Array<Record<string, any>>;
+  specifications: ProductSpecificationDto[];
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  createdBy: string;
+  createdBy: Types.ObjectId;
 
-  @IsString()
+  @IsMongoId()
   @IsOptional()
-  updatedBy: string;
+  updatedBy: Types.ObjectId;
 }

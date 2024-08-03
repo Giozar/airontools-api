@@ -7,13 +7,32 @@ import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class ProductsService {
+  private FAMILY = 'family';
+  private CATEGORY = 'category';
+  private SUBCATEGORY = 'subcategory';
+  private CREATEDBY = 'createdBy';
+  private UPDATEDBY = 'updatedBy';
+  private SPECIFICATIONS = 'specifications.specification';
   constructor(
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async create(product: CreateProductDto) {
-    const newPorduct = new this.productModel(product);
-    return newPorduct.save();
+  async create(createdProductDto: CreateProductDto) {
+    const createdProduct = new this.productModel(createdProductDto);
+    await createdProduct.save();
+    const product = this.productModel
+      .findById(createdProduct._id)
+      .populate([
+        this.FAMILY,
+        this.CATEGORY,
+        this.SUBCATEGORY,
+        this.CREATEDBY,
+        this.UPDATEDBY,
+        this.SPECIFICATIONS,
+      ])
+      .exec();
+
+    return product;
   }
 
   async update(id: string, product: UpdateProductDto) {
