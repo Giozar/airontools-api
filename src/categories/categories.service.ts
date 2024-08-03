@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 import {
   CategoryQueriesDto,
@@ -117,12 +117,12 @@ export class CategoriesService {
     }
   }
 
-  async removeByFamilyId(id: string) {
+  async removeByFamilyId(id: Types.ObjectId) {
     try {
       validateId(id);
       const categoryDeleted = await this.categoryModel
-        .find({ familyId: id })
-        .deleteMany({ familyId: id })
+        .find({ family: id })
+        .deleteMany({ family: id })
         .exec();
       return categoryDeleted;
     } catch (error) {
