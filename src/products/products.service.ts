@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { Product } from './schemas/product.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
@@ -136,13 +136,13 @@ export class ProductsService {
 
     return productSearchResults;
   }
-  async countByFamilyId(family: string): Promise<number> {
+  async countByFamilyId(family: Types.ObjectId): Promise<number> {
     return this.productModel.countDocuments({ family });
   }
-  async countByCategoryId(category: string): Promise<number> {
+  async countByCategoryId(category: Types.ObjectId): Promise<number> {
     return this.productModel.countDocuments({ category });
   }
-  async countBySubcategoryId(subcategory: string): Promise<number> {
+  async countBySubcategoryId(subcategory: Types.ObjectId): Promise<number> {
     return this.productModel.countDocuments({ subcategory });
   }
 }

@@ -3,7 +3,7 @@ import { CreateSpecificationDto } from './dto/create-specification.dto';
 import { UpdateSpecificationDto } from './dto/update-specification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Specification } from './schemas/specification.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 
 @Injectable()
@@ -54,7 +54,6 @@ export class SpecificationsService {
 
   async findOne(id: string) {
     try {
-      validateId(id);
       const specificationSearched = await this.specificationModel
         .findById(id)
         .populate([
@@ -73,8 +72,6 @@ export class SpecificationsService {
 
   async update(id: string, updateSpecificationDto: UpdateSpecificationDto) {
     try {
-      validateId(id);
-
       const specificationUpdated = await this.specificationModel
         .findByIdAndUpdate(id, updateSpecificationDto)
         .populate([
@@ -94,7 +91,6 @@ export class SpecificationsService {
 
   async remove(id: string) {
     try {
-      validateId(id);
       const specificationDeleted = await this.specificationModel
         .findByIdAndDelete(id)
         .populate([
@@ -112,9 +108,8 @@ export class SpecificationsService {
     }
   }
 
-  async removeByFamilyId(id: string) {
+  async removeByFamilyId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const specificationDeleted = await this.specificationModel
         .find({ family: id })
         .deleteMany({ family: id })
@@ -125,9 +120,8 @@ export class SpecificationsService {
     }
   }
 
-  async removeByCategoryId(id: string) {
+  async removeByCategoryId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const specificationDeleted = await this.specificationModel
         .find({ category: id })
         .deleteMany({ category: id })
@@ -138,20 +132,19 @@ export class SpecificationsService {
     }
   }
 
-  async removeBySubcategoryId(id: string) {
+  async removeBySubcategoryId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const specificationDeleted = await this.specificationModel
         .find({ subcategory: id })
         .deleteMany({ subcategory: id })
         .exec();
-      ifNotFound({ entity: specificationDeleted, id });
+      //ifNotFound({ entity: specificationDeleted, id });
       return specificationDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
   }
-  async findAllByCategoryId(category: string) {
+  async findAllByCategoryId(category: Types.ObjectId) {
     try {
       validateId(category);
       const specifications = await this.specificationModel
@@ -162,13 +155,13 @@ export class SpecificationsService {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(family: string): Promise<number> {
+  async countByFamilyId(family: Types.ObjectId): Promise<number> {
     return this.specificationModel.countDocuments({ family });
   }
-  async countByCategoryId(category: string): Promise<number> {
+  async countByCategoryId(category: Types.ObjectId): Promise<number> {
     return this.specificationModel.countDocuments({ category });
   }
-  async countBySubcategoryId(subcategory: string): Promise<number> {
+  async countBySubcategoryId(subcategory: Types.ObjectId): Promise<number> {
     return this.specificationModel.countDocuments({ subcategory });
   }
 }

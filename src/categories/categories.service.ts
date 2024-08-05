@@ -124,7 +124,7 @@ export class CategoriesService {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(family: string): Promise<number> {
+  async countByFamilyId(family: Types.ObjectId): Promise<number> {
     return this.categoryModel.countDocuments({ family });
   }
 }

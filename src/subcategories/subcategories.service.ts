@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Subcategory } from './schemas/subcategory.schema';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { handleDBErrors, ifNotFound } from 'src/handlers';
 import {
   CreateSubcategoryDto,
@@ -98,7 +98,7 @@ export class SubcategoriesService {
     }
   }
 
-  async removeByFamilyId(id: string) {
+  async removeByFamilyId(id: Types.ObjectId) {
     try {
       const subcategoriesDeleted = await this.subcategoryModel
         .find({ family: id })
@@ -110,7 +110,7 @@ export class SubcategoriesService {
     }
   }
 
-  async removeByCategoryId(id: string) {
+  async removeByCategoryId(id: Types.ObjectId) {
     try {
       const subcategoriesDeleted = await this.subcategoryModel
         .find({ category: id })
@@ -121,10 +121,10 @@ export class SubcategoriesService {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(family: string): Promise<number> {
+  async countByFamilyId(family: Types.ObjectId): Promise<number> {
     return this.subcategoryModel.countDocuments({ family });
   }
-  async countByCategoryId(category: string): Promise<number> {
+  async countByCategoryId(category: Types.ObjectId): Promise<number> {
     return this.subcategoryModel.countDocuments({ category });
   }
 }
