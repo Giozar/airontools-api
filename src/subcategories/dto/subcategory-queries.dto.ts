@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 export interface SubcategoryQueriesDto {
-  categoryId?: string;
+  category?: Types.ObjectId;
 }

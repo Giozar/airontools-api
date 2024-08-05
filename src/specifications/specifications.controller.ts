@@ -10,6 +10,7 @@ import {
 import { SpecificationsService } from './specifications.service';
 import { CreateSpecificationDto } from './dto/create-specification.dto';
 import { UpdateSpecificationDto } from './dto/update-specification.dto';
+import { Types } from 'mongoose';
 
 @Controller('specifications')
 export class SpecificationsController {
@@ -44,37 +45,39 @@ export class SpecificationsController {
   }
 
   @Delete('family/:id')
-  removeByFamilyId(@Param('id') id: string) {
+  removeByFamilyId(@Param('id') id: Types.ObjectId) {
     return this.specificationsService.removeByFamilyId(id);
   }
 
   @Delete('category/:id')
-  removeByCategoryId(@Param('id') id: string) {
+  removeByCategoryId(@Param('id') id: Types.ObjectId) {
     return this.specificationsService.removeByCategoryId(id);
   }
   @Delete('subcategory/:id')
-  removeBySubcategoryId(@Param('id') id: string) {
+  removeBySubcategoryId(@Param('id') id: Types.ObjectId) {
     return this.specificationsService.removeBySubcategoryId(id);
   }
-  @Get('category/:categoryId')
-  findAllByCategoryId(@Param('categoryId') categoryId: string) {
-    return this.specificationsService.findAllByCategoryId(categoryId);
+  @Get('category/:category')
+  findAllByCategoryId(@Param('category') category: Types.ObjectId) {
+    return this.specificationsService.findAllByCategoryId(category);
   }
-  @Get('count/:familyId')
-  async countByFamilyId(@Param('familyId') familyId: string): Promise<number> {
-    return this.specificationsService.countByFamilyId(familyId);
+  @Get('count/:family')
+  async countByFamilyId(
+    @Param('family') family: Types.ObjectId,
+  ): Promise<number> {
+    return this.specificationsService.countByFamilyId(family);
   }
   //Cambiar por queries TODO:
-  @Get('countByCategory/:categoryId')
+  @Get('countByCategory/:category')
   async countByCategoryId(
-    @Param('categoryId') categoryId: string,
+    @Param('category') category: Types.ObjectId,
   ): Promise<number> {
-    return this.specificationsService.countByCategoryId(categoryId);
+    return this.specificationsService.countByCategoryId(category);
   }
-  @Get('countBySubcategory/:subcategoryId')
+  @Get('countBySubcategory/:subcategory')
   async countBySubcategoryId(
-    @Param('subcategoryId') subcategoryId: string,
+    @Param('subcategory') subcategory: Types.ObjectId,
   ): Promise<number> {
-    return this.specificationsService.countBySubcategoryId(subcategoryId);
+    return this.specificationsService.countBySubcategoryId(subcategory);
   }
 }

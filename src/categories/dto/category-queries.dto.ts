@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 export interface CategoryQueriesDto {
-  familyId?: string;
+  family?: Types.ObjectId;
 }

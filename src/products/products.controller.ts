@@ -16,6 +16,7 @@ import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { SearchProductDto } from './dtos';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Types } from 'mongoose';
 
 @Controller('products')
 export class ProductsController {
@@ -85,21 +86,23 @@ export class ProductsController {
     const products = this.productsService.findAll();
     return products;
   }
-  @Get('count/:familyId')
-  async countByFamilyId(@Param('familyId') familyId: string): Promise<number> {
-    return this.productsService.countByFamilyId(familyId);
+  @Get('count/:family')
+  async countByFamilyId(
+    @Param('family') family: Types.ObjectId,
+  ): Promise<number> {
+    return this.productsService.countByFamilyId(family);
   }
   //Cambiar por queries
-  @Get('countByCategory/:categoryId')
+  @Get('countByCategory/:category')
   async countByCategoryId(
-    @Param('categoryId') categoryId: string,
+    @Param('category') category: Types.ObjectId,
   ): Promise<number> {
-    return this.productsService.countByCategoryId(categoryId);
+    return this.productsService.countByCategoryId(category);
   }
-  @Get('countBySubcategory/:subcategoryId')
+  @Get('countBySubcategory/:subcategory')
   async countBySubcategoryId(
-    @Param('subcategoryId') subcategoryId: string,
+    @Param('subcategory') subcategory: Types.ObjectId,
   ): Promise<number> {
-    return this.productsService.countBySubcategoryId(subcategoryId);
+    return this.productsService.countBySubcategoryId(subcategory);
   }
 }

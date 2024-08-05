@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Subcategory } from './schemas/subcategory.schema';
-import mongoose, { Model } from 'mongoose';
-import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
+import mongoose, { Model, Types } from 'mongoose';
+import { handleDBErrors, ifNotFound } from 'src/handlers';
 import {
   CreateSubcategoryDto,
   SubcategoryQueriesDto,
@@ -40,7 +40,7 @@ export class SubcategoriesService {
 
   async findAll(query: SubcategoryQueriesDto) {
     const filter: any = {};
-    if (query.categoryId) filter.categoryId = query.categoryId;
+    if (query.category) filter.category = query.category;
     return await this.subcategoryModel
       .find(filter)
       .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
@@ -49,7 +49,6 @@ export class SubcategoriesService {
 
   async findOne(id: string) {
     try {
-      validateId(id);
       const subcategorySearched = await this.subcategoryModel
         .findById(id)
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
@@ -62,8 +61,6 @@ export class SubcategoriesService {
 
   async update(id: string, updateSubcategoryDto: UpdateSubcategoryDto) {
     try {
-      validateId(id);
-
       const subcategoryUpdated = await this.subcategoryModel
         .findByIdAndUpdate(id, updateSubcategoryDto)
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
@@ -77,13 +74,12 @@ export class SubcategoriesService {
 
   async remove(id: string) {
     try {
-      validateId(id);
       const subcategoryDeleted = await this.subcategoryModel
         .findByIdAndDelete(id)
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       const specifications = await this.specificationModel.find({
-        subcategoryId: id,
+        subcategory: id,
       });
       const specificationsIds = specifications.map((specs) =>
         specs._id.toString(),
@@ -102,12 +98,11 @@ export class SubcategoriesService {
     }
   }
 
-  async removeByFamilyId(id: string) {
+  async removeByFamilyId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const subcategoriesDeleted = await this.subcategoryModel
-        .find({ familyId: id })
-        .deleteMany({ familyId: id })
+        .find({ family: id })
+        .deleteMany({ family: id })
         .exec();
       return subcategoriesDeleted;
     } catch (error) {
@@ -115,22 +110,21 @@ export class SubcategoriesService {
     }
   }
 
-  async removeByCategoryId(id: string) {
+  async removeByCategoryId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const subcategoriesDeleted = await this.subcategoryModel
-        .find({ categoryId: id })
-        .deleteMany({ categoryId: id })
+        .find({ category: id })
+        .deleteMany({ category: id })
         .exec();
       return subcategoriesDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(familyId: string): Promise<number> {
-    return this.subcategoryModel.countDocuments({ familyId });
+  async countByFamilyId(family: Types.ObjectId): Promise<number> {
+    return this.subcategoryModel.countDocuments({ family });
   }
-  async countByCategoryId(categoryId: string): Promise<number> {
-    return this.subcategoryModel.countDocuments({ categoryId });
+  async countByCategoryId(category: Types.ObjectId): Promise<number> {
+    return this.subcategoryModel.countDocuments({ category });
   }
 }

@@ -3,7 +3,7 @@ import { CreateSpecificationDto } from './dto/create-specification.dto';
 import { UpdateSpecificationDto } from './dto/update-specification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Specification } from './schemas/specification.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 
 @Injectable()
@@ -54,7 +54,6 @@ export class SpecificationsService {
 
   async findOne(id: string) {
     try {
-      validateId(id);
       const specificationSearched = await this.specificationModel
         .findById(id)
         .populate([
@@ -73,8 +72,6 @@ export class SpecificationsService {
 
   async update(id: string, updateSpecificationDto: UpdateSpecificationDto) {
     try {
-      validateId(id);
-
       const specificationUpdated = await this.specificationModel
         .findByIdAndUpdate(id, updateSpecificationDto)
         .populate([
@@ -94,7 +91,6 @@ export class SpecificationsService {
 
   async remove(id: string) {
     try {
-      validateId(id);
       const specificationDeleted = await this.specificationModel
         .findByIdAndDelete(id)
         .populate([
@@ -112,12 +108,11 @@ export class SpecificationsService {
     }
   }
 
-  async removeByFamilyId(id: string) {
+  async removeByFamilyId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const specificationDeleted = await this.specificationModel
-        .find({ familyId: id })
-        .deleteMany({ familyId: id })
+        .find({ family: id })
+        .deleteMany({ family: id })
         .exec();
       return specificationDeleted;
     } catch (error) {
@@ -125,12 +120,11 @@ export class SpecificationsService {
     }
   }
 
-  async removeByCategoryId(id: string) {
+  async removeByCategoryId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const specificationDeleted = await this.specificationModel
-        .find({ categoryId: id })
-        .deleteMany({ categoryId: id })
+        .find({ category: id })
+        .deleteMany({ category: id })
         .exec();
       return specificationDeleted;
     } catch (error) {
@@ -138,37 +132,36 @@ export class SpecificationsService {
     }
   }
 
-  async removeBySubcategoryId(id: string) {
+  async removeBySubcategoryId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const specificationDeleted = await this.specificationModel
-        .find({ subcategoryId: id })
-        .deleteMany({ subcategoryId: id })
+        .find({ subcategory: id })
+        .deleteMany({ subcategory: id })
         .exec();
-      ifNotFound({ entity: specificationDeleted, id });
+      //ifNotFound({ entity: specificationDeleted, id });
       return specificationDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
   }
-  async findAllByCategoryId(categoryId: string) {
+  async findAllByCategoryId(category: Types.ObjectId) {
     try {
-      validateId(categoryId);
+      validateId(category);
       const specifications = await this.specificationModel
-        .find({ categoryId })
+        .find({ category })
         .exec();
       return specifications;
     } catch (error) {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(familyId: string): Promise<number> {
-    return this.specificationModel.countDocuments({ familyId });
+  async countByFamilyId(family: Types.ObjectId): Promise<number> {
+    return this.specificationModel.countDocuments({ family });
   }
-  async countByCategoryId(categoryId: string): Promise<number> {
-    return this.specificationModel.countDocuments({ categoryId });
+  async countByCategoryId(category: Types.ObjectId): Promise<number> {
+    return this.specificationModel.countDocuments({ category });
   }
-  async countBySubcategoryId(subcategoryId: string): Promise<number> {
-    return this.specificationModel.countDocuments({ subcategoryId });
+  async countBySubcategoryId(subcategory: Types.ObjectId): Promise<number> {
+    return this.specificationModel.countDocuments({ subcategory });
   }
 }
