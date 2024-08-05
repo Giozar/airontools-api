@@ -24,7 +24,7 @@ export class FilesController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Get(['/:filename', '/:type/:id/:filename'])
+  @Get(['/:filename', '/:type/:filename', '/:type/:id/:filename'])
   findProductFile(
     @Param('filename') filename: string,
     @Param('type') type: string,
@@ -40,7 +40,7 @@ export class FilesController {
     res.sendFile(path);
   }
 
-  @Post(['upload', 'upload/:type/:id'])
+  @Post(['upload', 'upload/:type', 'upload/:type/:id'])
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
@@ -70,11 +70,11 @@ export class FilesController {
       throw new BadRequestException('File is empty');
     }
 
-    const secureUrl = `${this.configService.get('HOST_API')}/files/${type}/${id}/${file.filename}`;
+    const secureUrl = `${this.configService.get('HOST_API')}/files/${type ? type + '/' : ''}${id ? id + '/' : ''}${file.filename}`;
     return { secureUrl };
   }
 
-  @Delete(['/:filename', '/:type/:id/:filename'])
+  @Delete(['/:filename', '/:type/:filename', '/:type/:id/:filename'])
   deleteFile(
     @Param('filename') filename: string,
     @Param('type') type: string,
