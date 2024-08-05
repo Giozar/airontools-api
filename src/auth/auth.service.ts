@@ -40,7 +40,6 @@ export class AuthService {
         .exec();
       // Exclude password from the response
       user.password = undefined;
-
       return {
         user,
         token: this.getJwtToken({ id: user._id.toString(), user }),
@@ -120,7 +119,7 @@ export class AuthService {
     const user = await this.userModel
       .findOne({ email })
       .populate([this.ROLE, this.CREATEDBY, this.UPDATEDBY])
-      .select('password email _id role fullName imageUrl')
+      .select('password email _id role name imageUrl')
       .exec();
 
     if (!user) {
