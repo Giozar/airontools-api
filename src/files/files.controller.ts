@@ -48,7 +48,7 @@ export class FilesController {
         destination: (req, file, cb) => {
           const type = req.params.type || '';
           const id = req.params.id || '';
-          const uploadPath = `./static/uploads/${type}/${id}`;
+          const uploadPath = `./static/uploads/${type ? type + '/' : ''}/${id ? id + '/' : ''}`;
 
           // Asegúrate de que el directorio existe, si no, créalo
           if (!fs.existsSync(uploadPath)) {
@@ -72,6 +72,16 @@ export class FilesController {
 
     const secureUrl = `${this.configService.get('HOST_API')}/files/${type}/${id}/${file.filename}`;
     return { secureUrl };
+  }
+
+  @Delete(['/:filename', '/:type/:id/:filename'])
+  deleteFile(
+    @Param('filename') filename: string,
+    @Param('type') type: string,
+    @Param('id') id: string,
+  ) {
+    this.filesService.deleteFile(filename, type, id);
+    return { message: 'File successfully deleted' };
   }
 
   @Post('upload-file-s3')
