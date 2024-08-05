@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Subcategory } from './schemas/subcategory.schema';
 import mongoose, { Model } from 'mongoose';
-import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
+import { handleDBErrors, ifNotFound } from 'src/handlers';
 import {
   CreateSubcategoryDto,
   SubcategoryQueriesDto,
@@ -49,7 +49,6 @@ export class SubcategoriesService {
 
   async findOne(id: string) {
     try {
-      validateId(id);
       const subcategorySearched = await this.subcategoryModel
         .findById(id)
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
@@ -62,8 +61,6 @@ export class SubcategoriesService {
 
   async update(id: string, updateSubcategoryDto: UpdateSubcategoryDto) {
     try {
-      validateId(id);
-
       const subcategoryUpdated = await this.subcategoryModel
         .findByIdAndUpdate(id, updateSubcategoryDto)
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
@@ -77,7 +74,6 @@ export class SubcategoriesService {
 
   async remove(id: string) {
     try {
-      validateId(id);
       const subcategoryDeleted = await this.subcategoryModel
         .findByIdAndDelete(id)
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
@@ -104,7 +100,6 @@ export class SubcategoriesService {
 
   async removeByFamilyId(id: string) {
     try {
-      validateId(id);
       const subcategoriesDeleted = await this.subcategoryModel
         .find({ family: id })
         .deleteMany({ family: id })
@@ -117,7 +112,6 @@ export class SubcategoriesService {
 
   async removeByCategoryId(id: string) {
     try {
-      validateId(id);
       const subcategoriesDeleted = await this.subcategoryModel
         .find({ category: id })
         .deleteMany({ category: id })

@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsMongoId,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateRoleDto {
@@ -13,10 +19,12 @@ export class CreateRoleDto {
   permissions: object;
 
   @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   createdBy: Types.ObjectId;
 
   @IsString()
+  @IsMongoId()
   @IsOptional()
   updatedBy: Types.ObjectId;
 }

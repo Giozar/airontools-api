@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import mongoose, { Model, Types } from 'mongoose';
-import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
+import { handleDBErrors, ifNotFound } from 'src/handlers';
 import {
   CategoryQueriesDto,
   CreateCategoryDto,
@@ -49,7 +49,6 @@ export class CategoriesService {
 
   async findOne(id: string) {
     try {
-      validateId(id);
       const categorySearched = await this.categoryModel
         .findById(id)
         .populate([this.FAMILY, this.CREATEDBY, this.UPDATEDBY])
@@ -63,8 +62,6 @@ export class CategoriesService {
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
     try {
-      validateId(id);
-
       const categoryUpdated = await this.categoryModel
         .findByIdAndUpdate(id, updateCategoryDto)
         .populate([this.FAMILY, this.CREATEDBY, this.UPDATEDBY])
@@ -78,7 +75,6 @@ export class CategoriesService {
 
   async remove(id: string) {
     try {
-      validateId(id);
       const categoryDeleted = await this.categoryModel
         .findByIdAndDelete(id)
         .populate([this.FAMILY, this.CREATEDBY, this.UPDATEDBY])
@@ -119,7 +115,6 @@ export class CategoriesService {
 
   async removeByFamilyId(id: Types.ObjectId) {
     try {
-      validateId(id);
       const categoryDeleted = await this.categoryModel
         .find({ family: id })
         .deleteMany({ family: id })

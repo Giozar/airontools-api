@@ -1,5 +1,6 @@
 import {
   IsAlphanumeric,
+  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -24,22 +25,27 @@ export class CreateSpecificationDto {
   units: string;
 
   @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   family: Types.ObjectId;
 
   @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   category: Types.ObjectId;
 
   @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   subcategory: Types.ObjectId;
 
   @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   createdBy: Types.ObjectId;
 
   @IsString()
+  @IsMongoId()
   @IsOptional()
   updatedBy: Types.ObjectId;
 }
