@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, UploadedFile } from '@nestjs/common';
-import { existsSync } from 'fs';
+import { existsSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import * as fs from 'fs';
 import awsConfig from '@config/awsConfig';
@@ -33,6 +33,24 @@ export class FilesService {
       throw new BadRequestException(`No file found with name ${fileName}`);
     }
     return path;
+  }
+
+  deleteFile(filename: string, type?: string, id?: string) {
+    const path = join(
+      __dirname,
+      `../../static/uploads/${type ? type + '/' : ''}/${id ? id + '/' : ''}`,
+      filename,
+    );
+
+    if (!existsSync(path)) {
+      throw new BadRequestException(`No file found with name ${filename}`);
+    }
+
+    try {
+      unlinkSync(path);
+    } catch (err) {
+      throw new BadRequestException(`Failed to delete file: ${err.message}`);
+    }
   }
 
   async uploadFileS3(
