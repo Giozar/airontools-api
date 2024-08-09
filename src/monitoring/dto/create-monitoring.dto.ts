@@ -1,14 +1,16 @@
 import {
   IsString,
   IsNotEmpty,
+  IsArray,
+  ValidateNested,
   IsOptional,
-  IsDate,
   IsNumber,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class CreateMonitoringDto {
+class ActivityDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   activityType: string;
 
   @IsString()
@@ -16,17 +18,23 @@ export class CreateMonitoringDto {
   fileName: string;
 
   @IsString()
-  @IsNotEmpty()
-  sourcePath: string;
+  @IsOptional()
+  sourcePath?: string;
 
   @IsString()
   @IsNotEmpty()
   destinationPath: string;
 
-  @IsDate()
-  @IsNotEmpty()
-  eventTimestamp: Date;
+  @IsNumber()
+  @IsOptional()
+  fileSize?: number;
 
+  @IsString()
+  @IsOptional()
+  fileType?: string;
+}
+
+export class CreateMonitoringDto {
   @IsString()
   @IsNotEmpty()
   userId: string;
@@ -35,23 +43,20 @@ export class CreateMonitoringDto {
   @IsNotEmpty()
   computerId: string;
 
-  @IsOptional()
-  @IsNumber()
-  fileSize?: number;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ActivityDto)
+  activities: ActivityDto[];
 
-  @IsOptional()
   @IsString()
-  fileType?: string;
-
   @IsOptional()
-  @IsString()
   fileHash?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   status?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   remarks?: string;
 }

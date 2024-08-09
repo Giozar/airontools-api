@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument /* Schema as MongooseSchema */ } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
 export type MonitoringDocument = HydratedDocument<Monitoring>;
 
@@ -8,41 +8,32 @@ export type MonitoringDocument = HydratedDocument<Monitoring>;
 })
 export class Monitoring {
   @Prop({ required: true })
-  activityType: string;
-
-  @Prop({ required: true })
-  fileName: string;
-
-  @Prop({ required: true })
-  sourcePath: string;
-
-  @Prop({ required: true })
-  destinationPath: string;
-
-  @Prop({ required: true })
-  eventTimestamp: Date;
-
-  // @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: false })
-  // userId: MongooseSchema.Types.ObjectId;
-
-  // @Prop({
-  //   type: MongooseSchema.Types.ObjectId,
-  //   ref: 'Computer',
-  //   required: false,
-  // })
-  // computerId: MongooseSchema.Types.ObjectId;
-
-  @Prop({ required: true })
   userId: string;
 
   @Prop({ required: true })
   computerId: string;
 
-  @Prop({})
-  fileSize: number;
-
-  @Prop({})
-  fileType: string;
+  @Prop({
+    type: [
+      {
+        activityType: { type: String },
+        fileName: { type: String, required: true },
+        sourcePath: { type: String },
+        destinationPath: { type: String, required: true },
+        fileSize: { type: Number },
+        fileType: { type: String },
+      },
+    ],
+    required: true,
+  })
+  activities: Array<{
+    activityType: string;
+    fileName: string;
+    sourcePath: string;
+    destinationPath: string;
+    fileSize: number;
+    fileType: string;
+  }>;
 
   @Prop({})
   fileHash: string;
