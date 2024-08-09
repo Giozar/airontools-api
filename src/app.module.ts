@@ -12,6 +12,7 @@ import { ProductsModule } from './products/products.module';
 import { RolesModule } from './roles/roles.module';
 import { FamiliesModule } from './families/families.module';
 import { SpecificationsModule } from './specifications/specifications.module';
+import { MonitoringModule } from './monitoring/monitoring.module';
 import awsConfig from '@config/awsConfig';
 
 @Module({
@@ -32,6 +33,7 @@ import awsConfig from '@config/awsConfig';
     RolesModule,
     FamiliesModule,
     SpecificationsModule,
+    MonitoringModule,
   ],
   controllers: [],
   providers: [],
