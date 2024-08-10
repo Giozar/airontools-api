@@ -27,6 +27,8 @@ export class SeedService {
       const createdRole = new this.roleModel(this.role);
       await createdRole.save();
 
+      // console.log(createdRole);
+
       this.user = {
         email: 'root@root.com',
         password: 'Root123',
@@ -40,6 +42,8 @@ export class SeedService {
       });
 
       await createdUser.save();
+
+      // console.log(createdUser);
 
       return 'Semilla cultivada con éxito';
     } catch (error) {
