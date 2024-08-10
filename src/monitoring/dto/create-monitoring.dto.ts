@@ -5,7 +5,6 @@ import {
   ValidateNested,
   IsOptional,
   IsNumber,
-  IsDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -34,9 +33,9 @@ class ActivityDto {
   @IsOptional()
   fileType?: string;
 
-  @IsDate()
-  @IsNotEmpty()
-  eventTimestamp: Date;
+  @IsString()
+  @IsOptional()
+  eventTimestamp: string;
 }
 
 export class CreateMonitoringDto {
