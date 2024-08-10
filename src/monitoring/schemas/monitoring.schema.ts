@@ -22,6 +22,7 @@ export class Monitoring {
         destinationPath: { type: String, required: true },
         fileSize: { type: Number },
         fileType: { type: String },
+        eventTimestamp: { type: Date },
       },
     ],
     required: true,
@@ -33,6 +34,7 @@ export class Monitoring {
     destinationPath: string;
     fileSize: number;
     fileType: string;
+    eventTimestamp: Date;
   }>;
 
   @Prop({})
