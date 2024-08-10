@@ -13,6 +13,7 @@ import { RolesModule } from './roles/roles.module';
 import { FamiliesModule } from './families/families.module';
 import { SpecificationsModule } from './specifications/specifications.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
+import { SeedModule } from './seed/seed.module';
 import awsConfig from '@config/awsConfig';
 
 @Module({
@@ -34,6 +35,7 @@ import awsConfig from '@config/awsConfig';
     FamiliesModule,
     SpecificationsModule,
     MonitoringModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],
