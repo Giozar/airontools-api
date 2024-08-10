@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MonitoringService } from './monitoring.service';
 import { Monitoring, MonitoringSchema } from './schemas/monitoring.schema';
-// import { MonitoringController } from './monitoring.controller';
+import { MonitoringController } from './monitoring.controller';
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import { Monitoring, MonitoringSchema } from './schemas/monitoring.schema';
     ]),
   ],
   providers: [MonitoringService],
-  exports: [MonitoringService], // Exporta el servicio si lo necesitas en otros módulos
-  // controllers: [MonitoringController], // Descomentar cuando implementes el controlador
+  exports: [MonitoringService],
+  controllers: [MonitoringController],
 })
 export class MonitoringModule {}
