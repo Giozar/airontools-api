@@ -8,42 +8,43 @@ import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class SeedService {
-  private role;
-  private user;
+  private role = {
+    name: 'Administrador',
+    description: 'Es el rol del administrador semilla',
+    createdBy: new Types.ObjectId(),
+  };
+
+  private user = {
+    email: 'root@root.com',
+    password: 'Root123',
+    name: 'root',
+    createdBy: new Types.ObjectId(),
+  };
 
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Role.name) private roleModel: Model<Role>,
-  ) {
-    this.role = {
-      name: 'Administrador',
-      description: 'Es el rol del administrador semilla',
-      createdBy: new Types.ObjectId(),
-    };
-  }
+  ) {}
 
   async executeSeed() {
     try {
-      const createdRole = new this.roleModel(this.role);
-      await createdRole.save();
+      // Buscar si el rol "Administrador" ya existe
+      let adminRole = await this.roleModel.findOne({ name: this.role.name });
 
-      // console.log(createdRole);
+      if (!adminRole) {
+        // Si no existe, crear el rol
+        adminRole = await this.roleModel.create(this.role);
+      }
 
-      this.user = {
-        email: 'root@root.com',
-        password: 'Root123',
-        name: 'root',
-        role: createdRole._id,
-        createdBy: new Types.ObjectId(),
-      };
-      const createdUser = new this.userModel({
+      // Asignar el rol al usuario
+      const user = {
         ...this.user,
+        role: adminRole._id,
         password: await bcrypt.hashSync(this.user.password, 10),
-      });
+      };
 
-      await createdUser.save();
-
-      // console.log(createdUser);
+      // Crear el usuario
+      await this.userModel.create(user);
 
       return 'Semilla cultivada con éxito';
     } catch (error) {
