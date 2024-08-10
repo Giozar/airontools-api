@@ -33,18 +33,28 @@ export class SeedService {
         this.userModel.findOne({ email: this.adminUser.email }).exec(),
       ]);
 
+      let roleId = existingRole ? existingRole._id : null;
+
       if (!existingRole) {
+        // Create the role if it does not exist
         const createdRole = await new this.roleModel(this.adminRole).save();
-        this.adminUser['role'] = createdRole._id;
-      } else {
-        this.adminUser['role'] = existingRole._id;
+        roleId = createdRole._id;
       }
 
-      if (!existingUser) {
+      if (existingUser) {
+        if (existingUser.role.toString() !== roleId.toString()) {
+          // Update the existing user's role if it is different
+          await this.userModel
+            .findByIdAndUpdate(existingUser._id, { role: roleId })
+            .exec();
+        }
+      } else {
+        // Create the user if it does not exist
         const hashedPassword = await bcrypt.hash(this.adminUser.password, 10);
         await new this.userModel({
           ...this.adminUser,
           password: hashedPassword,
+          role: roleId,
         }).save();
       }
 
