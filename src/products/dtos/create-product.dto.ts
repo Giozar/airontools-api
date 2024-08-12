@@ -32,7 +32,7 @@ export class CreateProductDto {
   subcategory: Types.ObjectId;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   description: string;
 
   @IsOptional()

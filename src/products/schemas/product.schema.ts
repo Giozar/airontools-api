@@ -40,7 +40,7 @@ export class Product {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({})
   characteristics: string[];
 
   @Prop({})
