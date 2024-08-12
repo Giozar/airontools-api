@@ -40,8 +40,26 @@ export class Product {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({})
   characteristics: string[];
+
+  @Prop({})
+  includedItems: string[];
+
+  @Prop({})
+  opcionalAccessories: string[];
+
+  @Prop({})
+  operationRequirements: string[];
+
+  @Prop({})
+  applications: string[];
+
+  @Prop({})
+  recommendations: string[];
+
+  @Prop({})
+  technicalDatasheet: string[];
 
   @Prop({
     type: [
@@ -60,6 +78,9 @@ export class Product {
   }>;
   @Prop({})
   images: string[];
+
+  @Prop({})
+  webImages: string[];
 
   @Prop({})
   manuals: string[];

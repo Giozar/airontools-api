@@ -31,10 +31,59 @@ export class CreateProductDto {
   @IsMongoId()
   subcategory: Types.ObjectId;
 
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  images: [string];
+  characteristics: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  includedItems: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  optionalAccessories: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  operationRequirements: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  applications: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  recommendations: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  technicalDatasheet: string[];
+
+  @ValidateNested({ each: true })
+  @Type(() => ProductSpecificationDto)
+  @IsArray()
+  specifications: ProductSpecificationDto[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  webImages: string[];
 
   @IsOptional()
   @IsArray()
@@ -46,25 +95,11 @@ export class CreateProductDto {
   @IsString({ each: true })
   videos: string[];
 
-  @IsString()
-  @IsOptional()
-  description: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  characteristics: string[];
-
-  @ValidateNested({ each: true })
-  @Type(() => ProductSpecificationDto)
-  @IsArray()
-  specifications: ProductSpecificationDto[];
-
-  @IsMongoId()
   @IsNotEmpty()
+  @IsMongoId()
   createdBy: Types.ObjectId;
 
-  @IsMongoId()
   @IsOptional()
+  @IsMongoId()
   updatedBy: Types.ObjectId;
 }
