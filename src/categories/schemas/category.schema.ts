@@ -20,7 +20,7 @@ export class Category {
   description: string;
 
   @Prop()
-  image: string[];
+  images: string[];
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   family: MongooseSchema.Types.ObjectId;

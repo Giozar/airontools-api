@@ -20,7 +20,7 @@ export class Family {
   description: string;
 
   @Prop()
-  image: string;
+  images: string[];
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   createdBy: MongooseSchema.Types.ObjectId;
