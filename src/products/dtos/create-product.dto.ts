@@ -103,3 +103,4 @@ export class CreateProductDto {
   @IsMongoId()
   updatedBy: Types.ObjectId;
 }
+

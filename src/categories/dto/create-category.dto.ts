@@ -22,7 +22,8 @@ export class CreateCategoryDto {
 
   @IsOptional()
   @IsArray()
-  image?: string[];
+  @IsString({ each: true })
+  images: string[];
 
   @IsString()
   @IsMongoId()
