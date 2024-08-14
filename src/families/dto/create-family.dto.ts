@@ -8,10 +8,11 @@ import {
 import { Types } from 'mongoose';
 
 export class CreateFamilyDto {
+  @IsNotEmpty()
   @IsString()
   name: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   path: string;
 

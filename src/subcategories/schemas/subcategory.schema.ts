@@ -13,7 +13,7 @@ export class Subcategory {
   })
   name: string;
 
-  @Prop()
+  @Prop({ required: true })
   path: string;
 
   @Prop()

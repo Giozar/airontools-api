@@ -12,9 +12,9 @@ export class CreateSubcategoryDto {
   @IsString()
   name: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  path?: string;
+  path: string;
 
   @IsOptional()
   @IsString()
