@@ -13,7 +13,7 @@ export class Category {
   })
   name: string;
 
-  @Prop()
+  @Prop({ required: true })
   path: string;
 
   @Prop()
