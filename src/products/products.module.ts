@@ -20,6 +20,7 @@ import {
 @Module({
   controllers: [ProductsController],
   providers: [ProductsService],
+  exports: [ProductsService],
   imports: [
     MongooseModule.forFeature([
       {

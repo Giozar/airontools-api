@@ -39,4 +39,17 @@ export class BasicReportsController {
     pdfDoc.pipe(response);
     pdfDoc.end();
   }
+
+  @Get('product/:id')
+  async productTechnicalDatasheet(
+    @Res() response: Response,
+    @Param('id') id: string,
+  ) {
+    const pdfDoc = await this.basicReportsService.productTechnicalDatasheet(id);
+
+    response.setHeader('Content-Type', 'application/pdf');
+    pdfDoc.info.Title = 'Employment-Letter';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
 }

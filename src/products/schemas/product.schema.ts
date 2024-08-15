@@ -47,7 +47,7 @@ export class Product {
   includedItems: string[];
 
   @Prop({})
-  opcionalAccessories: string[];
+  optionalAccessories: string[];
 
   @Prop({})
   operationRequirements: string[];
