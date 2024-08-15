@@ -43,6 +43,12 @@ import { Role, RoleSchema } from 'src/roles/schemas/role.schema';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [MongooseModule, JwtStrategy, PassportModule, JwtModule],
+  exports: [
+    MongooseModule,
+    JwtStrategy,
+    PassportModule,
+    JwtModule,
+    AuthService,
+  ],
 })
 export class AuthModule {}
