@@ -1,6 +1,9 @@
-import type { StyleDictionary, TDocumentDefinitions } from 'pdfmake/interfaces';
-import { headerSection } from './sections/header.section';
-import { DateFormatter } from 'src/helpers';
+import {
+  Content,
+  ContentStack,
+  TDocumentDefinitions,
+  StyleDictionary,
+} from 'pdfmake/interfaces';
 import { Product } from 'src/products/schemas/product.schema';
 import { Family } from 'src/families/schemas/family.schema';
 import { Category } from 'src/categories/schemas/category.schema';
@@ -8,35 +11,7 @@ import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
 import { Specification } from 'src/specifications/schemas/specification.schema';
 import { User } from 'src/auth/schemas/user.schema';
 
-const styles: StyleDictionary = {
-  header: {
-    fontSize: 22,
-    bold: true,
-    alignment: 'center',
-    margin: [0, 60, 0, 20],
-  },
-  body: {
-    alignment: 'justify',
-    margin: [0, 0, 0, 70],
-  },
-  signature: {
-    fontSize: 14,
-    bold: true,
-    // alignment: 'left',
-  },
-  footer: {
-    fontSize: 10,
-    italics: true,
-    alignment: 'center',
-    margin: [0, 0, 0, 20],
-  },
-  subheader: {
-    fontSize: 14,
-    bold: true,
-    margin: [0, 10, 0, 5],
-  },
-};
-
+// Function to generate the product technical datasheet
 export const getProductTechnicalDatasheet = (
   product: Product & {
     family: Family;
@@ -63,119 +38,190 @@ export const getProductTechnicalDatasheet = (
     operationRequirements,
     applications,
     recommendations,
-    technicalDatasheet,
     specifications,
     images,
-    webImages,
-    manuals,
-    videos,
-    createdBy,
-    updatedBy,
   } = product;
 
+  // Helper function to create a list section
+  const createListSection = (title: string, items: string[]): ContentStack => {
+    const itemList: Content[] = items.map((item) => ({ text: item }));
+    return {
+      stack: [
+        {
+          table: {
+            widths: ['92%'],
+            body: [
+              [
+                {
+                  border: [false, false, false, false],
+                  text: title,
+                  alignment: 'left',
+                  color: '#fff',
+                  bold: true,
+                  fillColor: '#1A87C0',
+                },
+              ],
+            ],
+          },
+        },
+        {
+          ul: itemList,
+        },
+      ],
+    };
+  };
+
+  // Helper function to create the specification table
+  const createSpecsTable = (
+    specs: { specification: Specification; value: string }[],
+  ): ContentStack => {
+    return {
+      stack: [
+        {
+          layout: {
+            hLineColor: () => '#223C80',
+            vLineColor: () => '#223C80',
+          },
+          table: {
+            widths: ['50%', '50%'],
+            body: [
+              [
+                { colSpan: 2, text: 'Especificaciones', style: 'headerSpec' },
+                {},
+              ],
+              ...specs.map((spec) => [
+                { text: spec.specification.name, style: 'specStyle' },
+                { text: spec.value, style: 'specValueStyle' },
+              ]),
+            ],
+          },
+        },
+      ],
+    };
+  };
+
+  // Define the document
   const docDefinition: TDocumentDefinitions = {
-    styles: styles,
-    pageMargins: [40, 60, 40, 60],
-
-    header: headerSection({
-      showLogo: true,
-      showDate: true,
-    }),
-
+    pageSize: 'LETTER',
+    footer: [
+      {
+        table: {
+          widths: ['*'],
+          body: [
+            [
+              {
+                text: 'www.airontools.com',
+                alignment: 'center',
+                color: '#fff',
+                bold: true,
+                fillColor: '#1A87C0',
+              },
+            ],
+            [
+              {
+                text: '*Las imágenes y especificaciones de los productos están sujetos a cambios sin previo aviso',
+                alignment: 'center',
+                color: '#fff',
+                bold: true,
+                fillColor: '#1A87C0',
+                fontSize: 10,
+              },
+            ],
+          ],
+        },
+        layout: 'noBorders',
+      },
+    ],
     content: [
       {
-        text: `Nombre del Producto: ${name}`,
-        style: 'subheader',
+        stack: [
+          {
+            columns: [
+              {
+                width: '50%',
+                stack: [
+                  {
+                    image: images.length > 0 ? images[0] : 'sampleImage.jpg', // Primera imagen del arreglo o imagen por defecto
+                    width: 100,
+                    height: 100,
+                  },
+                ],
+                margin: [0, 0, 10, 20],
+              },
+              {
+                width: '50%',
+                text: name || 'Nombre del Producto',
+                fontSize: 20,
+                alignment: 'right',
+                margin: [0, 0, 0, 10],
+              },
+            ],
+          },
+        ],
       },
       {
-        text: `Modelo: ${model}`,
-        style: 'body',
+        columns: [
+          {
+            width: '50%',
+            stack: [
+              createListSection('Características', characteristics || []),
+              createListSection('Aplicaciones', applications || []),
+              createListSection('Recomendaciones', recommendations || []),
+              createListSection(
+                'Requisitos de Operación',
+                operationRequirements || [],
+              ),
+            ],
+          },
+          {
+            width: '50%',
+            stack: [
+              {
+                stack: [
+                  {
+                    text: model || 'Modelo del Producto',
+                    alignment: 'right',
+                    background: '#1A87C0',
+                    color: '#fff',
+                    bold: true,
+                    fontSize: 15,
+                    margin: [5, 5, 5, 5],
+                  },
+                  {
+                    image: images.length > 0 ? images[0] : 'sampleImage.jpg', // Primera imagen del arreglo o imagen por defecto
+                    width: 100,
+                    height: 100,
+                  },
+                ],
+              },
+              createSpecsTable(specifications),
+              createListSection(
+                'Accesorios Opcionales',
+                optionalAccessories || [],
+              ),
+            ],
+          },
+        ],
       },
-      {
-        text: `Familia: ${family.name}`,
-        style: 'body',
-      },
-      {
-        text: `Categoría: ${category.name}`,
-        style: 'body',
-      },
-      {
-        text: `Subcategoría: ${subcategory.name}`,
-        style: 'body',
-      },
-      {
-        text: `Descripción: ${description}`,
-        style: 'body',
-      },
-      {
-        text: `Características: ${characteristics?.join(', ') || 'No especificadas'}`,
-        style: 'body',
-      },
-      {
-        text: `Ítems Incluidos: ${includedItems?.join(', ') || 'No especificados'}`,
-        style: 'body',
-      },
-      {
-        text: `Accesorios Opcionales: ${optionalAccessories?.join(', ') || 'No especificados'}`,
-        style: 'body',
-      },
-      {
-        text: `Requisitos de Operación: ${operationRequirements?.join(', ') || 'No especificados'}`,
-        style: 'body',
-      },
-      {
-        text: `Aplicaciones: ${applications?.join(', ') || 'No especificadas'}`,
-        style: 'body',
-      },
-      {
-        text: `Recomendaciones: ${recommendations?.join(', ') || 'No especificadas'}`,
-        style: 'body',
-      },
-      {
-        text: `Especificaciones Técnicas:`,
-        style: 'subheader',
-      },
-      {
-        ul: specifications?.map(
-          (spec) =>
-            `${(spec.specification as Specification).name}: ${spec.value}`,
-        ) || ['No especificadas'],
-      },
-      {
-        text: `Imágenes: ${images?.join(', ') || 'No disponibles'}`,
-        style: 'body',
-      },
-      {
-        text: `Imágenes web: ${webImages?.join(', ') || 'No disponibles'}`,
-        style: 'body',
-      },
-      {
-        text: `Ficha técnica: ${technicalDatasheet?.join(', ') || 'No disponibles'}`,
-        style: 'body',
-      },
-      {
-        text: `Manuales: ${manuals?.join(', ') || 'No disponibles'}`,
-        style: 'body',
-      },
-      {
-        text: `Videos: ${videos?.join(', ') || 'No disponibles'}`,
-        style: 'body',
-      },
-      {
-        text: `Creado por: ${createdBy || 'No disponibles'}`,
-        style: 'body',
-      },
-      {
-        text: `Actualizado por: ${updatedBy || 'No disponibles'}`,
-        style: 'body',
-      },
-      { text: DateFormatter.getDDMMMMYYYY(new Date()), style: 'signature' },
     ],
-
-    footer: {
-      text: 'Esta ficha técnica es proporcionada para información general y no constituye un compromiso legal.',
-      alignment: 'center',
-      margin: [0, 20, 0, 0],
+    styles: {
+      headerSpec: {
+        fontSize: 12,
+        bold: true,
+        fillColor: '#223C80',
+        color: '#fff',
+      },
+      specStyle: {
+        fontSize: 10,
+        bold: true,
+        fillColor: '#223C80',
+        color: '#fff',
+        alignment: 'center',
+      },
+      specValueStyle: {
+        fontSize: 10,
+        alignment: 'center',
+      },
     },
   };
 
