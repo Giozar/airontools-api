@@ -71,6 +71,7 @@ export class ProductsService {
   // Modificar la firma del método findOne para que refleje el tipo de retorno esperado
   async findOne(id: string): Promise<
     Product & {
+      _id: Types.ObjectId;
       family: Family;
       category: Category;
       subcategory: Subcategory;
@@ -102,6 +103,7 @@ export class ProductsService {
 
     // Convertir el producto a un tipo específico si es necesario
     return product as Product & {
+      _id: Types.ObjectId;
       family: Family;
       category: Category;
       subcategory: Subcategory;

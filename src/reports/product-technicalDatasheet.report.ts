@@ -15,10 +15,12 @@ import {
   toolImage,
   toolList,
 } from './sections/componentsTool.section';
+import { Types } from 'mongoose';
 
 // Function to generate the product technical datasheet
 export const getProductTechnicalDatasheet = (
   product: Product & {
+    _id: Types.ObjectId;
     family: Family;
     category: Category;
     subcategory: Subcategory;
@@ -31,6 +33,7 @@ export const getProductTechnicalDatasheet = (
   },
 ): TDocumentDefinitions => {
   const {
+    _id,
     name,
     model,
     description,
@@ -38,9 +41,8 @@ export const getProductTechnicalDatasheet = (
     operationRequirements,
     applications,
     recommendations,
-    // images,
+    images,
   } = product;
-
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
 
@@ -67,7 +69,7 @@ export const getProductTechnicalDatasheet = (
             stack: [
               toolImage(
                 model,
-                './static/uploads/images/66b2b977d864ae78a6c7d213/8703d197-a75d-472c-adc4-078dbd199995.png',
+                `./static/uploads/images/${_id}/${images[0].replace(/\S+\/\/\S+\/\w+\//, '')}`,
               ),
               specs,
               toolList(
