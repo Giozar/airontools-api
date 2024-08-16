@@ -39,6 +39,12 @@ export class User {
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
   updatedBy: MongooseSchema.Types.ObjectId;
+
+  @Prop({ type: Date })
+  createdAt: Date;
+
+  @Prop({ type: Date })
+  updatedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

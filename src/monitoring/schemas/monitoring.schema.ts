@@ -45,6 +45,12 @@ export class Monitoring {
 
   @Prop({})
   remarks: string;
+
+  @Prop({ type: Date })
+  createdAt: Date;
+
+  @Prop({ type: Date })
+  updatedAt: Date;
 }
 
 export const MonitoringSchema = SchemaFactory.createForClass(Monitoring);
