@@ -2,6 +2,11 @@ import type { StyleDictionary, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { headerSection } from './sections/header.section';
 import { DateFormatter } from 'src/helpers';
 import { Product } from 'src/products/schemas/product.schema';
+import { Family } from 'src/families/schemas/family.schema';
+import { Category } from 'src/categories/schemas/category.schema';
+import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
+import { Specification } from 'src/specifications/schemas/specification.schema';
+import { User } from 'src/auth/schemas/user.schema';
 
 const styles: StyleDictionary = {
   header: {
@@ -33,7 +38,17 @@ const styles: StyleDictionary = {
 };
 
 export const getProductTechnicalDatasheet = (
-  product: Product,
+  product: Product & {
+    family: Family;
+    category: Category;
+    subcategory: Subcategory;
+    specifications: {
+      specification: Specification;
+      value: string;
+    }[];
+    createdBy: User;
+    updatedBy: User;
+  },
 ): TDocumentDefinitions => {
   const {
     name,
@@ -48,14 +63,14 @@ export const getProductTechnicalDatasheet = (
     operationRequirements,
     applications,
     recommendations,
-    // technicalDatasheet,
-    // specifications,
+    technicalDatasheet,
+    specifications,
     images,
-    // webImages,
+    webImages,
     manuals,
     videos,
-    // createdBy,
-    // updatedBy,
+    createdBy,
+    updatedBy,
   } = product;
 
   const docDefinition: TDocumentDefinitions = {
@@ -77,15 +92,15 @@ export const getProductTechnicalDatasheet = (
         style: 'body',
       },
       {
-        text: `Familia: ${family}`,
+        text: `Familia: ${family.name}`,
         style: 'body',
       },
       {
-        text: `Categoría: ${category}`,
+        text: `Categoría: ${category.name}`,
         style: 'body',
       },
       {
-        text: `Subcategoría: ${subcategory}`,
+        text: `Subcategoría: ${subcategory.name}`,
         style: 'body',
       },
       {
@@ -120,13 +135,22 @@ export const getProductTechnicalDatasheet = (
         text: `Especificaciones Técnicas:`,
         style: 'subheader',
       },
-      //   {
-      //     ul: specifications?.map(
-      //       (spec) => `${spec.specification}: ${spec.value}`,
-      //     ) || ['No especificadas'],
-      //   },
+      {
+        ul: specifications?.map(
+          (spec) =>
+            `${(spec.specification as Specification).name}: ${spec.value}`,
+        ) || ['No especificadas'],
+      },
       {
         text: `Imágenes: ${images?.join(', ') || 'No disponibles'}`,
+        style: 'body',
+      },
+      {
+        text: `Imágenes web: ${webImages?.join(', ') || 'No disponibles'}`,
+        style: 'body',
+      },
+      {
+        text: `Ficha técnica: ${technicalDatasheet?.join(', ') || 'No disponibles'}`,
         style: 'body',
       },
       {
@@ -135,6 +159,14 @@ export const getProductTechnicalDatasheet = (
       },
       {
         text: `Videos: ${videos?.join(', ') || 'No disponibles'}`,
+        style: 'body',
+      },
+      {
+        text: `Creado por: ${createdBy || 'No disponibles'}`,
+        style: 'body',
+      },
+      {
+        text: `Actualizado por: ${updatedBy || 'No disponibles'}`,
         style: 'body',
       },
       { text: DateFormatter.getDDMMMMYYYY(new Date()), style: 'signature' },

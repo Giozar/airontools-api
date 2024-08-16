@@ -1,6 +1,11 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
+import { User } from 'src/auth/schemas/user.schema';
+import { Category } from 'src/categories/schemas/category.schema';
+import { Family } from 'src/families/schemas/family.schema';
+import { Specification } from 'src/specifications/schemas/specification.schema';
+import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
 
 export type productDocument = HydratedDocument<Product>;
 
@@ -21,21 +26,21 @@ export class Product {
   model: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
-  family: MongooseSchema.Types.ObjectId;
+  family: MongooseSchema.Types.ObjectId | Family;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: 'Category',
     required: true,
   })
-  category: MongooseSchema.Types.ObjectId;
+  category: MongooseSchema.Types.ObjectId | Category;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: 'Subcategory',
     required: true,
   })
-  subcategory: MongooseSchema.Types.ObjectId;
+  subcategory: MongooseSchema.Types.ObjectId | Subcategory;
 
   @Prop({ required: true })
   description: string;
@@ -73,7 +78,7 @@ export class Product {
     ],
   })
   specifications: Array<{
-    specification: MongooseSchema.Types.ObjectId;
+    specification: MongooseSchema.Types.ObjectId | Specification;
     value: string;
   }>;
   @Prop({})
@@ -89,10 +94,10 @@ export class Product {
   videos: string[];
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  createdBy: MongooseSchema.Types.ObjectId;
+  createdBy: MongooseSchema.Types.ObjectId | User;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
-  updatedBy: MongooseSchema.Types.ObjectId;
+  updatedBy: MongooseSchema.Types.ObjectId | User;
 
   @Prop({ type: Date })
   createdAt: Date;

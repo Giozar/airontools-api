@@ -4,6 +4,11 @@ import { UpdateProductDto } from './dtos/update-product.dto';
 import { Product } from './schemas/product.schema';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Family } from 'src/families/schemas/family.schema';
+import { Category } from 'src/categories/schemas/category.schema';
+import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
+import { User } from 'src/auth/schemas/user.schema';
+import { Specification } from 'src/specifications/schemas/specification.schema';
 
 @Injectable()
 export class ProductsService {
@@ -63,18 +68,50 @@ export class ProductsService {
       .exec();
   }
 
-  async findOne(id: string) {
-    return this.productModel
+  // Modificar la firma del método findOne para que refleje el tipo de retorno esperado
+  async findOne(id: string): Promise<
+    Product & {
+      family: Family;
+      category: Category;
+      subcategory: Subcategory;
+      specifications: {
+        specification: Specification;
+        value: string;
+      }[];
+      createdBy: User;
+      updatedBy: User;
+    }
+  > {
+    const product = await this.productModel
       .findById(id)
       .populate([
-        this.FAMILY,
-        this.CATEGORY,
-        this.SUBCATEGORY,
-        this.CREATEDBY,
-        this.UPDATEDBY,
-        this.SPECIFICATIONS,
+        { path: this.FAMILY, model: 'Family' },
+        { path: this.CATEGORY, model: 'Category' },
+        { path: this.SUBCATEGORY, model: 'Subcategory' },
+        { path: this.CREATEDBY, model: 'User' },
+        { path: this.UPDATEDBY, model: 'User' },
+        { path: this.SPECIFICATIONS, model: 'Specification' },
       ])
+      .lean()
       .exec();
+
+    // Verificamos que el producto existe y retornamos el producto
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
+    // Convertir el producto a un tipo específico si es necesario
+    return product as Product & {
+      family: Family;
+      category: Category;
+      subcategory: Subcategory;
+      specifications: {
+        specification: Specification;
+        value: string;
+      }[];
+      createdBy: User;
+      updatedBy: User;
+    };
   }
 
   async findAll() {
