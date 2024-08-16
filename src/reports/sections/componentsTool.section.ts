@@ -1,13 +1,11 @@
-import {
-  Content,
-  ContentStack,
-  StyleDictionary,
-  TableLayout,
-} from 'pdfmake/interfaces';
+import { Content, ContentStack, StyleDictionary } from 'pdfmake/interfaces';
+import { Specification } from 'src/specifications/schemas/specification.schema';
 
 export function renderList(items: string[]): Content[] {
-  const renderList: Content[] = items.map((item): Content => ({ text: item }));
-  return renderList;
+  if (items.length === 0) {
+    return [{ text: 'No hay elementos disponibles', style: 'noDataStyle' }];
+  }
+  return items.map((item): Content => ({ text: item }));
 }
 
 export function toolHeader(title: string): ContentStack {
@@ -28,7 +26,7 @@ export function toolHeader(title: string): ContentStack {
           },
           {
             width: '50%',
-            text: title,
+            text: title || 'Información no disponible',
             fontSize: 20,
             alignment: 'right',
             margin: [0, 0, 0, 10],
@@ -49,7 +47,7 @@ export function toolList(name: string, list: Content[]): ContentStack {
             [
               {
                 border: [false, false, false, false],
-                text: `${name}`,
+                text: name || 'Información no disponible',
                 alignment: 'left',
                 color: '#fff',
                 bold: true,
@@ -60,11 +58,15 @@ export function toolList(name: string, list: Content[]): ContentStack {
         },
       },
       {
-        ul: list,
+        ul:
+          list.length > 0
+            ? list
+            : [{ text: 'No hay elementos disponibles', style: 'noDataStyle' }],
       },
     ],
   };
 }
+
 export function toolDescription(description: string) {
   const renderToolDescription: ContentStack = {
     stack: [
@@ -75,7 +77,7 @@ export function toolDescription(description: string) {
             [
               {
                 border: [false, false, false, false],
-                text: 'características',
+                text: 'Características',
                 alignment: 'left',
                 color: '#fff',
                 bold: true,
@@ -86,7 +88,7 @@ export function toolDescription(description: string) {
         },
       },
       {
-        text: description,
+        text: description || 'Descripción no disponible',
         alignment: 'justify',
         margin: [0, 5, 20, 20],
       },
@@ -94,11 +96,12 @@ export function toolDescription(description: string) {
   };
   return renderToolDescription;
 }
+
 export function toolImage(model: string, image: string) {
   const renderToolImage: ContentStack = {
     stack: [
       {
-        text: model,
+        text: model || 'Modelo no disponible',
         alignment: 'right',
         background: '#1A87C0',
         color: '#fff',
@@ -107,7 +110,7 @@ export function toolImage(model: string, image: string) {
         margin: [5, 5, 5, 5],
       },
       {
-        image: image,
+        image: image || './static/default-image.png',
         width: 250,
         height: 200,
         margin: [0, 0, 0, 20],
@@ -118,52 +121,49 @@ export function toolImage(model: string, image: string) {
   return renderToolImage;
 }
 
-export const specs: ContentStack = {
-  stack: [
-    {
-      layout: {
-        hLineColor: '#223C80',
-        vLineColor: '#223C80',
-      } as unknown as TableLayout,
-      table: {
-        widths: ['50%', '50%'],
-        body: [
-          [
-            {
-              colSpan: 2,
-              text: 'Especificaciones',
-              style: 'headerSpec',
-            },
-            {},
+export const renderSpecs = (
+  specifications: { specification: Specification; value: string }[],
+): ContentStack => {
+  if (specifications.length === 0) {
+    return {
+      stack: [
+        {
+          text: 'No hay especificaciones disponibles',
+          style: 'noDataStyle',
+        },
+      ],
+    };
+  }
+  return {
+    stack: [
+      {
+        layout: {
+          hLineColor: '#223C80',
+          vLineColor: '#223C80',
+        },
+        table: {
+          widths: ['50%', '50%'],
+          body: [
+            [
+              {
+                colSpan: 2,
+                text: 'Especificaciones',
+                style: 'headerSpec',
+              },
+              {},
+            ],
+            ...specifications.map(({ specification, value }) => [
+              {
+                text: specification.name || 'Nombre no disponible',
+                style: 'specStyle',
+              },
+              { text: value || 'Valor no disponible', style: 'specValueStyle' },
+            ]),
           ],
-          [
-            { text: 'Rango de Torque', style: ['specStyle'] },
-            { text: '2.5-5.9Nm', style: ['specValueStyle'] },
-          ],
-          [
-            { text: 'Velocidad', style: ['specStyle'] },
-            { text: '1,100 rpm', style: ['specValueStyle'] },
-          ],
-          [
-            { text: 'Tipo de Mecanismo', style: ['specStyle'] },
-            { text: 'Clutch con corte de aire', style: ['specValueStyle'] },
-          ],
-          [
-            { text: 'Tipo de salida', style: ['specStyle'] },
-            { text: '1/4" hexagonal', style: ['specValueStyle'] },
-          ],
-          [
-            { text: 'Entrada de aire', style: ['specStyle'] },
-            { text: '1/4" NPT', style: ['specValueStyle'] },
-          ],
-          [
-            { text: 'Peso', style: ['specStyle'] },
-            { text: '0.95 kg', style: ['specValueStyle'] },
-          ],
-        ],
+        },
       },
-    },
-  ],
+    ],
+  };
 };
 
 export const toolFooter: Content[] = [
@@ -219,5 +219,10 @@ export const styles: StyleDictionary = {
   specValueStyle: {
     fontSize: 10,
     alignment: 'center',
+  },
+  noDataStyle: {
+    fontSize: 10,
+    italics: true,
+    color: '#888',
   },
 };

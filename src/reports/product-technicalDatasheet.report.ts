@@ -7,7 +7,7 @@ import { Specification } from 'src/specifications/schemas/specification.schema';
 import { User } from 'src/auth/schemas/user.schema';
 import {
   renderList,
-  specs,
+  renderSpecs,
   styles,
   toolDescription,
   toolFooter,
@@ -42,6 +42,7 @@ export const getProductTechnicalDatasheet = (
     applications,
     recommendations,
     images,
+    specifications,
   } = product;
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
@@ -71,7 +72,7 @@ export const getProductTechnicalDatasheet = (
                 model,
                 `./static/uploads/images/${_id}/${images[0].replace(/\S+\/\/\S+\/\w+\//, '')}`,
               ),
-              specs,
+              renderSpecs(specifications),
               toolList(
                 'Accesorios Opcionales',
                 renderList(optionalAccessories),
