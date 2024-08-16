@@ -2,26 +2,15 @@ import {
   Content,
   ContentStack,
   StyleDictionary,
-  TDocumentDefinitions,
   TableLayout,
 } from 'pdfmake/interfaces';
 
-const listItems = ['Item 1', 'Item 2', 'Item 3'];
-const itemList: Content[] = listItems.map((item): Content => ({ text: item }));
-const listItems2 = ['Item 1', 'Item 2', 'Item 3', 'Item 1', 'Item 2', 'Item 3'];
-const itemList2: Content[] = listItems2.map(
-  (item): Content => ({ text: item }),
-);
-const listItems3 = ['Item 1', 'Item 2', 'Item 3', 'Item 1', 'Item 2', 'Item 3'];
-const itemList3: Content[] = listItems3.map(
-  (item): Content => ({ text: item }),
-);
-const listItems4 = ['Item 1', 'Item 2', 'Item 3', 'Item 1'];
-const itemList4: Content[] = listItems4.map(
-  (item): Content => ({ text: item }),
-);
+export function renderList(items: string[]): Content[] {
+  const renderList: Content[] = items.map((item): Content => ({ text: item }));
+  return renderList;
+}
 
-export function toolheader(title: string): ContentStack {
+export function toolHeader(title: string): ContentStack {
   return {
     stack: [
       {
@@ -30,7 +19,7 @@ export function toolheader(title: string): ContentStack {
             width: '50%',
             stack: [
               {
-                image: 'sampleImage.jpg', // logo airontools
+                image: './static/logo/logo.png', // logo airontools
                 width: 100,
                 height: 100,
               },
@@ -50,7 +39,7 @@ export function toolheader(title: string): ContentStack {
   };
 }
 
-export function toollist(name: string, list: Content[]): ContentStack {
+export function toolList(name: string, list: Content[]): ContentStack {
   return {
     stack: [
       {
@@ -76,63 +65,65 @@ export function toollist(name: string, list: Content[]): ContentStack {
     ],
   };
 }
-
-const muchotexto =
-  'Explore the origins, history and meaning of the famous passage...';
-
-export const tooldescription: ContentStack = {
-  stack: [
-    {
-      table: {
-        widths: ['92%'],
-        body: [
-          [
-            {
-              border: [false, false, false, false],
-              text: 'Caracteristicas',
-              alignment: 'left',
-              color: '#fff',
-              bold: true,
-              fillColor: '#1A87C0',
-            },
+export function toolDescription(description: string) {
+  const renderToolDescription: ContentStack = {
+    stack: [
+      {
+        table: {
+          widths: ['92%'],
+          body: [
+            [
+              {
+                border: [false, false, false, false],
+                text: 'características',
+                alignment: 'left',
+                color: '#fff',
+                bold: true,
+                fillColor: '#1A87C0',
+              },
+            ],
           ],
-        ],
+        },
       },
-    },
-    {
-      text: muchotexto,
-      alignment: 'justify',
-      margin: [0, 5, 20, 20],
-    },
-  ],
-};
+      {
+        text: description,
+        alignment: 'justify',
+        margin: [0, 5, 20, 20],
+      },
+    ],
+  };
+  return renderToolDescription;
+}
+export function toolImage(model: string, image: string) {
+  const renderToolImage: ContentStack = {
+    stack: [
+      {
+        text: model,
+        alignment: 'right',
+        background: '#1A87C0',
+        color: '#fff',
+        bold: true,
+        fontSize: 15,
+        margin: [5, 5, 5, 5],
+      },
+      {
+        image: image,
+        width: 250,
+        height: 200,
+        margin: [0, 0, 0, 20],
+      },
+    ],
+  };
 
-export const toolimage: ContentStack = {
-  stack: [
-    {
-      text: 'ATSD-30S11',
-      alignment: 'right',
-      background: '#1A87C0',
-      color: '#fff',
-      bold: true,
-      fontSize: 15,
-      margin: [5, 5, 5, 5],
-    },
-    {
-      image: 'sampleImage.jpg',
-      width: 250,
-      height: 200,
-      margin: [0, 0, 0, 20],
-    },
-  ],
-};
+  return renderToolImage;
+}
 
 export const specs: ContentStack = {
   stack: [
     {
       layout: {
-        hLineColor: (i: number, node: unknown): string => '#223C80',
-        vLineColor: (i: number, node: unknown): string => '#223C80',
+        hLineColor: '#223C80',
+        vLineColor: '#223C80',
       } as unknown as TableLayout,
       table: {
         widths: ['50%', '50%'],
@@ -175,7 +166,7 @@ export const specs: ContentStack = {
   ],
 };
 
-const toolfooter: Content[] = [
+export const toolFooter: Content[] = [
   {
     table: {
       widths: ['*'],
@@ -205,7 +196,7 @@ const toolfooter: Content[] = [
   },
 ];
 
-const styles: StyleDictionary = {
+export const styles: StyleDictionary = {
   header: {
     fontSize: 15,
     bold: true,
@@ -229,38 +220,4 @@ const styles: StyleDictionary = {
     fontSize: 10,
     alignment: 'center',
   },
-};
-
-export const dd: TDocumentDefinitions = {
-  pageSize: 'LETTER',
-
-  footer: function (currentPage: number, pageCount: number): Content[] {
-    return toolfooter;
-  },
-
-  content: [
-    toolheader('ATORNILLADOR DE PARO AUTOMÁTICO CON DES-CONEXIÓN'),
-    {
-      columns: [
-        {
-          width: '50%',
-          stack: [
-            tooldescription,
-            toollist('Aplicaciones', itemList),
-            toollist('Recomendaciones', itemList2),
-            toollist('Requisitos de operación', itemList3),
-          ],
-        },
-        {
-          width: '50%',
-          stack: [
-            toolimage,
-            specs,
-            toollist('Accesorios Opcionales', itemList4),
-          ],
-        },
-      ],
-    },
-  ],
-  styles: styles,
 };
