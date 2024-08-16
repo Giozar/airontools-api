@@ -14,6 +14,8 @@ import { FamiliesModule } from './families/families.module';
 import { SpecificationsModule } from './specifications/specifications.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { SeedModule } from './seed/seed.module';
+import { BasicReportsModule } from './basic-reports/basic-reports.module';
+import { PrinterModule } from './printer/printer.module';
 import awsConfig from '@config/awsConfig';
 
 @Module({
@@ -36,6 +38,8 @@ import awsConfig from '@config/awsConfig';
     SpecificationsModule,
     MonitoringModule,
     SeedModule,
+    BasicReportsModule,
+    PrinterModule,
   ],
   controllers: [],
   providers: [],

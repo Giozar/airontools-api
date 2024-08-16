@@ -30,6 +30,12 @@ export class Category {
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
   updatedBy: MongooseSchema.Types.ObjectId;
+
+  @Prop({ type: Date })
+  createdAt: Date;
+
+  @Prop({ type: Date })
+  updatedAt: Date;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
