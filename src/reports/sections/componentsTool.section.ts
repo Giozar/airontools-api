@@ -2,7 +2,7 @@ import { Content, ContentStack, StyleDictionary } from 'pdfmake/interfaces';
 import { Specification } from 'src/specifications/schemas/specification.schema';
 
 export function renderList(items: string[]): Content[] {
-  if (items.length === 0) {
+  if (!items || items.length === 0) {
     return [{ text: 'No hay elementos disponibles', style: 'noDataStyle' }];
   }
   return items.map((item): Content => ({ text: item }));

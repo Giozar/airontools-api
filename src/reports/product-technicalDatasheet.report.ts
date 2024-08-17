@@ -45,7 +45,7 @@ export const getProductTechnicalDatasheet = (
     specifications,
   } = product;
   const imagePath =
-    images.length > 0 && images[0]
+    images && images.length > 0 && images[0]
       ? `./static/uploads/images/${_id}/${images[0].replace(/\S+\/\/\S+\/\w+\//, '')}`
       : './static/images/no-image.jpg';
   const docDefinition: TDocumentDefinitions = {
