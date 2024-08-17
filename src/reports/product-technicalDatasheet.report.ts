@@ -44,6 +44,10 @@ export const getProductTechnicalDatasheet = (
     images,
     specifications,
   } = product;
+  const imagePath =
+    images.length > 0 && images[0]
+      ? `./static/uploads/images/${_id}/${images[0].replace(/\S+\/\/\S+\/\w+\//, '')}`
+      : './static/images/no-image.jpg';
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
 
@@ -97,10 +101,7 @@ export const getProductTechnicalDatasheet = (
                                       {
                                         width: '50%',
                                         stack: [
-                                          toolImage(
-                                            model,
-                                            `./static/uploads/images/${_id}/${images[0].replace(/\S+\/\/\S+\/\w+\//, '')}`,
-                                          ),
+                                          toolImage(model, imagePath),
                                           renderSpecs(specifications),
                                           toolList(
                                             'Accesorios Opcionales',

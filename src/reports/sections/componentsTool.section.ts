@@ -131,7 +131,7 @@ export function toolImage(model: string, image: string) {
             [
               {
                 alignment: 'right',
-                image: image || './static/default-image.png',
+                image: image || './static/no-image.jpg',
                 width: 200,
                 height: 200,
                 padding: [0, 0, 0, 20],

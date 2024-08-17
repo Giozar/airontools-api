@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
+import { handleDBErrors } from 'src/handlers';
 import { PrinterService } from 'src/printer/printer.service';
 import { ProductsService } from 'src/products/products.service';
 import {
@@ -59,15 +60,23 @@ export class BasicReportsService {
   }
 
   async productTechnicalDatasheet(id: string) {
-    const product = await this.productsService.findOne(id);
+    try {
+      const product = await this.productsService.findOne(id);
 
-    if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found`);
+      if (!product) {
+        throw new NotFoundException(`Product with id ${id} not found`);
+      }
+
+      const docDefinition = getProductTechnicalDatasheet(product);
+      const doc = this.printerService.createPdf(docDefinition);
+      await this.productsService.assignDatasheet(
+        id,
+        `${process.env.HOST_API}/basic-reports/product/${id}`,
+      );
+
+      return doc;
+    } catch (error) {
+      handleDBErrors(error);
     }
-
-    const docDefinition = getProductTechnicalDatasheet(product);
-    const doc = this.printerService.createPdf(docDefinition);
-
-    return doc;
   }
 }

@@ -54,6 +54,14 @@ export class ProductsService {
       .exec();
   }
 
+  async assignDatasheet(id: string, dataSheet: string) {
+    return this.productModel.findByIdAndUpdate(
+      id,
+      { technicalDatasheet: dataSheet },
+      { new: true },
+    );
+  }
+
   async remove(id: string) {
     return this.productModel
       .findByIdAndDelete(id)
