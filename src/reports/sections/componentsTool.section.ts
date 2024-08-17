@@ -19,8 +19,8 @@ export function toolHeader(title: string): ContentStack {
             stack: [
               {
                 image: './static/logo/logo.png', // logo airontools
-                width: 200,
-                height: 100,
+                width: 100,
+                height: 50,
               },
             ],
             margin: [0, 0, 10, 20],
