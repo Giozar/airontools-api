@@ -50,86 +50,69 @@ export const getProductTechnicalDatasheet = (
       : './static/images/no-image.jpg';
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
-
     footer: toolFooter,
 
     content: [
       {
         table: {
           widths: ['100%'],
+          heights: 700,
           body: [
             [
               {
-                fillColor: 'white', // Fondo blanco exterior
-                margin: [10, 10, 10, 10], // Margen exterior
-                table: {
-                  widths: ['100%'],
-                  body: [
-                    [
+                fillColor: 'white', // Fondo blanco interior
+                margin: [10, 5, 5, 10], // Margen para el contenido
+                stack: [
+                  toolHeader(name),
+                  {
+                    columns: [
                       {
-                        fillColor: '#223C80', // Fondo azul
-                        margin: [10, 10, 10, 10], // Margen para el fondo azul
-                        table: {
-                          widths: ['100%'],
-                          body: [
-                            [
-                              {
-                                fillColor: 'white', // Fondo blanco interior
-                                margin: [10, 10, 10, 10], // Margen para el contenido
-                                stack: [
-                                  toolHeader(name),
-                                  {
-                                    columns: [
-                                      {
-                                        width: '50%',
-                                        stack: [
-                                          toolDescription(description),
-                                          toolList(
-                                            'Aplicaciones',
-                                            renderList(applications),
-                                          ),
-                                          toolList(
-                                            'Recomendaciones',
-                                            renderList(recommendations),
-                                          ),
-                                          toolList(
-                                            'Requisitos de operación',
-                                            renderList(operationRequirements),
-                                          ),
-                                        ],
-                                      },
-                                      {
-                                        width: '50%',
-                                        stack: [
-                                          toolImage(model, imagePath),
-                                          renderSpecs(specifications),
-                                          toolList(
-                                            'Accesorios Opcionales',
-                                            renderList(optionalAccessories),
-                                          ),
-                                        ],
-                                      },
-                                    ],
-                                  },
-                                ],
-                              },
-                            ],
-                          ],
-                        },
-                        layout: 'noBorders', // Sin bordes para el fondo azul
+                        width: '50%',
+                        stack: [
+                          toolDescription(description),
+                          toolList('Aplicaciones', renderList(applications)),
+                          toolList(
+                            'Recomendaciones',
+                            renderList(recommendations),
+                          ),
+                          toolList(
+                            'Requisitos de operación',
+                            renderList(operationRequirements),
+                          ),
+                        ],
+                      },
+                      {
+                        width: '50%',
+                        stack: [
+                          toolImage(model, imagePath),
+                          renderSpecs(specifications),
+                          toolList(
+                            'Accesorios Opcionales',
+                            renderList(optionalAccessories),
+                          ),
+                        ],
                       },
                     ],
-                  ],
-                },
-                layout: 'noBorders', // Sin bordes para el fondo blanco exterior
+                  },
+                ],
               },
             ],
           ],
         },
-        layout: 'noBorders', // Sin bordes para la tabla principal
+        layout: {
+          hLineColor: '#223C80',
+          vLineColor: '#223C80',
+          hLineWidth: function () {
+            return 7;
+          },
+          vLineWidth: function () {
+            return 7;
+          },
+        },
       },
     ],
     styles: styles,
+    pageMargins: [20, 20, 20, 50],
   };
 
   return docDefinition;
