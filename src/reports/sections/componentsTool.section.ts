@@ -12,13 +12,14 @@ export function toolHeader(title: string): ContentStack {
   return {
     stack: [
       {
+        margin: [5, 5, 5, 5],
         columns: [
           {
             width: '50%',
             stack: [
               {
                 image: './static/logo/logo.png', // logo airontools
-                width: 100,
+                width: 200,
                 height: 100,
               },
             ],
@@ -30,6 +31,7 @@ export function toolHeader(title: string): ContentStack {
             fontSize: 20,
             alignment: 'right',
             margin: [0, 0, 0, 10],
+            bold: true,
           },
         ],
       },
@@ -72,12 +74,12 @@ export function toolDescription(description: string) {
     stack: [
       {
         table: {
-          widths: ['92%'],
+          widths: ['100%'],
           body: [
             [
               {
                 border: [false, false, false, false],
-                text: 'Características',
+                text: 'Descripción',
                 alignment: 'left',
                 color: '#fff',
                 bold: true,
@@ -88,9 +90,20 @@ export function toolDescription(description: string) {
         },
       },
       {
-        text: description || 'Descripción no disponible',
-        alignment: 'justify',
-        margin: [0, 5, 20, 20],
+        table: {
+          widths: ['100%'],
+          body: [
+            [
+              {
+                border: [false, false, false, false],
+                text: description || 'Descripción no disponible',
+                alignment: 'justify',
+                fontSize: 10,
+                margin: [0, 10, 0, 20],
+              },
+            ],
+          ],
+        },
       },
     ],
   };
@@ -110,10 +123,22 @@ export function toolImage(model: string, image: string) {
         margin: [5, 5, 5, 5],
       },
       {
-        image: image || './static/default-image.png',
-        width: 250,
-        height: 200,
-        margin: [0, 0, 0, 20],
+        margin: [5, 5, 5, 5],
+        alignment: 'right',
+        table: {
+          widths: ['100%'],
+          body: [
+            [
+              {
+                alignment: 'right',
+                image: image || './static/default-image.png',
+                width: 200,
+                height: 200,
+                padding: [0, 0, 0, 20],
+              },
+            ],
+          ],
+        },
       },
     ],
   };
@@ -137,6 +162,7 @@ export const renderSpecs = (
   return {
     stack: [
       {
+        margin: [0, 0, 0, 10],
         layout: {
           hLineColor: '#223C80',
           vLineColor: '#223C80',
@@ -157,7 +183,11 @@ export const renderSpecs = (
                 text: specification.name || 'Nombre no disponible',
                 style: 'specStyle',
               },
-              { text: value || 'Valor no disponible', style: 'specValueStyle' },
+              {
+                text:
+                  `${value} ${specification?.unit}` || 'Valor no disponible',
+                style: 'specValueStyle',
+              },
             ]),
           ],
         },
