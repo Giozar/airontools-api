@@ -43,8 +43,9 @@ export function toolList(name: string, list: Content[]): ContentStack {
   return {
     stack: [
       {
+        margin: [0, 15, 0, 13],
         table: {
-          widths: ['92%'],
+          widths: ['90%'],
           body: [
             [
               {
@@ -74,7 +75,7 @@ export function toolDescription(description: string) {
     stack: [
       {
         table: {
-          widths: ['100%'],
+          widths: ['90%'],
           body: [
             [
               {
@@ -114,13 +115,24 @@ export function toolImage(model: string, image: string) {
   const renderToolImage: ContentStack = {
     stack: [
       {
-        text: model || 'Modelo no disponible',
+        text: 'Modelo: ' + model || 'No disponible',
         alignment: 'right',
         background: '#1A87C0',
         color: '#fff',
         bold: true,
         fontSize: 15,
-        margin: [5, 5, 5, 5],
+        margin: [0, 0, 0, 5],
+        noWrap: true,
+        layout: {
+          hLineColor: '#223C80',
+          vLineColor: '#223C80',
+          hLineWidth: function () {
+            return 7;
+          },
+          vLineWidth: function () {
+            return 7;
+          },
+        },
       },
       {
         margin: [5, 5, 5, 5],
