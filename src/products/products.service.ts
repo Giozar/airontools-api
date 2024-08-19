@@ -9,6 +9,7 @@ import { Category } from 'src/categories/schemas/category.schema';
 import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
 import { User } from 'src/auth/schemas/user.schema';
 import { Specification } from 'src/specifications/schemas/specification.schema';
+import { validateId } from 'src/handlers';
 
 @Injectable()
 export class ProductsService {
@@ -91,6 +92,7 @@ export class ProductsService {
       updatedBy: User;
     }
   > {
+    validateId(id);
     const product = await this.productModel
       .findById(id)
       .populate([
