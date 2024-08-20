@@ -1,3 +1,3 @@
 export default () => ({
-  apiKeyGpt: process.env.OPENAI_API_KEY,
+  apiKeyOpenAI: process.env.OPENAI_API_KEY || 'sk-1234567890',
 });

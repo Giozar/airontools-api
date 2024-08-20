@@ -17,11 +17,14 @@ import { SeedModule } from './seed/seed.module';
 import { BasicReportsModule } from './basic-reports/basic-reports.module';
 import { PrinterModule } from './printer/printer.module';
 import awsConfig from '@config/awsConfig';
+import clientConfig from '@config/clientConfig';
+import mailerConfig from '@config/mailerConfig';
+import gptConfig from '@config/gptConfig';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, awsConfig], // Para cargar el archivo de configuración
+      load: [databaseConfig, awsConfig, clientConfig, mailerConfig, gptConfig], // Para cargar el archivo de configuración
       envFilePath: '.env', // Para leer archivo .env de variables de entorno
       isGlobal: true, // Para que todas la variables de entorno sean globales en la aplicación
     }),

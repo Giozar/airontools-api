@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, UploadedFile } from '@nestjs/common';
 import { existsSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import * as fs from 'fs';
-import awsConfig from '@config/awsConfig';
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -11,14 +10,20 @@ import {
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { Readable } from 'stream';
+import { ConfigService } from '@nestjs/config';
+import { AWSConfig } from './interfaces/aws.interface';
 
 @Injectable()
 export class FilesService {
+  constructor(private configService: ConfigService) {}
+
+  private awsConfig = this.configService.get<AWSConfig>('awsConfig');
+
   private clientAWS = new S3Client({
-    region: awsConfig().aws.region,
+    region: this.awsConfig.region,
     credentials: {
-      accessKeyId: awsConfig().aws.accessKeyId,
-      secretAccessKey: awsConfig().aws.secretAccessKey,
+      accessKeyId: this.awsConfig.accessKeyId,
+      secretAccessKey: this.awsConfig.secretAccessKey,
     },
   });
 
@@ -70,7 +75,7 @@ export class FilesService {
       const key = fileName || file.originalname;
 
       const uploadParams = {
-        Bucket: awsConfig().aws.bucketName,
+        Bucket: this.awsConfig.bucketName,
         Key: key,
         Body: stream,
         ContentType: contentType,
@@ -97,7 +102,7 @@ export class FilesService {
     isEditing?: boolean;
   }): Promise<Readable> | null {
     const command = new GetObjectCommand({
-      Bucket: awsConfig().aws.bucketName,
+      Bucket: this.awsConfig.bucketName,
       Key: fileName,
     });
     try {
@@ -129,7 +134,7 @@ export class FilesService {
       const upload = new Upload({
         client: this.clientAWS,
         params: {
-          Bucket: awsConfig().aws.bucketName,
+          Bucket: this.awsConfig.bucketName,
           Key: newFileName,
           Body: fileStream,
         },
@@ -148,7 +153,7 @@ export class FilesService {
 
   async downloadFileS3(fileName: string) {
     const command = new GetObjectCommand({
-      Bucket: awsConfig().aws.bucketName,
+      Bucket: this.awsConfig.bucketName,
       Key: fileName,
     });
     try {
@@ -162,7 +167,7 @@ export class FilesService {
   async deleteFileS3(fileName: string) {
     try {
       const command = new DeleteObjectCommand({
-        Bucket: awsConfig().aws.bucketName,
+        Bucket: this.awsConfig.bucketName,
         Key: fileName,
       });
       return await this.clientAWS.send(command);
