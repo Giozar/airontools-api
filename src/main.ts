@@ -18,7 +18,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true, // Permitir el envío de cookies y credenciales
   });
-  await app.listen(process.env.PORT || 3000, '0.0.0.0');
-  logger.log(`Application listening on port ${process.env.PORT || 3000}`);
+  await app.listen(process.env.SERVER_PORT);
+  logger.log(`Application listening on port ${process.env.SERVER_PORT}`);
 }
 bootstrap();
