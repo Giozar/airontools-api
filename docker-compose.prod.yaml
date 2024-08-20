@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  airontoolsapp:
+    depends_on:
+      - db
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: airontools-docker
+    container_name: airontoolsapp
+    restart: always # reiniciar el contenedor si se detiene
+    ports:
+      - "${PORT}:${PORT}"
+    # working_dir: /var/www/airontools
+    environment:
+      SERVER_PORT: ${SERVER_PORT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_PORT: ${DATABASE_PORT}
+      HOST_API: ${HOST_API}
+      CLIENT_PORT: ${CLIENT_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
+
+    # volumes:
+    #   - ./:/var/www/airontools
+
+  db:
+    image: mongo:7.0
+    container_name: mongodb-airontools
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: airontools
+    volumes:
+      - ./mongo:/data/db
