@@ -5,7 +5,9 @@ export function renderList(items: string[]): Content[] {
   if (!items || items.length === 0) {
     return [{ text: 'No hay elementos disponibles', style: 'noDataStyle' }];
   }
-  return items.map((item): Content => ({ text: item }));
+  return items.map(
+    (item): Content => ({ text: item, style: 'listContentStyle' }),
+  );
 }
 
 export function toolHeader(title: string): ContentStack {
@@ -74,6 +76,7 @@ export function toolDescription(description: string) {
   const renderToolDescription: ContentStack = {
     stack: [
       {
+        margin: [0, 25, 0, 0],
         table: {
           widths: ['90%'],
           body: [
@@ -99,8 +102,7 @@ export function toolDescription(description: string) {
                 border: [false, false, false, false],
                 text: description || 'Descripción no disponible',
                 alignment: 'justify',
-                fontSize: 10,
-                margin: [0, 10, 0, 20],
+                style: 'descriptionStyle',
               },
             ],
           ],
@@ -115,13 +117,13 @@ export function toolImage(model: string, image: string) {
   const renderToolImage: ContentStack = {
     stack: [
       {
-        text: 'Modelo: ' + model || 'No disponible',
+        text: '  Modelo: ' + model + '  ' || 'No disponible',
         alignment: 'right',
         background: '#1A87C0',
         color: '#fff',
         bold: true,
         fontSize: 15,
-        margin: [0, 0, 0, 5],
+        margin: [0, 5, 14, 0],
         noWrap: true,
         layout: {
           hLineColor: '#223C80',
@@ -135,14 +137,13 @@ export function toolImage(model: string, image: string) {
         },
       },
       {
-        margin: [5, 5, 5, 5],
-        alignment: 'right',
+        margin: [5, 2, 5, 10],
         table: {
           widths: ['100%'],
           body: [
             [
               {
-                alignment: 'right',
+                alignment: 'center',
                 image: image || './static/no-image.jpg',
                 width: 200,
                 height: 200,
@@ -266,5 +267,13 @@ export const styles: StyleDictionary = {
     fontSize: 10,
     italics: true,
     color: '#888',
+  },
+  listContentStyle: {
+    margin: [0, 0, 20, 0],
+    fontSize: 12,
+  },
+  descriptionStyle: {
+    margin: [0, 0, 20, 0],
+    fontSize: 12,
   },
 };
