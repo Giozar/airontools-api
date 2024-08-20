@@ -20,12 +20,22 @@ import awsConfig from '@config/awsConfig';
 import clientConfig from '@config/clientConfig';
 import mailerConfig from '@config/mailerConfig';
 import gptConfig from '@config/gptConfig';
+import { JoiValidationSchema } from '@config/joi.validation';
+import serverConfig from '@config/serverConfig';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, awsConfig, clientConfig, mailerConfig, gptConfig], // Para cargar el archivo de configuración
+      load: [
+        serverConfig,
+        databaseConfig,
+        awsConfig,
+        clientConfig,
+        mailerConfig,
+        gptConfig,
+      ], // Para cargar el archivo de configuración
       envFilePath: '.env', // Para leer archivo .env de variables de entorno
+      validationSchema: JoiValidationSchema,
       isGlobal: true, // Para que todas la variables de entorno sean globales en la aplicación
     }),
     MongooseModule.forRoot(databaseConfig().database.host),
