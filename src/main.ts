@@ -14,7 +14,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: process.env.CLIENT_PORT, // Origen permitido
+    origin: [process.env.CLIENT_PORT, process.env.AI_API], // Origen permitido
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true, // Permitir el envío de cookies y credenciales
   });
