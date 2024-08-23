@@ -31,6 +31,7 @@ export const getProductTechnicalDatasheet = (
     createdBy: User;
     updatedBy: User;
   },
+  opt?: number,
 ): TDocumentDefinitions => {
   const {
     _id,
@@ -45,8 +46,8 @@ export const getProductTechnicalDatasheet = (
     specifications,
   } = product;
   const imagePath =
-    images && images.length > 0 && images[0]
-      ? `./static/uploads/images/${_id}/${images[0].replace(/\S+\/\/\S+\/\w+\//, '')}`
+    images && images.length > 0 && images[opt]
+      ? `./static/uploads/images/${_id}/${images[opt].replace(/\S+\/\/\S+\/\w+\//, '')}`
       : './static/images/no-image.jpg';
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',

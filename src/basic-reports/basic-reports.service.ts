@@ -59,7 +59,7 @@ export class BasicReportsService {
     return doc;
   }
 
-  async productTechnicalDatasheet(id: string) {
+  async productTechnicalDatasheet(id: string, opt?: number) {
     try {
       const product = await this.productsService.findOne(id);
 
@@ -67,7 +67,7 @@ export class BasicReportsService {
         throw new NotFoundException(`Product with id ${id} not found`);
       }
 
-      const docDefinition = getProductTechnicalDatasheet(product);
+      const docDefinition = getProductTechnicalDatasheet(product, opt);
       const doc = this.printerService.createPdf(docDefinition);
       await this.productsService.assignDatasheet(
         id,
