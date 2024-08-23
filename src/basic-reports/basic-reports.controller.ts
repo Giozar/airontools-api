@@ -1,7 +1,6 @@
 import { Controller, Get, Param, Query, Res } from '@nestjs/common';
 import { BasicReportsService } from './basic-reports.service';
 import { Response } from 'express';
-import { parseIntValidate } from 'src/handlers/parseIntValidate.handle';
 
 @Controller('basic-reports')
 export class BasicReportsController {
@@ -47,10 +46,9 @@ export class BasicReportsController {
     @Param('id') id: string,
     @Query('opt') opt?: string,
   ) {
-    const parsedOpt = parseIntValidate(opt);
     const pdfDoc = await this.basicReportsService.productTechnicalDatasheet(
       id,
-      parsedOpt,
+      opt,
     );
 
     response.setHeader('Content-Type', 'application/pdf');
