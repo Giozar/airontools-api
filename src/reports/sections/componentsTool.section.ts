@@ -20,7 +20,7 @@ export function toolHeader(title: string): ContentStack {
             width: '50%',
             stack: [
               {
-                image: './static/logo/logo.png', // logo airontools
+                image: 'src/assets/images/logos/logo.png', // logo airontools
                 width: 100,
                 height: 50,
               },
@@ -144,7 +144,8 @@ export function toolImage(model: string, image: string) {
             [
               {
                 alignment: 'center',
-                image: image || './static/images/no-image.jpg',
+                image:
+                  image || 'src/assets/images/fallback-images/no-image.jpg',
                 width: 200,
                 height: 200,
                 padding: [0, 0, 0, 20],
