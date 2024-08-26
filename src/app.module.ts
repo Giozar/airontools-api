@@ -22,6 +22,8 @@ import mailerConfig from '@config/mailerConfig';
 import gptConfig from '@config/gptConfig';
 import { JoiValidationSchema } from '@config/joi.validation';
 import serverConfig from '@config/serverConfig';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { resolve } from 'path';
 
 @Module({
   imports: [
@@ -39,6 +41,10 @@ import serverConfig from '@config/serverConfig';
       isGlobal: true, // Para que todas la variables de entorno sean globales en la aplicación
     }),
     MongooseModule.forRoot(databaseConfig().database.host),
+    ServeStaticModule.forRoot({
+      rootPath: resolve(__dirname, 'assets'),
+      serveRoot: '/',
+    }),
     CategoriesModule,
     SubcategoriesModule,
     GptModule,

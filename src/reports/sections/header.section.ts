@@ -1,8 +1,9 @@
+import path from 'path';
 import { Content } from 'pdfmake/interfaces';
 import { DateFormatter } from 'src/helpers';
 
 const logo: Content = {
-  image: 'src/assets/images/logos/logo.png',
+  image: path.join(__dirname, '../../assets/images/logos/logo.png'),
   width: 100,
   height: 100,
   alignment: 'center',
@@ -17,7 +18,7 @@ interface HeaderOptions {
 }
 
 export const headerSection = (options: HeaderOptions): Content => {
-  const { title, subTitle, showLogo = true, showDate = true } = options;
+  const { title, showLogo = true, showDate = true } = options;
 
   const headerLogo: Content = showLogo ? logo : null;
   const headerDate: Content = showDate
