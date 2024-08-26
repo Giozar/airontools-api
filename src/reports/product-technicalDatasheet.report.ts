@@ -16,6 +16,7 @@ import {
   toolList,
 } from './sections/componentsTool.section';
 import { Types } from 'mongoose';
+import path from 'path';
 
 // Function to generate the product technical datasheet
 export const getProductTechnicalDatasheet = (
@@ -48,7 +49,7 @@ export const getProductTechnicalDatasheet = (
   const imagePath =
     images && images.length > 0 && images[opt]
       ? `./static/uploads/images/${_id}/${images[opt].replace(/\S+\/\/\S+\/\w+\//, '')}`
-      : './static/images/no-image.jpg';
+      : path.join(__dirname, '../assets/images/fallback-images/no-image.jpg');
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
     footer: toolFooter,

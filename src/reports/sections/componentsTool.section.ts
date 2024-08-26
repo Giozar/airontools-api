@@ -1,3 +1,4 @@
+import path from 'path';
 import { Content, ContentStack, StyleDictionary } from 'pdfmake/interfaces';
 import { Specification } from 'src/specifications/schemas/specification.schema';
 
@@ -20,7 +21,10 @@ export function toolHeader(title: string): ContentStack {
             width: '50%',
             stack: [
               {
-                image: 'src/assets/images/logos/logo.png', // logo airontools
+                image: path.join(
+                  __dirname,
+                  '../../assets/images/logos/logo.png',
+                ), // logo airontools
                 width: 100,
                 height: 50,
               },
@@ -145,7 +149,11 @@ export function toolImage(model: string, image: string) {
               {
                 alignment: 'center',
                 image:
-                  image || 'src/assets/images/fallback-images/no-image.jpg',
+                  image ||
+                  path.join(
+                    __dirname,
+                    '../../assets/images/fallback-images/no-image.jpg',
+                  ),
                 width: 200,
                 height: 200,
                 padding: [0, 0, 0, 20],
