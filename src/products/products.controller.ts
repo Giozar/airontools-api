@@ -105,4 +105,11 @@ export class ProductsController {
   ): Promise<number> {
     return this.productsService.countBySubcategoryId(subcategory);
   }
+  @Get('countBySpecification/:specification')
+  async countBySpecificationId(
+    @Param('specification') specificationId: string,
+  ): Promise<number> {
+    const specification = new Types.ObjectId(specificationId);
+    return this.productsService.countBySpecificationId(specification);
+  }
 }

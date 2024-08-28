@@ -194,4 +194,9 @@ export class ProductsService {
   async countBySubcategoryId(subcategory: Types.ObjectId): Promise<number> {
     return this.productModel.countDocuments({ subcategory });
   }
+  async countBySpecificationId(specification: Types.ObjectId): Promise<number> {
+    return this.productModel.countDocuments({
+      specifications: { $elemMatch: { specification } },
+    });
+  }
 }
