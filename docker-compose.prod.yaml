@@ -1,12 +1,12 @@
 services:
-  airontoolsapp:
+  airontools-admin-api:
     depends_on:
       - db
     build: 
       context: .
       dockerfile: Dockerfile
-    image: airontools-docker
-    container_name: airontoolsapp
+    image: airontools-admin-api
+    container_name: airontools-admin-api
     restart: always # reiniciar el contenedor si se detiene
     ports:
       - "${PORT}:${PORT}"
@@ -30,7 +30,7 @@ services:
 
   db:
     image: mongo:7.0
-    container_name: mongodb-airontools
+    container_name: mongodb-airontools-admin-api
     restart: always
     ports:
       - 27017:27017
