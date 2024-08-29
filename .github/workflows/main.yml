@@ -57,7 +57,7 @@ jobs:
         run: |
           docker run -d --name airontools-admin-api-test \
             --env SERVER_PORT=${{ secrets.SERVER_PORT }} \
-            --env DATABASE_HOST=mongodb://mongo:27017/${{ secrets.DATABASE_NAME }} \
+            --env DATABASE_HOST=mongodb://localhost:27017/${{ secrets.DATABASE_NAME }} \
             --env DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
             --env DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
             --env DATABASE_PORT=27017 \
@@ -68,8 +68,8 @@ jobs:
             --env AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             --env AWS_REGION=${{ secrets.AWS_REGION }} \
             --env AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
-            --link ${{ jobs.build.services.mongo.id }}:mongo \
-            ${{ secrets.DOCKERHUB_USERNAME }}/airontools-admin-api:latest
+            -p 4000:4000 \
+            desumex/airontools-admin-api:latest
 
       - name: Clean up Docker containers
         run: docker rm -f airontools-admin-api-test
