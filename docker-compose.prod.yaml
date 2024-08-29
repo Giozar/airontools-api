@@ -1,19 +1,17 @@
+version: '3.8'
+
 services:
   airontools-admin-api:
     depends_on:
       - db
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    image: airontools-admin-api
+    image: airontools-admin-api:latest  # Usaremos la imagen ya construida y subida
     container_name: airontools-admin-api
     restart: always # reiniciar el contenedor si se detiene
     ports:
       - "${PORT}:${PORT}"
-    # working_dir: /var/www/airontools
     environment:
       SERVER_PORT: ${SERVER_PORT}
-      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_HOST: mongodb://db:${DATABASE_PORT}/${DATABASE_NAME}  # Apuntando al servicio 'db'
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_PORT: ${DATABASE_PORT}
@@ -24,9 +22,9 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
       AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
-
-    # volumes:
-    #   - ./:/var/www/airontools
+      AI_API: ${AI_API}  # Agregado: URL para la API de IA
+      OPENAI_API_KEY: ${OPENAI_API_KEY}  # Agregado: Clave API de OpenAI
+      PORT: ${PORT}  # Agregado: El puerto de la aplicación
 
   db:
     image: mongo:7.0
@@ -35,6 +33,6 @@ services:
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_DATABASE: airontools
+      MONGO_INITDB_DATABASE: ${DATABASE_NAME}  # Nombre de la base de datos que se creará al iniciar MongoDB
     volumes:
-      - ./mongo:/data/db
+      - ./mongo:/data/db  # Persistencia de datos
