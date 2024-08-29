@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Test, and Push Docker Image
 
 on:
   push:
@@ -8,6 +8,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="echo 'db.runCommand({ connectionStatus: 1 }).ok'" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -28,17 +39,28 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/airontools-admin-api:latest
+          build-args: |
+            SERVER_PORT=${{ secrets.SERVER_PORT }}
+            DATABASE_HOST=mongodb://mongo:27017/${{ secrets.DATABASE_NAME }}
+            DATABASE_NAME=${{ secrets.DATABASE_NAME }}
+            DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+            DATABASE_PORT=27017
+            HOST_API=${{ secrets.HOST_API }}
+            CLIENT_PORT=${{ secrets.CLIENT_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
 
-      - name: Run Docker Containers
+      - name: Test Docker Image with MongoDB
         run: |
-          docker run -d \
-            --name airontools-admin-api \
-            --env PORT=${{ secrets.PORT }} \
+          docker run -d --name airontools-admin-api-test \
             --env SERVER_PORT=${{ secrets.SERVER_PORT }} \
-            --env DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
+            --env DATABASE_HOST=mongodb://mongo:27017/${{ secrets.DATABASE_NAME }} \
             --env DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
             --env DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
-            --env DATABASE_PORT=${{ secrets.DATABASE_PORT }} \
+            --env DATABASE_PORT=27017 \
             --env HOST_API=${{ secrets.HOST_API }} \
             --env CLIENT_PORT=${{ secrets.CLIENT_PORT }} \
             --env JWT_SECRET=${{ secrets.JWT_SECRET }} \
@@ -46,5 +68,11 @@ jobs:
             --env AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             --env AWS_REGION=${{ secrets.AWS_REGION }} \
             --env AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
-            -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
+            --link ${{ jobs.build.services.mongo.id }}:mongo \
             ${{ secrets.DOCKERHUB_USERNAME }}/airontools-admin-api:latest
+
+      - name: Clean up Docker containers
+        run: docker rm -f airontools-admin-api-test
+
+      - name: Clean up
+        run: docker builder prune --force
