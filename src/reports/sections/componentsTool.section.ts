@@ -1,5 +1,6 @@
 import path from 'path';
 import { Content, ContentStack, StyleDictionary } from 'pdfmake/interfaces';
+import { DateFormatter } from 'src/helpers';
 import { Specification } from 'src/specifications/schemas/specification.schema';
 
 export function renderList(items: string[]): Content[] {
@@ -240,6 +241,16 @@ export const toolFooter: Content[] = [
             bold: true,
             fillColor: '#1A87C0',
             fontSize: 10,
+          },
+        ],
+        [
+          {
+            text: DateFormatter.getDDMMMMYYYY(new Date()),
+            alignment: 'right',
+            color: '#000000',
+            bold: true,
+            fontSize: 10,
+            margin: [0, 0, 20, 0],
           },
         ],
       ],
