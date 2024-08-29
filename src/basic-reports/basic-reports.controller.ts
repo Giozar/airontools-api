@@ -52,7 +52,7 @@ export class BasicReportsController {
     );
 
     response.setHeader('Content-Type', 'application/pdf');
-    pdfDoc.info.Title = 'Employment-Letter';
+    pdfDoc.info.Title = 'Airontools-Herramientas-Industriales';
     pdfDoc.pipe(response);
     pdfDoc.end();
   }
