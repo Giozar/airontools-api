@@ -16,6 +16,7 @@ import {
   Subcategory,
   SubcategorySchema,
 } from 'src/subcategories/schemas/subcategory.schema';
+import { Product, ProductSchema } from 'src/products/schemas/product.schema';
 
 @Module({
   controllers: [SpecificationsController],
@@ -41,6 +42,10 @@ import {
       {
         name: Subcategory.name,
         schema: SubcategorySchema,
+      },
+      {
+        name: Product.name,
+        schema: ProductSchema,
       },
     ]),
   ],
