@@ -5,6 +5,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Specification } from './schemas/specification.schema';
 import { Model, Types } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
+import { removeProductSpecification } from './handlers/removeProductSpecification';
+import { Product } from 'src/products/schemas/product.schema';
 
 @Injectable()
 export class SpecificationsService {
@@ -16,6 +18,8 @@ export class SpecificationsService {
   constructor(
     @InjectModel(Specification.name)
     private specificationModel: Model<Specification>,
+    @InjectModel(Product.name)
+    private productModel: Model<Product>,
   ) {}
   async create(createSpecificationDto: CreateSpecificationDto) {
     try {
@@ -102,6 +106,8 @@ export class SpecificationsService {
         ])
         .exec();
       ifNotFound({ entity: specificationDeleted, id });
+      removeProductSpecification(id, this.productModel);
+      console.log('Se eliminó con éxito');
       return specificationDeleted;
     } catch (error) {
       handleDBErrors(error);
