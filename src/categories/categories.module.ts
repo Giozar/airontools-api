@@ -15,6 +15,9 @@ import {
 } from 'src/specifications/schemas/specification.schema';
 
 @Module({
+  providers: [CategoriesService],
+  controllers: [CategoriesController],
+  exports: [CategoriesService],
   imports: [
     MongooseModule.forFeature([
       {
@@ -39,7 +42,5 @@ import {
       },
     ]),
   ],
-  providers: [CategoriesService],
-  controllers: [CategoriesController],
 })
 export class CategoriesModule {}
