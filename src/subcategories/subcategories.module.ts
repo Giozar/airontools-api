@@ -14,6 +14,8 @@ import {
   Specification,
   SpecificationSchema,
 } from 'src/specifications/schemas/specification.schema';
+import { SpecificationsModule } from 'src/specifications/specifications.module';
+import { ProductsModule } from 'src/products/products.module';
 
 @Module({
   providers: [SubcategoriesService],
@@ -42,6 +44,8 @@ import {
         schema: SpecificationSchema,
       },
     ]),
+    SpecificationsModule,
+    ProductsModule,
   ],
 })
 export class SubcategoriesModule {}

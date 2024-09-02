@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import { Model, Types } from 'mongoose';
-import { handleDBErrors, ifNotFound } from 'src/handlers';
+import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 import {
   CategoryQueriesDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from './dto';
+import { ProductsService } from 'src/products/products.service';
+import { SpecificationsService } from 'src/specifications/specifications.service';
+import { SubcategoriesService } from 'src/subcategories/subcategories.service';
 @Injectable()
 export class CategoriesService {
   private FAMILY = 'family';
@@ -15,6 +18,9 @@ export class CategoriesService {
   private UPDATEDBY = 'updatedBy';
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<Category>,
+    private readonly subcategoriesService: SubcategoriesService,
+    private readonly specificationsService: SpecificationsService,
+    private readonly productsService: ProductsService,
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
     try {
@@ -74,6 +80,10 @@ export class CategoriesService {
         .populate([this.FAMILY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       ifNotFound({ entity: categoryDeleted, id });
+      const categoryId = validateId(id);
+      this.subcategoriesService.removeByCategoryId(categoryId);
+      this.specificationsService.removeByCategoryId(categoryId);
+      this.productsService.removeByCategoryId(categoryId);
       return categoryDeleted;
     } catch (error) {
       handleDBErrors(error);
