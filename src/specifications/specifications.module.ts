@@ -21,6 +21,7 @@ import { Product, ProductSchema } from 'src/products/schemas/product.schema';
 @Module({
   controllers: [SpecificationsController],
   providers: [SpecificationsService],
+  exports: [SpecificationsService],
   imports: [
     MongooseModule.forFeature([
       {

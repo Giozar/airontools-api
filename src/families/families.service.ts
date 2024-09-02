@@ -3,11 +3,12 @@ import { CreateFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Family } from './schemas/family.schema';
-import mongoose, { Model } from 'mongoose';
-import { handleDBErrors, ifNotFound } from 'src/handlers';
-import { Category } from 'src/categories/schemas/category.schema';
-import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
-import { Specification } from 'src/specifications/schemas/specification.schema';
+import { Model } from 'mongoose';
+import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
+import { CategoriesService } from 'src/categories/categories.service';
+import { SubcategoriesService } from 'src/subcategories/subcategories.service';
+import { SpecificationsService } from 'src/specifications/specifications.service';
+import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class FamiliesService {
@@ -15,10 +16,10 @@ export class FamiliesService {
   private UPDATEDBY = 'updatedBy';
   constructor(
     @InjectModel(Family.name) private familyModel: Model<Family>,
-    @InjectModel(Category.name) private categoryModel: Model<Category>,
-    @InjectModel(Subcategory.name) private subcategoryModel: Model<Subcategory>,
-    @InjectModel(Specification.name)
-    private specificationModel: Model<Specification>,
+    private readonly categoriesService: CategoriesService,
+    private readonly subcategoriesService: SubcategoriesService,
+    private readonly specificationsService: SpecificationsService,
+    private readonly productsService: ProductsService,
   ) {}
   async create(createFamilyDto: CreateFamilyDto) {
     try {
@@ -66,48 +67,21 @@ export class FamiliesService {
       handleDBErrors(error);
     }
   }
-  /*Se repite como tres veces xd */
+
   async remove(id: string) {
     try {
       const familyDeleted = await this.familyModel
         .findByIdAndDelete(id)
         .populate([this.CREATEDBY, this.UPDATEDBY]);
-      const categories = await this.categoryModel.find({ family: id });
-      const categoryIds = categories.map((category) => category._id.toString());
-      await this.categoryModel
-        .deleteMany({
-          _id: {
-            $in: categoryIds.map((id) => new mongoose.Types.ObjectId(id)),
-          },
-        })
-        .exec();
-      const subcategories = await this.subcategoryModel.find({
-        family: id,
-      });
-      const subcategoryIds = subcategories.map((subcategory) =>
-        subcategory._id.toString(),
-      );
-      await this.subcategoryModel
-        .deleteMany({
-          _id: {
-            $in: subcategoryIds.map((id) => new mongoose.Types.ObjectId(id)),
-          },
-        })
-        .exec();
-      const specifications = await this.specificationModel.find({
-        family: id,
-      });
-      const specificationsIds = specifications.map((specs) =>
-        specs._id.toString(),
-      );
-      await this.specificationModel
-        .deleteMany({
-          _id: {
-            $in: specificationsIds.map((id) => new mongoose.Types.ObjectId(id)),
-          },
-        })
-        .exec();
       ifNotFound({ entity: familyDeleted, id });
+
+      // Se ejecuta eliminación en cadena
+      const familyId = validateId(id);
+      this.categoriesService.removeByFamilyId(familyId);
+      this.subcategoriesService.removeByFamilyId(familyId);
+      this.specificationsService.removeByFamilyId(familyId);
+      this.productsService.removeByFamilyId(familyId);
+
       return familyDeleted;
     } catch (error) {
       handleDBErrors(error);

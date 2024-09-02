@@ -13,8 +13,14 @@ import {
   Specification,
   SpecificationSchema,
 } from 'src/specifications/schemas/specification.schema';
+import { SubcategoriesModule } from 'src/subcategories/subcategories.module';
+import { SpecificationsModule } from 'src/specifications/specifications.module';
+import { ProductsModule } from 'src/products/products.module';
 
 @Module({
+  providers: [CategoriesService],
+  controllers: [CategoriesController],
+  exports: [CategoriesService],
   imports: [
     MongooseModule.forFeature([
       {
@@ -38,8 +44,9 @@ import {
         schema: SpecificationSchema,
       },
     ]),
+    SubcategoriesModule,
+    SpecificationsModule,
+    ProductsModule,
   ],
-  providers: [CategoriesService],
-  controllers: [CategoriesController],
 })
 export class CategoriesModule {}

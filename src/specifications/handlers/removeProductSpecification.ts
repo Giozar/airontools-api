@@ -1,7 +1,8 @@
-import { NotFoundException } from '@nestjs/common';
+// import { NotFoundException } from '@nestjs/common';
+import { Types } from 'mongoose';
 
 export async function removeProductSpecification(
-  specificationId: string,
+  specificationId: string | Types.ObjectId,
   productModel,
 ) {
   // Step 1: Find all products that contain the specification to be deleted
@@ -15,11 +16,11 @@ export async function removeProductSpecification(
   //     JSON.stringify(products, null, 2),
   //   );
 
-  if (products.length === 0) {
-    throw new NotFoundException(
-      `No products found with the specification ID ${specificationId}`,
-    );
-  }
+  // if (products.length === 0) {
+  //   throw new NotFoundException(
+  //     `No products found with the specification ID ${specificationId}`,
+  //   );
+  // }
 
   // Step 2: Update each product by removing the specification and filtering out those with empty values
   await Promise.all(

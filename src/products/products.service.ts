@@ -9,7 +9,7 @@ import { Category } from 'src/categories/schemas/category.schema';
 import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
 import { User } from 'src/auth/schemas/user.schema';
 import { Specification } from 'src/specifications/schemas/specification.schema';
-import { validateId } from 'src/handlers';
+import { handleDBErrors, validateId } from 'src/handlers';
 
 @Injectable()
 export class ProductsService {
@@ -61,20 +61,6 @@ export class ProductsService {
       { technicalDatasheet: dataSheet },
       { new: true },
     );
-  }
-
-  async remove(id: string) {
-    return this.productModel
-      .findByIdAndDelete(id)
-      .populate([
-        this.FAMILY,
-        this.CATEGORY,
-        this.SUBCATEGORY,
-        this.CREATEDBY,
-        this.UPDATEDBY,
-        this.SPECIFICATIONS,
-      ])
-      .exec();
   }
 
   // Modificar la firma del método findOne para que refleje el tipo de retorno esperado
@@ -184,6 +170,57 @@ export class ProductsService {
     }
 
     return productSearchResults;
+  }
+
+  async remove(id: string) {
+    return this.productModel
+      .findByIdAndDelete(id)
+      .populate([
+        this.FAMILY,
+        this.CATEGORY,
+        this.SUBCATEGORY,
+        this.CREATEDBY,
+        this.UPDATEDBY,
+        this.SPECIFICATIONS,
+      ])
+      .exec();
+  }
+
+  async removeByFamilyId(id: Types.ObjectId) {
+    try {
+      const productDeleted = await this.productModel
+        .find({ family: id })
+        .deleteMany({ family: id })
+        .exec();
+      return productDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async removeByCategoryId(id: Types.ObjectId) {
+    try {
+      const productDeleted = await this.productModel
+        .find({ category: id })
+        .deleteMany({ category: id })
+        .exec();
+      return productDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async removeBySubcategoryId(id: Types.ObjectId) {
+    try {
+      const productDeleted = await this.productModel
+        .find({ subcategory: id })
+        .deleteMany({ subcategory: id })
+        .exec();
+      //ifNotFound({ entity: productDeleted, id });
+      return productDeleted;
+    } catch (error) {
+      handleDBErrors(error);
+    }
   }
   async countByFamilyId(family: Types.ObjectId): Promise<number> {
     return this.productModel.countDocuments({ family });

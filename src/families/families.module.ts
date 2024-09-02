@@ -16,6 +16,10 @@ import {
   Specification,
   SpecificationSchema,
 } from 'src/specifications/schemas/specification.schema';
+import { CategoriesModule } from 'src/categories/categories.module';
+import { SubcategoriesModule } from 'src/subcategories/subcategories.module';
+import { SpecificationsModule } from 'src/specifications/specifications.module';
+import { ProductsModule } from 'src/products/products.module';
 
 @Module({
   controllers: [FamiliesController],
@@ -43,6 +47,11 @@ import {
         schema: SpecificationSchema,
       },
     ]),
+    CategoriesModule,
+    SubcategoriesModule,
+    SpecificationsModule,
+    ProductsModule,
   ],
+  exports: [FamiliesService],
 })
 export class FamiliesModule {}

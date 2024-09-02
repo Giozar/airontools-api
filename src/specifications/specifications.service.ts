@@ -120,6 +120,11 @@ export class SpecificationsService {
         .find({ family: id })
         .deleteMany({ family: id })
         .exec();
+      // ifNotFound({
+      //   entity: specificationDeleted,
+      //   id: specificationDeleted._id,
+      // });
+      removeProductSpecification(specificationDeleted._id, this.productModel);
       return specificationDeleted;
     } catch (error) {
       handleDBErrors(error);
@@ -132,6 +137,11 @@ export class SpecificationsService {
         .find({ category: id })
         .deleteMany({ category: id })
         .exec();
+      // ifNotFound({
+      //   entity: specificationDeleted,
+      //   id: specificationDeleted._id,
+      // });
+      removeProductSpecification(specificationDeleted._id, this.productModel);
       return specificationDeleted;
     } catch (error) {
       handleDBErrors(error);
@@ -144,7 +154,11 @@ export class SpecificationsService {
         .find({ subcategory: id })
         .deleteMany({ subcategory: id })
         .exec();
-      //ifNotFound({ entity: specificationDeleted, id });
+      // ifNotFound({
+      //   entity: specificationDeleted,
+      //   id: specificationDeleted._id,
+      // });
+      removeProductSpecification(specificationDeleted._id, this.productModel);
       return specificationDeleted;
     } catch (error) {
       handleDBErrors(error);
