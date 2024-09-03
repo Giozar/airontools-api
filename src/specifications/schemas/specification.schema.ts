@@ -13,22 +13,24 @@ export class Specification {
   @Prop({})
   unit: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
-  family: MongooseSchema.Types.ObjectId;
+  @Prop({
+    type: [Array<MongooseSchema.Types.ObjectId>],
+    ref: 'Family',
+    required: true,
+  })
+  families: MongooseSchema.Types.ObjectId[];
 
   @Prop({
-    type: MongooseSchema.Types.ObjectId,
+    type: [Array<MongooseSchema.Types.ObjectId>],
     ref: 'Category',
-    required: true,
   })
-  category: MongooseSchema.Types.ObjectId;
+  categories: MongooseSchema.Types.ObjectId[];
 
   @Prop({
-    type: MongooseSchema.Types.ObjectId,
+    type: [Array<MongooseSchema.Types.ObjectId>],
     ref: 'Subcategory',
-    required: true,
   })
-  subcategory: MongooseSchema.Types.ObjectId;
+  subcategories: MongooseSchema.Types.ObjectId[];
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   createdBy: MongooseSchema.Types.ObjectId;

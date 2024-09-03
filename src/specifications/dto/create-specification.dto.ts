@@ -1,5 +1,7 @@
 import {
+  ArrayNotEmpty,
   IsAlphanumeric,
+  IsArray,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
@@ -24,20 +26,20 @@ export class CreateSpecificationDto {
   @IsOptional()
   units: string;
 
-  @IsString()
-  @IsMongoId()
-  @IsNotEmpty()
-  family: Types.ObjectId;
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsMongoId({ each: true })
+  families: Types.ObjectId[];
 
-  @IsString()
-  @IsMongoId()
-  @IsNotEmpty()
-  category: Types.ObjectId;
+  @IsArray()
+  @IsMongoId({ each: true })
+  @IsOptional()
+  categories: Types.ObjectId[];
 
-  @IsString()
-  @IsMongoId()
-  @IsNotEmpty()
-  subcategory: Types.ObjectId;
+  @IsArray()
+  @IsMongoId({ each: true })
+  @IsOptional()
+  subcategories: Types.ObjectId[];
 
   @IsString()
   @IsMongoId()
