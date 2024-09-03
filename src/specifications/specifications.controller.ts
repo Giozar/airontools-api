@@ -10,7 +10,6 @@ import {
 import { SpecificationsService } from './specifications.service';
 import { CreateSpecificationDto } from './dto/create-specification.dto';
 import { UpdateSpecificationDto } from './dto/update-specification.dto';
-import { Types } from 'mongoose';
 
 @Controller('specifications')
 export class SpecificationsController {
@@ -45,38 +44,36 @@ export class SpecificationsController {
   }
 
   @Delete('family/:id')
-  removeByFamilyId(@Param('id') id: Types.ObjectId) {
+  removeByFamilyId(@Param('id') id: string) {
     return this.specificationsService.removeByFamilyId(id);
   }
 
   @Delete('category/:id')
-  removeByCategoryId(@Param('id') id: Types.ObjectId) {
+  removeByCategoryId(@Param('id') id: string) {
     return this.specificationsService.removeByCategoryId(id);
   }
   @Delete('subcategory/:id')
-  removeBySubcategoryId(@Param('id') id: Types.ObjectId) {
+  removeBySubcategoryId(@Param('id') id: string) {
     return this.specificationsService.removeBySubcategoryId(id);
   }
   @Get('category/:category')
-  findAllByCategoryId(@Param('category') category: Types.ObjectId) {
+  findAllByCategoryId(@Param('category') category: string) {
     return this.specificationsService.findAllByCategoryId(category);
   }
   @Get('count/:family')
-  async countByFamilyId(
-    @Param('family') family: Types.ObjectId,
-  ): Promise<number> {
+  async countByFamilyId(@Param('family') family: string): Promise<number> {
     return this.specificationsService.countByFamilyId(family);
   }
   //Cambiar por queries TODO:
   @Get('countByCategory/:category')
   async countByCategoryId(
-    @Param('category') category: Types.ObjectId,
+    @Param('category') category: string,
   ): Promise<number> {
     return this.specificationsService.countByCategoryId(category);
   }
   @Get('countBySubcategory/:subcategory')
   async countBySubcategoryId(
-    @Param('subcategory') subcategory: Types.ObjectId,
+    @Param('subcategory') subcategory: string,
   ): Promise<number> {
     return this.specificationsService.countBySubcategoryId(subcategory);
   }

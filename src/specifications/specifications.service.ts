@@ -3,7 +3,7 @@ import { CreateSpecificationDto } from './dto/create-specification.dto';
 import { UpdateSpecificationDto } from './dto/update-specification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Specification } from './schemas/specification.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 import { removeProductSpecification } from './handlers/removeProductSpecification';
 import { Product } from 'src/products/schemas/product.schema';
@@ -114,7 +114,7 @@ export class SpecificationsService {
     }
   }
 
-  async removeByFamilyId(id: Types.ObjectId) {
+  async removeByFamilyId(id: string) {
     try {
       //Obtiene todas las especificaciones que tenga el familyId
       const specifications = await this.specificationModel.find({
@@ -147,7 +147,7 @@ export class SpecificationsService {
     }
   }
 
-  async removeByCategoryId(id: Types.ObjectId) {
+  async removeByCategoryId(id: string) {
     try {
       const specificationDeleted = await this.specificationModel
         .find({ categories: id })
@@ -164,7 +164,7 @@ export class SpecificationsService {
     }
   }
 
-  async removeBySubcategoryId(id: Types.ObjectId) {
+  async removeBySubcategoryId(id: string) {
     try {
       const specificationDeleted = await this.specificationModel
         .find({ subcategories: id })
@@ -180,7 +180,7 @@ export class SpecificationsService {
       handleDBErrors(error);
     }
   }
-  async findAllByCategoryId(categories: Types.ObjectId) {
+  async findAllByCategoryId(categories: string) {
     try {
       validateId(categories);
       const specifications = await this.specificationModel
@@ -191,13 +191,13 @@ export class SpecificationsService {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(families: Types.ObjectId): Promise<number> {
+  async countByFamilyId(families: string): Promise<number> {
     return this.specificationModel.countDocuments({ families });
   }
-  async countByCategoryId(categories: Types.ObjectId): Promise<number> {
+  async countByCategoryId(categories: string): Promise<number> {
     return this.specificationModel.countDocuments({ categories });
   }
-  async countBySubcategoryId(subcategories: Types.ObjectId): Promise<number> {
+  async countBySubcategoryId(subcategories: string): Promise<number> {
     return this.specificationModel.countDocuments({ subcategories });
   }
 }

@@ -76,11 +76,11 @@ export class FamiliesService {
       ifNotFound({ entity: familyDeleted, id });
 
       // Se ejecuta eliminación en cadena
-      const familyId = validateId(id);
-      this.categoriesService.removeByFamilyId(familyId);
-      this.subcategoriesService.removeByFamilyId(familyId);
-      this.specificationsService.removeByFamilyId(familyId);
-      this.productsService.removeByFamilyId(familyId);
+      validateId(id);
+      this.categoriesService.removeByFamilyId(id);
+      this.subcategoriesService.removeByFamilyId(id);
+      this.specificationsService.removeByFamilyId(id);
+      this.productsService.removeByFamilyId(id);
 
       return familyDeleted;
     } catch (error) {

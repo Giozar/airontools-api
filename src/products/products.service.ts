@@ -186,7 +186,7 @@ export class ProductsService {
       .exec();
   }
 
-  async removeByFamilyId(id: Types.ObjectId) {
+  async removeByFamilyId(id: string) {
     try {
       const productDeleted = await this.productModel
         .find({ family: id })
@@ -198,7 +198,7 @@ export class ProductsService {
     }
   }
 
-  async removeByCategoryId(id: Types.ObjectId) {
+  async removeByCategoryId(id: string) {
     try {
       const productDeleted = await this.productModel
         .find({ category: id })
@@ -210,7 +210,7 @@ export class ProductsService {
     }
   }
 
-  async removeBySubcategoryId(id: Types.ObjectId) {
+  async removeBySubcategoryId(id: string) {
     try {
       const productDeleted = await this.productModel
         .find({ subcategory: id })
@@ -222,16 +222,16 @@ export class ProductsService {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(family: Types.ObjectId): Promise<number> {
+  async countByFamilyId(family: string): Promise<number> {
     return this.productModel.countDocuments({ family });
   }
-  async countByCategoryId(category: Types.ObjectId): Promise<number> {
+  async countByCategoryId(category: string): Promise<number> {
     return this.productModel.countDocuments({ category });
   }
-  async countBySubcategoryId(subcategory: Types.ObjectId): Promise<number> {
+  async countBySubcategoryId(subcategory: string): Promise<number> {
     return this.productModel.countDocuments({ subcategory });
   }
-  async countBySpecificationId(specification: Types.ObjectId): Promise<number> {
+  async countBySpecificationId(specification: string): Promise<number> {
     return this.productModel.countDocuments({
       specifications: { $elemMatch: { specification } },
     });
