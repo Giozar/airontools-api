@@ -149,16 +149,32 @@ export class SpecificationsService {
 
   async removeByCategoryId(id: string) {
     try {
-      const specificationDeleted = await this.specificationModel
-        .find({ categories: id })
-        .deleteMany({ categories: id })
-        .exec();
-      // ifNotFound({
-      //   entity: specificationDeleted,
-      //   id: specificationDeleted._id,
-      // });
-      removeProductSpecification(specificationDeleted._id, this.productModel);
-      return specificationDeleted;
+      // Obtiene todas las especificaciones que tengan el categoryId
+      const specifications = await this.specificationModel.find({
+        categories: id,
+      });
+
+      for (const specification of specifications) {
+        // Eliminar el ID de categoría del arreglo
+        specification.categories = specification.categories.filter(
+          (categoryId) => categoryId.toString() !== id.toString(),
+        );
+
+        // Verificar si el arreglo de categorías quedó vacío y eliminar la especificación si es necesario
+        if (
+          specification.families.length === 0 &&
+          specification.categories.length === 0 &&
+          specification.subcategories.length === 0
+        ) {
+          await this.remove(specification._id.toString());
+          // Llama a removeProductSpecification cuando se elimina una especificación completa
+          removeProductSpecification(specification._id, this.productModel);
+        } else {
+          await specification.save();
+        }
+      }
+
+      return { deleted: specifications.length };
     } catch (error) {
       handleDBErrors(error);
     }
@@ -166,20 +182,37 @@ export class SpecificationsService {
 
   async removeBySubcategoryId(id: string) {
     try {
-      const specificationDeleted = await this.specificationModel
-        .find({ subcategories: id })
-        .deleteMany({ subcategories: id })
-        .exec();
-      // ifNotFound({
-      //   entity: specificationDeleted,
-      //   id: specificationDeleted._id,
-      // });
-      removeProductSpecification(specificationDeleted._id, this.productModel);
-      return specificationDeleted;
+      // Obtiene todas las especificaciones que tengan el subcategoryId
+      const specifications = await this.specificationModel.find({
+        subcategories: id,
+      });
+
+      for (const specification of specifications) {
+        // Eliminar el ID de subcategoría del arreglo
+        specification.subcategories = specification.subcategories.filter(
+          (subcategoryId) => subcategoryId.toString() !== id.toString(),
+        );
+
+        // Verificar si el arreglo de subcategorías quedó vacío y eliminar la especificación si es necesario
+        if (
+          specification.families.length === 0 &&
+          specification.categories.length === 0 &&
+          specification.subcategories.length === 0
+        ) {
+          await this.remove(specification._id.toString());
+          // Llama a removeProductSpecification cuando se elimina una especificación completa
+          removeProductSpecification(specification._id, this.productModel);
+        } else {
+          await specification.save();
+        }
+      }
+
+      return { deleted: specifications.length };
     } catch (error) {
       handleDBErrors(error);
     }
   }
+
   async findAllByCategoryId(categories: string) {
     try {
       validateId(categories);
