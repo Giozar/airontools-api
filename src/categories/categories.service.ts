@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 import {
   CategoryQueriesDto,
@@ -80,17 +80,17 @@ export class CategoriesService {
         .populate([this.FAMILY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       ifNotFound({ entity: categoryDeleted, id });
-      const categoryId = validateId(id);
-      this.subcategoriesService.removeByCategoryId(categoryId);
-      this.specificationsService.removeByCategoryId(categoryId);
-      this.productsService.removeByCategoryId(categoryId);
+      validateId(id);
+      this.subcategoriesService.removeByCategoryId(id);
+      this.specificationsService.removeByCategoryId(id);
+      this.productsService.removeByCategoryId(id);
       return categoryDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
   }
 
-  async removeByFamilyId(id: Types.ObjectId) {
+  async removeByFamilyId(id: string) {
     try {
       const categoryDeleted = await this.categoryModel
         .find({ family: id })
@@ -102,7 +102,7 @@ export class CategoriesService {
     }
   }
 
-  async countByFamilyId(family: Types.ObjectId): Promise<number> {
+  async countByFamilyId(family: string): Promise<number> {
     return this.categoryModel.countDocuments({ family });
   }
 }

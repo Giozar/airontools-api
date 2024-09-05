@@ -14,7 +14,6 @@ import {
   SubcategoryQueriesDto,
   UpdateSubcategoryDto,
 } from './dto';
-import { Types } from 'mongoose';
 
 @Controller('subcategories')
 export class SubcategoriesController {
@@ -49,24 +48,22 @@ export class SubcategoriesController {
   }
 
   @Delete('family/:id')
-  removeByFamilyId(@Param('id') id: Types.ObjectId) {
+  removeByFamilyId(@Param('id') id: string) {
     return this.subcategoriesService.removeByFamilyId(id);
   }
 
   @Delete('category/:id')
-  removeByCategoryId(@Param('id') id: Types.ObjectId) {
+  removeByCategoryId(@Param('id') id: string) {
     return this.subcategoriesService.removeByCategoryId(id);
   }
   //Arreglar a queries
   @Get('count/:family')
-  async countByFamilyId(
-    @Param('family') family: Types.ObjectId,
-  ): Promise<number> {
+  async countByFamilyId(@Param('family') family: string): Promise<number> {
     return this.subcategoriesService.countByFamilyId(family);
   }
   @Get('countByCategory/:category')
   async countByCategoryId(
-    @Param('category') category: Types.ObjectId,
+    @Param('category') category: string,
   ): Promise<number> {
     return this.subcategoriesService.countByCategoryId(category);
   }

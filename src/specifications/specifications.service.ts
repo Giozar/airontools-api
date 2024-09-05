@@ -3,16 +3,16 @@ import { CreateSpecificationDto } from './dto/create-specification.dto';
 import { UpdateSpecificationDto } from './dto/update-specification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Specification } from './schemas/specification.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 import { removeProductSpecification } from './handlers/removeProductSpecification';
 import { Product } from 'src/products/schemas/product.schema';
 
 @Injectable()
 export class SpecificationsService {
-  private FAMILY = 'family';
-  private CATEGORY = 'category';
-  private SUBCATEGORY = 'subcategory';
+  private FAMILIES = 'families';
+  private CATEGORIES = 'categories';
+  private SUBCATEGORIES = 'subcategories';
   private CREATEDBY = 'createdBy';
   private UPDATEDBY = 'updatedBy';
   constructor(
@@ -30,9 +30,9 @@ export class SpecificationsService {
       const specification = this.specificationModel
         .findById(createdSpecification._id)
         .populate([
-          this.FAMILY,
-          this.CATEGORY,
-          this.SUBCATEGORY,
+          this.FAMILIES,
+          this.CATEGORIES,
+          this.SUBCATEGORIES,
           this.CREATEDBY,
           this.UPDATEDBY,
         ])
@@ -47,9 +47,9 @@ export class SpecificationsService {
     return await this.specificationModel
       .find()
       .populate([
-        this.FAMILY,
-        this.CATEGORY,
-        this.SUBCATEGORY,
+        this.FAMILIES,
+        this.CATEGORIES,
+        this.SUBCATEGORIES,
         this.CREATEDBY,
         this.UPDATEDBY,
       ])
@@ -61,9 +61,9 @@ export class SpecificationsService {
       const specificationSearched = await this.specificationModel
         .findById(id)
         .populate([
-          this.FAMILY,
-          this.CATEGORY,
-          this.SUBCATEGORY,
+          this.FAMILIES,
+          this.CATEGORIES,
+          this.SUBCATEGORIES,
           this.CREATEDBY,
           this.UPDATEDBY,
         ])
@@ -79,9 +79,9 @@ export class SpecificationsService {
       const specificationUpdated = await this.specificationModel
         .findByIdAndUpdate(id, updateSpecificationDto)
         .populate([
-          this.FAMILY,
-          this.CATEGORY,
-          this.SUBCATEGORY,
+          this.FAMILIES,
+          this.CATEGORIES,
+          this.SUBCATEGORIES,
           this.CREATEDBY,
           this.UPDATEDBY,
         ])
@@ -98,90 +98,139 @@ export class SpecificationsService {
       const specificationDeleted = await this.specificationModel
         .findByIdAndDelete(id)
         .populate([
-          this.FAMILY,
-          this.CATEGORY,
-          this.SUBCATEGORY,
+          this.FAMILIES,
+          this.CATEGORIES,
+          this.SUBCATEGORIES,
           this.CREATEDBY,
           this.UPDATEDBY,
         ])
         .exec();
       ifNotFound({ entity: specificationDeleted, id });
       removeProductSpecification(id, this.productModel);
-      console.log('Se eliminó con éxito');
+      console.log('Se eliminó con éxito la especificación');
       return specificationDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
   }
 
-  async removeByFamilyId(id: Types.ObjectId) {
+  async removeByFamilyId(id: string) {
     try {
-      const specificationDeleted = await this.specificationModel
-        .find({ family: id })
-        .deleteMany({ family: id })
-        .exec();
-      // ifNotFound({
-      //   entity: specificationDeleted,
-      //   id: specificationDeleted._id,
-      // });
-      removeProductSpecification(specificationDeleted._id, this.productModel);
-      return specificationDeleted;
+      //Obtiene todas las especificaciones que tenga el familyId
+      const specifications = await this.specificationModel.find({
+        families: id,
+      });
+
+      for (const specification of specifications) {
+        // Eliminar el ID de familia del arreglo
+        specification.families = specification.families.filter(
+          (familyId) => familyId.toString() !== id.toString(),
+        );
+
+        // Verificar si el arreglo de familias quedó vacío y eliminar la especificación si es necesario
+        if (
+          specification.families.length === 0 &&
+          specification.categories.length === 0 &&
+          specification.subcategories.length === 0
+        ) {
+          await this.remove(specification._id.toString());
+          // Llama a removeProductSpecification cuando se elimina una especificación completa
+          removeProductSpecification(specification._id, this.productModel);
+        } else {
+          await specification.save();
+        }
+      }
+
+      return { deleted: specifications.length };
     } catch (error) {
       handleDBErrors(error);
     }
   }
 
-  async removeByCategoryId(id: Types.ObjectId) {
+  async removeByCategoryId(id: string) {
     try {
-      const specificationDeleted = await this.specificationModel
-        .find({ category: id })
-        .deleteMany({ category: id })
-        .exec();
-      // ifNotFound({
-      //   entity: specificationDeleted,
-      //   id: specificationDeleted._id,
-      // });
-      removeProductSpecification(specificationDeleted._id, this.productModel);
-      return specificationDeleted;
+      // Obtiene todas las especificaciones que tengan el categoryId
+      const specifications = await this.specificationModel.find({
+        categories: id,
+      });
+
+      for (const specification of specifications) {
+        // Eliminar el ID de categoría del arreglo
+        specification.categories = specification.categories.filter(
+          (categoryId) => categoryId.toString() !== id.toString(),
+        );
+
+        // Verificar si el arreglo de categorías quedó vacío y eliminar la especificación si es necesario
+        if (
+          specification.families.length === 0 &&
+          specification.categories.length === 0 &&
+          specification.subcategories.length === 0
+        ) {
+          await this.remove(specification._id.toString());
+          // Llama a removeProductSpecification cuando se elimina una especificación completa
+          removeProductSpecification(specification._id, this.productModel);
+        } else {
+          await specification.save();
+        }
+      }
+
+      return { deleted: specifications.length };
     } catch (error) {
       handleDBErrors(error);
     }
   }
 
-  async removeBySubcategoryId(id: Types.ObjectId) {
+  async removeBySubcategoryId(id: string) {
     try {
-      const specificationDeleted = await this.specificationModel
-        .find({ subcategory: id })
-        .deleteMany({ subcategory: id })
-        .exec();
-      // ifNotFound({
-      //   entity: specificationDeleted,
-      //   id: specificationDeleted._id,
-      // });
-      removeProductSpecification(specificationDeleted._id, this.productModel);
-      return specificationDeleted;
+      // Obtiene todas las especificaciones que tengan el subcategoryId
+      const specifications = await this.specificationModel.find({
+        subcategories: id,
+      });
+
+      for (const specification of specifications) {
+        // Eliminar el ID de subcategoría del arreglo
+        specification.subcategories = specification.subcategories.filter(
+          (subcategoryId) => subcategoryId.toString() !== id.toString(),
+        );
+
+        // Verificar si el arreglo de subcategorías quedó vacío y eliminar la especificación si es necesario
+        if (
+          specification.families.length === 0 &&
+          specification.categories.length === 0 &&
+          specification.subcategories.length === 0
+        ) {
+          await this.remove(specification._id.toString());
+          // Llama a removeProductSpecification cuando se elimina una especificación completa
+          removeProductSpecification(specification._id, this.productModel);
+        } else {
+          await specification.save();
+        }
+      }
+
+      return { deleted: specifications.length };
     } catch (error) {
       handleDBErrors(error);
     }
   }
-  async findAllByCategoryId(category: Types.ObjectId) {
+
+  async findAllByCategoryId(categories: string) {
     try {
-      validateId(category);
+      validateId(categories);
       const specifications = await this.specificationModel
-        .find({ category })
+        .find({ categories })
         .exec();
       return specifications;
     } catch (error) {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(family: Types.ObjectId): Promise<number> {
-    return this.specificationModel.countDocuments({ family });
+  async countByFamilyId(families: string): Promise<number> {
+    return this.specificationModel.countDocuments({ families });
   }
-  async countByCategoryId(category: Types.ObjectId): Promise<number> {
-    return this.specificationModel.countDocuments({ category });
+  async countByCategoryId(categories: string): Promise<number> {
+    return this.specificationModel.countDocuments({ categories });
   }
-  async countBySubcategoryId(subcategory: Types.ObjectId): Promise<number> {
-    return this.specificationModel.countDocuments({ subcategory });
+  async countBySubcategoryId(subcategories: string): Promise<number> {
+    return this.specificationModel.countDocuments({ subcategories });
   }
 }

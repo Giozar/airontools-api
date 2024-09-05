@@ -14,7 +14,6 @@ import {
   CreateCategoryDto,
   UpdateCategoryDto,
 } from './dto';
-import { Types } from 'mongoose';
 
 @Controller('categories')
 export class CategoriesController {
@@ -49,13 +48,11 @@ export class CategoriesController {
   }
 
   @Delete('family/:id')
-  removeByFamilyId(@Param('id') id: Types.ObjectId) {
+  removeByFamilyId(@Param('id') id: string) {
     return this.categoriesService.removeByFamilyId(id);
   }
   @Get('count/:family')
-  async countByFamilyId(
-    @Param('family') family: Types.ObjectId,
-  ): Promise<number> {
+  async countByFamilyId(@Param('family') family: string): Promise<number> {
     return this.categoriesService.countByFamilyId(family);
   }
 }

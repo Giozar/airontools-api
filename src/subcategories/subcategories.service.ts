@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Subcategory } from './schemas/subcategory.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { handleDBErrors, ifNotFound, validateId } from 'src/handlers';
 import {
   CreateSubcategoryDto,
@@ -80,16 +80,16 @@ export class SubcategoriesService {
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       ifNotFound({ entity: subcategoryDeleted, id });
-      const subcategoryId = validateId(id);
-      this.specificationsService.removeBySubcategoryId(subcategoryId);
-      this.productsService.removeBySubcategoryId(subcategoryId);
+      validateId(id);
+      this.specificationsService.removeBySubcategoryId(id);
+      this.productsService.removeBySubcategoryId(id);
       return subcategoryDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
   }
 
-  async removeByFamilyId(id: Types.ObjectId) {
+  async removeByFamilyId(id: string) {
     try {
       const subcategoriesDeleted = await this.subcategoryModel
         .find({ family: id })
@@ -101,7 +101,7 @@ export class SubcategoriesService {
     }
   }
 
-  async removeByCategoryId(id: Types.ObjectId) {
+  async removeByCategoryId(id: string) {
     try {
       const subcategoriesDeleted = await this.subcategoryModel
         .find({ category: id })
@@ -112,10 +112,10 @@ export class SubcategoriesService {
       handleDBErrors(error);
     }
   }
-  async countByFamilyId(family: Types.ObjectId): Promise<number> {
+  async countByFamilyId(family: string): Promise<number> {
     return this.subcategoryModel.countDocuments({ family });
   }
-  async countByCategoryId(category: Types.ObjectId): Promise<number> {
+  async countByCategoryId(category: string): Promise<number> {
     return this.subcategoryModel.countDocuments({ category });
   }
 }
