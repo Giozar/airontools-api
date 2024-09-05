@@ -213,17 +213,42 @@ export class SpecificationsService {
     }
   }
 
-  async findAllByCategoryId(categories: string) {
+  async findAllByFamilyId(id: string) {
     try {
-      validateId(categories);
+      validateId(id);
       const specifications = await this.specificationModel
-        .find({ categories })
+        .find({ families: id })
         .exec();
       return specifications;
     } catch (error) {
       handleDBErrors(error);
     }
   }
+
+  async findAllByCategoryId(id: string) {
+    try {
+      validateId(id);
+      const specifications = await this.specificationModel
+        .find({ families: id })
+        .exec();
+      return specifications;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async findAllBySubcategoryId(id: string) {
+    try {
+      validateId(id);
+      const specifications = await this.specificationModel
+        .find({ subcategories: id })
+        .exec();
+      return specifications;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
   async countByFamilyId(families: string): Promise<number> {
     return this.specificationModel.countDocuments({ families });
   }
