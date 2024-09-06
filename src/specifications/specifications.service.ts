@@ -69,6 +69,7 @@ export class SpecificationsService {
         ])
         .exec();
       ifNotFound({ entity: specificationSearched, id });
+      return specificationSearched;
     } catch (error) {
       handleDBErrors(error);
     }

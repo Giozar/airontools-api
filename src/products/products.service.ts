@@ -112,6 +112,70 @@ export class ProductsService {
     };
   }
 
+  async findAllByFamilyId(id: string) {
+    try {
+      const productSearched = await this.productModel
+        .find({ FAMILY: id })
+        .populate([
+          this.FAMILY,
+          this.CATEGORY,
+          this.SUBCATEGORY,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
+        .exec();
+      return productSearched;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async findAllByCategoryId(id: string) {
+    try {
+      const productSearched = await this.productModel
+        .find({ CATEGORY: id })
+        .populate([
+          this.FAMILY,
+          this.CATEGORY,
+          this.SUBCATEGORY,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
+        .exec();
+      return productSearched;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async findAllBySubcategoryId(id: string) {
+    try {
+      const productSearched = await this.productModel
+        .find({ subCATEGORY: id })
+        .populate([
+          this.FAMILY,
+          this.CATEGORY,
+          this.SUBCATEGORY,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
+        .exec();
+      return productSearched;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async findAllBySpecificationId(id: string) {
+    try {
+      return this.productModel.find({
+        specifications: { $elemMatch: { id } },
+      });
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
   async findAll() {
     return await this.productModel
       .find()

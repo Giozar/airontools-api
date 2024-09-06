@@ -34,6 +34,16 @@ export class SubcategoriesController {
     return this.subcategoriesService.findOne(id);
   }
 
+  @Get('family:id')
+  findOneByFamilyId(@Param('id') id: string) {
+    return this.subcategoriesService.findOneByFamilyId(id);
+  }
+
+  @Get('category:id')
+  findOneByCategoryId(@Param('id') id: string) {
+    return this.subcategoriesService.findOneByCategoryId(id);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,
