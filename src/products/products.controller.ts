@@ -85,6 +85,26 @@ export class ProductsController {
     const products = this.productsService.findAll();
     return products;
   }
+
+  @Get('family/:id')
+  findAllByFamilyId(@Param('id') id: string) {
+    return this.productsService.findAllByFamilyId(id);
+  }
+  @Get('category/:id')
+  findAllByCategoryId(@Param('id') id: string) {
+    return this.productsService.findAllByCategoryId(id);
+  }
+  @Get('subcategory/:id')
+  findAllBySubcategoryId(@Param('id') id: string) {
+    return this.productsService.findAllBySubcategoryId(id);
+  }
+
+  @Get('specification/:id')
+  findAllBySpecificationId(@Param('id') id: string) {
+    const products = this.productsService.findAllBySpecificationId(id);
+    return products;
+  }
+
   @Get('count/:family')
   async countByFamilyId(@Param('family') family: string): Promise<number> {
     return this.productsService.countByFamilyId(family);

@@ -60,6 +60,30 @@ export class SubcategoriesService {
     }
   }
 
+  async findOneByFamilyId(id: string) {
+    try {
+      const subcategorySearched = await this.subcategoryModel
+        .findOne({ family: id })
+        .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
+        .exec();
+      ifNotFound({ entity: subcategorySearched, id });
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async findOneByCategoryId(id: string) {
+    try {
+      const subcategorySearched = await this.subcategoryModel
+        .findOne({ category: id })
+        .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
+        .exec();
+      ifNotFound({ entity: subcategorySearched, id });
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
   async update(id: string, updateSubcategoryDto: UpdateSubcategoryDto) {
     try {
       const subcategoryUpdated = await this.subcategoryModel
