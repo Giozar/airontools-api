@@ -56,9 +56,17 @@ export class SpecificationsController {
   removeBySubcategoryId(@Param('id') id: string) {
     return this.specificationsService.removeBySubcategoryId(id);
   }
-  @Get('category/:category')
-  findAllByCategoryId(@Param('category') category: string) {
-    return this.specificationsService.findAllByCategoryId(category);
+  @Get('family/:id')
+  findAllByFamilyId(@Param('id') id: string) {
+    return this.specificationsService.findAllByFamilyId(id);
+  }
+  @Get('category/:id')
+  findAllByCategoryId(@Param('id') id: string) {
+    return this.specificationsService.findAllByCategoryId(id);
+  }
+  @Get('subcategory/:id')
+  findAllBySubcategoryId(@Param('id') id: string) {
+    return this.specificationsService.findAllBySubcategoryId(id);
   }
   @Get('count/:family')
   async countByFamilyId(@Param('family') family: string): Promise<number> {
