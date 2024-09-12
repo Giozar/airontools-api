@@ -27,12 +27,9 @@ export class FilesService {
     },
   });
 
-  getStaticFile(fileName: string, type?: string, id?: string) {
-    const path = join(
-      __dirname,
-      `../../static/uploads/${type ? type + '/' : ''}/${id ? id + '/' : ''}`,
-      fileName,
-    );
+  // Obtener archivo estático desde una ruta dinámica
+  getStaticFile(fileName: string, ...folders: string[]) {
+    const path = join(__dirname, '../../static/uploads', ...folders, fileName);
 
     if (!existsSync(path)) {
       throw new BadRequestException(`No file found with name ${fileName}`);
@@ -40,12 +37,9 @@ export class FilesService {
     return path;
   }
 
-  deleteFile(filename: string, type?: string, id?: string) {
-    const path = join(
-      __dirname,
-      `../../static/uploads/${type ? type + '/' : ''}/${id ? id + '/' : ''}`,
-      filename,
-    );
+  // Eliminar archivo desde una ruta dinámica
+  deleteFile(filename: string, ...folders: string[]) {
+    const path = join(__dirname, '../../static/uploads', ...folders, filename);
 
     if (!existsSync(path)) {
       throw new BadRequestException(`No file found with name ${filename}`);

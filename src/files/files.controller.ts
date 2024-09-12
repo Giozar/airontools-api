@@ -24,31 +24,29 @@ export class FilesController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Get(['/:filename', '/:type/:filename', '/:type/:id/:filename'])
+  // Método para obtener archivos
+  @Get(['/:filename', '/*/:filename'])
   findProductFile(
     @Param('filename') filename: string,
-    @Param('type') type: string,
-    @Param('id') id: string,
+    @Param() params: Record<string, string>,
     @Res() res: Response,
   ) {
-    const path = this.filesService.getStaticFile(filename, type, id);
-    // res.status(403).json({
-    //   ok: false,
-    //   path: path,
-    // });
-
+    const dynamicPath = Object.values(params)
+      .filter((p) => p !== filename)
+      .join('/');
+    const path = this.filesService.getStaticFile(filename, dynamicPath);
     res.sendFile(path);
   }
 
-  @Post(['upload', 'upload/:type', 'upload/:type/:id'])
+  // Método para subir archivos
+  @Post(['upload', 'upload/*'])
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const type = req.params.type || '';
-          const id = req.params.id || '';
-          const uploadPath = `./static/uploads/${type ? type + '/' : ''}/${id ? id + '/' : ''}`;
+          const dynamicPath = req.params[0] || ''; // Captura todo lo que está después de 'upload'
+          const uploadPath = `./static/uploads/${dynamicPath}`;
 
           // Asegúrate de que el directorio existe, si no, créalo
           if (!fs.existsSync(uploadPath)) {
@@ -62,25 +60,28 @@ export class FilesController {
     }),
   )
   uploadProductImage(
-    @Param('type') type: string,
-    @Param('id') id: string,
+    @Param() params: Record<string, string>,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
       throw new BadRequestException('File is empty');
     }
 
-    const secureUrl = `${this.configService.get('HOST_API')}/files/${type ? type + '/' : ''}${id ? id + '/' : ''}${file.filename}`;
+    const dynamicPath = Object.values(params).join('/');
+    const secureUrl = `${this.configService.get('HOST_API')}/files/${dynamicPath}/${file.filename}`;
     return { secureUrl };
   }
 
-  @Delete(['/:filename', '/:type/:filename', '/:type/:id/:filename'])
+  // Método para eliminar archivos
+  @Delete(['/:filename', '/*/:filename'])
   deleteFile(
     @Param('filename') filename: string,
-    @Param('type') type: string,
-    @Param('id') id: string,
+    @Param() params: Record<string, string>,
   ) {
-    this.filesService.deleteFile(filename, type, id);
+    const dynamicPath = Object.values(params)
+      .filter((p) => p !== filename)
+      .join('/');
+    this.filesService.deleteFile(filename, dynamicPath);
     return { message: 'File successfully deleted' };
   }
 
