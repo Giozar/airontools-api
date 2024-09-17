@@ -60,13 +60,12 @@ export class CategoriesService {
     }
   }
 
-  async findOneByFamilyId(id: string) {
+  async findAllByFamilyId(id: string) {
     try {
       const categorySearched = await this.categoryModel
-        .findOne({ family: id })
+        .find({ family: id })
         .populate([this.FAMILY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
-      ifNotFound({ entity: categorySearched, id });
       return categorySearched;
     } catch (error) {
       handleDBErrors(error);

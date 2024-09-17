@@ -34,9 +34,9 @@ export class CategoriesController {
     return this.categoriesService.findOne(id);
   }
 
-  @Get('family:id')
-  findOneByFamilyId(@Param('id') id: string) {
-    return this.categoriesService.findOneByFamilyId(id);
+  @Get('family/:id')
+  findAllByFamilyId(@Param('id') id: string) {
+    return this.categoriesService.findAllByFamilyId(id);
   }
 
   @Patch(':id')
