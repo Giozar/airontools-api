@@ -10,6 +10,7 @@ import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
 import { User } from 'src/auth/schemas/user.schema';
 import { Specification } from 'src/specifications/schemas/specification.schema';
 import { handleDBErrors, validateId } from 'src/handlers';
+import { DateFormatter } from 'src/helpers';
 
 @Injectable()
 export class ProductsService {
@@ -58,7 +59,12 @@ export class ProductsService {
   async assignDatasheet(id: string, dataSheet: string) {
     return this.productModel.findByIdAndUpdate(
       id,
-      { technicalDatasheet: dataSheet },
+      {
+        technicalDatasheet: {
+          url: dataSheet,
+          date: DateFormatter.getDDMMMMYYYY(new Date()),
+        },
+      },
       { new: true },
     );
   }

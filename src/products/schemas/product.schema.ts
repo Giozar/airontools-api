@@ -6,6 +6,7 @@ import { Category } from 'src/categories/schemas/category.schema';
 import { Family } from 'src/families/schemas/family.schema';
 import { Specification } from 'src/specifications/schemas/specification.schema';
 import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
+import { TechnicalDatasheetDto } from '../dtos/technicalDatasheet.dto';
 
 export type productDocument = HydratedDocument<Product>;
 
@@ -64,7 +65,7 @@ export class Product {
   recommendations: string[];
 
   @Prop({})
-  technicalDatasheet: string[];
+  technicalDatasheet: TechnicalDatasheetDto[];
 
   @Prop({
     type: [
