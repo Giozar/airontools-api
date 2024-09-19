@@ -60,25 +60,25 @@ export class SubcategoriesService {
     }
   }
 
-  async findOneByFamilyId(id: string) {
+  async findAllByFamilyId(id: string) {
     try {
       const subcategorySearched = await this.subcategoryModel
-        .findOne({ family: id })
+        .find({ family: id })
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
-      ifNotFound({ entity: subcategorySearched, id });
+      return subcategorySearched;
     } catch (error) {
       handleDBErrors(error);
     }
   }
 
-  async findOneByCategoryId(id: string) {
+  async findAllByCategoryId(id: string) {
     try {
       const subcategorySearched = await this.subcategoryModel
-        .findOne({ category: id })
+        .find({ category: id })
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
-      ifNotFound({ entity: subcategorySearched, id });
+      return subcategorySearched;
     } catch (error) {
       handleDBErrors(error);
     }
