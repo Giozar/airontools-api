@@ -48,7 +48,7 @@ export const getProductTechnicalDatasheet = (
   } = product;
   const imagePath =
     images && images.length > 0 && images[opt]
-      ? `./static/uploads/images/${_id}/${images[opt].replace(/\S+\/\/\S+\/\w+\//, '')}`
+      ? `./static/uploads/images/products/${_id}/${images[opt].replace(/\S+\/\/\S+\/\w+\//, '')}`
       : path.join(__dirname, '../assets/images/fallback-images/no-image.jpg');
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',

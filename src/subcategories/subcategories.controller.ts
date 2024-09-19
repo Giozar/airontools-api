@@ -34,14 +34,14 @@ export class SubcategoriesController {
     return this.subcategoriesService.findOne(id);
   }
 
-  @Get('family:id')
-  findOneByFamilyId(@Param('id') id: string) {
-    return this.subcategoriesService.findOneByFamilyId(id);
+  @Get('family/:id')
+  findAllByFamilyId(@Param('id') id: string) {
+    return this.subcategoriesService.findAllByFamilyId(id);
   }
 
-  @Get('category:id')
-  findOneByCategoryId(@Param('id') id: string) {
-    return this.subcategoriesService.findOneByCategoryId(id);
+  @Get('category/:id')
+  findAllByCategoryId(@Param('id') id: string) {
+    return this.subcategoriesService.findAllByCategoryId(id);
   }
 
   @Patch(':id')
