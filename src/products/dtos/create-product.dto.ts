@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { ProductSpecificationDto } from './productSpecification.dto';
+import { TechnicalDatasheetDto } from './technicalDatasheet.dto';
 
 export class CreateProductDto {
   @IsNotEmpty()
@@ -66,9 +67,10 @@ export class CreateProductDto {
   recommendations: string[];
 
   @IsOptional()
+  @Type(() => TechnicalDatasheetDto)
   @IsArray()
-  @IsString({ each: true })
-  technicalDatasheet: string[];
+  @ValidateNested({ each: true })
+  technicalDatasheet: TechnicalDatasheetDto[];
 
   @ValidateNested({ each: true })
   @Type(() => ProductSpecificationDto)
