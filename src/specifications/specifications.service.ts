@@ -219,6 +219,13 @@ export class SpecificationsService {
       validateId(id);
       const specifications = await this.specificationModel
         .find({ families: id })
+        .populate([
+          this.FAMILIES,
+          this.CATEGORIES,
+          this.SUBCATEGORIES,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
         .exec();
       return specifications;
     } catch (error) {
@@ -230,7 +237,14 @@ export class SpecificationsService {
     try {
       validateId(id);
       const specifications = await this.specificationModel
-        .find({ families: id })
+        .find({ categories: id })
+        .populate([
+          this.FAMILIES,
+          this.CATEGORIES,
+          this.SUBCATEGORIES,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
         .exec();
       return specifications;
     } catch (error) {
@@ -243,6 +257,13 @@ export class SpecificationsService {
       validateId(id);
       const specifications = await this.specificationModel
         .find({ subcategories: id })
+        .populate([
+          this.FAMILIES,
+          this.CATEGORIES,
+          this.SUBCATEGORIES,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+        ])
         .exec();
       return specifications;
     } catch (error) {
