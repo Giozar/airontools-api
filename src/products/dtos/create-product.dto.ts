@@ -68,9 +68,8 @@ export class CreateProductDto {
 
   @IsOptional()
   @Type(() => TechnicalDatasheetDto)
-  @IsArray()
   @ValidateNested({ each: true })
-  technicalDatasheet: TechnicalDatasheetDto[];
+  technicalDatasheet: TechnicalDatasheetDto;
 
   @ValidateNested({ each: true })
   @Type(() => ProductSpecificationDto)
