@@ -65,7 +65,7 @@ export class Product {
   recommendations: string[];
 
   @Prop({})
-  technicalDatasheet: TechnicalDatasheetDto[];
+  technicalDatasheet: TechnicalDatasheetDto;
 
   @Prop({
     type: [
