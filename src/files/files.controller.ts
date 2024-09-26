@@ -106,9 +106,12 @@ export class FilesController {
     const fileName = customFileName
       ? `${customFileName}.${extension}`
       : file.originalname;
-    const dynamicPath = Object.values(params).join('/');
-    const folderPath = dynamicPath ? `${dynamicPath}/${fileName}` : fileName;
-    const { res, key } = await this.filesService.uploadFileS3(file, folderPath);
+    const folderPath = Object.values(params).join('/');
+    const { res, key } = await this.filesService.uploadFileS3(
+      file,
+      fileName,
+      folderPath,
+    );
     const imageUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${key}`;
 
     return { res, imageUrl };
