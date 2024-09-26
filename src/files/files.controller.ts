@@ -25,7 +25,7 @@ export class FilesController {
   ) {}
 
   // Método para obtener archivos
-  @Get(['/:filename', '/*/:filename'])
+  @Get(['get-file/:filename', 'get-file/*/:filename'])
   findProductFile(
     @Param('filename') filename: string,
     @Param() params: Record<string, string>,
@@ -39,7 +39,7 @@ export class FilesController {
   }
 
   // Método para subir archivos
-  @Post(['upload', 'upload/*'])
+  @Post(['upload-file', 'upload-file/*'])
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
@@ -73,7 +73,7 @@ export class FilesController {
   }
 
   // Método para eliminar archivos
-  @Delete(['/:filename', '/*/:filename'])
+  @Delete(['delete-file/:filename', 'delete-file/*/:filename'])
   deleteFile(
     @Param('filename') filename: string,
     @Param() params: Record<string, string>,
@@ -85,7 +85,7 @@ export class FilesController {
     return { message: 'File successfully deleted' };
   }
 
-  @Post('upload-file-s3')
+  @Post(['upload-file-s3', 'upload-file-s3/*'])
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
@@ -99,14 +99,16 @@ export class FilesController {
   async uploadFileS3(
     @UploadedFile() file: Express.Multer.File,
     @Body('customFileName') customFileName: string,
+    @Param() params: Record<string, string>,
   ) {
     // Se extrae la extensión del archivo
     const extension = file.originalname.split('.').pop();
     const fileName = customFileName
       ? `${customFileName}.${extension}`
       : file.originalname;
-
-    const { res, key } = await this.filesService.uploadFileS3(file, fileName);
+    const dynamicPath = Object.values(params).join('/');
+    const folderPath = dynamicPath ? `${dynamicPath}/${fileName}` : fileName;
+    const { res, key } = await this.filesService.uploadFileS3(file, folderPath);
     const imageUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${key}`;
 
     return { res, imageUrl };

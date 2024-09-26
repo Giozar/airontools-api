@@ -52,25 +52,29 @@ export class FilesService {
     }
   }
 
+  // Subir archivo a S3 en una carpeta dinámica
   async uploadFileS3(
     @UploadedFile() file: Express.Multer.File,
     fileName: string,
+    folderPath?: string, // Nueva ruta de carpetas
   ) {
     try {
       if (!file) {
         throw new BadRequestException('File is empty');
       }
-      // Implementar lógica para subir archivo a S3
+
+      // Leer el archivo del sistema local
       const stream = fs.createReadStream(this.getStaticFile(file.filename));
 
       // Configurar el Content-Type según el tipo de archivo
       const contentType = file.mimetype;
 
-      const key = fileName || file.originalname;
+      // Construir la clave que incluye la ruta de carpetas
+      const key = folderPath ? `${folderPath}/${fileName}` : fileName;
 
       const uploadParams = {
         Bucket: this.awsConfig.bucketName,
-        Key: key,
+        Key: key, // Aquí se incluye la estructura de carpetas
         Body: stream,
         ContentType: contentType,
       };
@@ -78,9 +82,9 @@ export class FilesService {
       // Subir archivo a S3
       const command = new PutObjectCommand(uploadParams);
       const res = await this.clientAWS.send(command);
+
       return { res, key };
     } catch (error) {
-      // console.error(error);
       throw new BadRequestException(
         'Error uploading file to S3',
         error.message,
