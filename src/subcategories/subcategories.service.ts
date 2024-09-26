@@ -55,6 +55,7 @@ export class SubcategoriesService {
         .populate([this.FAMILY, this.CATEGORY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       ifNotFound({ entity: subcategorySearched, id });
+      return subcategorySearched;
     } catch (error) {
       handleDBErrors(error);
     }
