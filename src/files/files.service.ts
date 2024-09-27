@@ -94,17 +94,21 @@ export class FilesService {
 
   async getFileS3({
     fileName,
+    folderPath,
     isEditing,
   }: {
     fileName: string;
+    folderPath?: string;
     isEditing?: boolean;
   }): Promise<Readable> | null {
+    // Construir la clave que incluye la ruta de carpetas
+    const key = folderPath ? `${folderPath}/${fileName}` : fileName;
     const command = new GetObjectCommand({
       Bucket: this.awsConfig.bucketName,
-      Key: fileName,
+      Key: key,
     });
     try {
-      if (!fileName) {
+      if (!key) {
         return null;
       }
       // console.log('Trying to get file from S3');
@@ -114,7 +118,7 @@ export class FilesService {
       // Manejar error si no se encuentra el archivo
       if (error.name === 'NoSuchKey') {
         if (!isEditing)
-          throw new BadRequestException(`No file found with name ${fileName}`);
+          throw new BadRequestException(`No file found with name ${key}`);
         return null;
       }
 

@@ -117,10 +117,18 @@ export class FilesController {
     return { res, imageUrl };
   }
 
-  @Get('get-file-s3/:filename')
-  async getFileS3(@Param('filename') filename: string, @Res() res: Response) {
+  @Get(['get-file-s3/:filename', 'get-file-s3/*/:filename'])
+  async getFileS3(
+    @Param('filename') filename: string,
+    @Param() params: Record<string, string>,
+    @Res() res: Response,
+  ) {
+    const folderPath = Object.values(params)
+      .filter((p) => p !== filename)
+      .join('/');
     const fileStream = await this.filesService.getFileS3({
       fileName: filename,
+      folderPath,
     });
     fileStream.pipe(res);
   }
