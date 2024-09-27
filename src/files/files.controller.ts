@@ -112,9 +112,9 @@ export class FilesController {
       fileName,
       folderPath,
     );
-    const imageUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${key}`;
+    const secureUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${key}`;
 
-    return { res, imageUrl };
+    return { res, secureUrl };
   }
 
   @Get(['get-file-s3/:filename', 'get-file-s3/*/:filename'])
@@ -179,9 +179,9 @@ export class FilesController {
         customFileName,
         uploadedFileName,
       );
-      const imageUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
+      const secureUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
 
-      return { res, imageUrl };
+      return { res, secureUrl };
     } catch (error) {
       // console.log('Si hay error', error.response);
       return error.response;
