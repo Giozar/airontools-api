@@ -46,7 +46,9 @@ export class FilesController {
       storage: diskStorage({
         destination: (req, file, cb) => {
           const dynamicPath = req.params[0] || ''; // Captura todo lo que está después de 'upload'
-          const uploadPath = `./static/uploads/${dynamicPath}`;
+          //const uploadPath = `./static/uploads/${dynamicPath}`;
+
+          const uploadPath = `./assets/uploads/${dynamicPath}`;
 
           // Asegúrate de que el directorio existe, si no, créalo
           if (!fs.existsSync(uploadPath)) {
@@ -68,7 +70,7 @@ export class FilesController {
     }
 
     const dynamicPath = Object.values(params).join('/');
-    const secureUrl = `${this.configService.get('HOST_API')}/files/${dynamicPath}/${file.filename}`;
+    const secureUrl = `${this.configService.get('HOST_API')}/uploads/${dynamicPath}/${file.filename}`;
     return { secureUrl };
   }
 
