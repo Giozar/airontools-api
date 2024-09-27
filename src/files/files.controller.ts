@@ -133,10 +133,16 @@ export class FilesController {
     fileStream.pipe(res);
   }
 
-  @Get('download-file-s3/:filename')
-  async downloadFileS3(@Param('filename') filename: string) {
+  @Get(['download-file-s3/:filename', 'download-file-s3/*/:filename'])
+  async downloadFileS3(
+    @Param('filename') filename: string,
+    @Param() params: Record<string, string>,
+  ) {
+    const folderPath = Object.values(params)
+      .filter((p) => p !== filename)
+      .join('/');
     try {
-      await this.filesService.downloadFileS3(filename);
+      await this.filesService.downloadFileS3(filename, folderPath);
     } catch (error) {}
   }
 

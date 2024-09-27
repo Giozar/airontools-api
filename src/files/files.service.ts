@@ -153,17 +153,28 @@ export class FilesService {
     }
   }
 
-  async downloadFileS3(fileName: string) {
+  async downloadFileS3(fileName: string, folderPath?: string) {
+    const key = folderPath ? `${folderPath}/${fileName}` : fileName;
     const command = new GetObjectCommand({
       Bucket: this.awsConfig.bucketName,
-      Key: fileName,
+      Key: key,
     });
     try {
+      const downloadPath = `./static/downloads/${folderPath}`;
+      // Asegúrate de que el directorio existe, si no, créalo
+      if (!fs.existsSync(downloadPath)) {
+        fs.mkdirSync(downloadPath, { recursive: true });
+      }
       const data = await this.clientAWS.send(command);
       return (data.Body as Readable).pipe(
-        fs.createWriteStream(`./static/downloads/${fileName}`),
+        fs.createWriteStream(`${downloadPath}/${fileName}`),
       );
-    } catch (error) {}
+    } catch (error) {
+      throw new BadRequestException(
+        'Error downloading file from S3',
+        error.message,
+      );
+    }
   }
 
   async deleteFileS3(fileName: string, folderPath?: string) {
