@@ -132,9 +132,15 @@ export class FilesController {
     } catch (error) {}
   }
 
-  @Delete('delete-file-s3/:filename')
-  async deleteFileS3(@Param('filename') filename: string) {
-    await this.filesService.deleteFileS3(filename);
+  @Delete(['delete-file-s3/:filename', 'delete-file-s3/*/:filename'])
+  async deleteFileS3(
+    @Param('filename') filename: string,
+    @Param() params: Record<string, string>,
+  ) {
+    const folderPath = Object.values(params)
+      .filter((p) => p !== filename)
+      .join('/');
+    await this.filesService.deleteFileS3(filename, folderPath);
   }
 
   @Post('edit-file-s3')

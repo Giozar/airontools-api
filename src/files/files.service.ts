@@ -162,15 +162,18 @@ export class FilesService {
     } catch (error) {}
   }
 
-  async deleteFileS3(fileName: string) {
+  async deleteFileS3(fileName: string, folderPath?: string) {
     try {
+      // Construir la clave que incluye la ruta de carpetas
+      const key = folderPath ? `${folderPath}/${fileName}` : fileName;
+
       const command = new DeleteObjectCommand({
         Bucket: this.awsConfig.bucketName,
-        Key: fileName,
+        Key: key, // Aquí se incluye la estructura de carpetas
       });
+
       return await this.clientAWS.send(command);
     } catch (error) {
-      // console.error(error);
       throw new Error(`Error deleting file: ${error.message}`);
     }
   }
