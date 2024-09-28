@@ -178,10 +178,10 @@ export class FilesService {
     }
   }
 
-  async deleteFileS3(fileName: string, folderPath?: string) {
+  async deleteFileS3(fileUrl: string) {
     try {
       // Construir la clave que incluye la ruta de carpetas
-      const key = folderPath ? `${folderPath}/${fileName}` : fileName;
+      const key = fileUrl.replace(/https?:\/\/([^\/]+)\//, '');
 
       const command = new DeleteObjectCommand({
         Bucket: this.awsConfig.bucketName,
