@@ -38,11 +38,12 @@ export class FilesService {
   }
 
   // Eliminar archivo desde una ruta dinámica
-  deleteFile(filename: string, ...folders: string[]) {
-    const path = join(__dirname, '../../assets/uploads', ...folders, filename);
+  deleteFile(fileUrl: string) {
+    const filePath = fileUrl.replace(/https?:\/\/([^\/]+)\//, '');
+    const path = join(__dirname, '../../assets/', filePath);
 
     if (!existsSync(path)) {
-      throw new BadRequestException(`No file found with name ${filename}`);
+      throw new BadRequestException(`No file found with name ${filePath}`);
     }
 
     try {

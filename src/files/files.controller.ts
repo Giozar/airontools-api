@@ -75,15 +75,9 @@ export class FilesController {
   }
 
   // Método para eliminar archivos
-  @Delete(['delete-file/:filename', 'delete-file/*/:filename'])
-  deleteFile(
-    @Param('filename') filename: string,
-    @Param() params: Record<string, string>,
-  ) {
-    const dynamicPath = Object.values(params)
-      .filter((p) => p !== filename)
-      .join('/');
-    this.filesService.deleteFile(filename, dynamicPath);
+  @Delete('delete-file')
+  deleteFile(@Body('fileUrl') fileUrl: string) {
+    this.filesService.deleteFile(fileUrl);
     return { message: 'File successfully deleted' };
   }
 
