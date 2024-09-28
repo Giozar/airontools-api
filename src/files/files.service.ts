@@ -38,11 +38,12 @@ export class FilesService {
   }
 
   // Eliminar archivo desde una ruta dinámica
-  deleteFile(filename: string, ...folders: string[]) {
-    const path = join(__dirname, '../../static/uploads', ...folders, filename);
+  deleteFile(fileUrl: string) {
+    const filePath = fileUrl.replace(/https?:\/\/([^\/]+)\//, '');
+    const path = join(__dirname, '../../assets/', filePath);
 
     if (!existsSync(path)) {
-      throw new BadRequestException(`No file found with name ${filename}`);
+      throw new BadRequestException(`No file found with name ${filePath}`);
     }
 
     try {
@@ -52,25 +53,29 @@ export class FilesService {
     }
   }
 
+  // Subir archivo a S3 en una carpeta dinámica
   async uploadFileS3(
     @UploadedFile() file: Express.Multer.File,
     fileName: string,
+    folderPath?: string, // Nueva ruta de carpetas
   ) {
     try {
       if (!file) {
         throw new BadRequestException('File is empty');
       }
-      // Implementar lógica para subir archivo a S3
+
+      // Leer el archivo del sistema local
       const stream = fs.createReadStream(this.getStaticFile(file.filename));
 
       // Configurar el Content-Type según el tipo de archivo
       const contentType = file.mimetype;
 
-      const key = fileName || file.originalname;
+      // Construir la clave que incluye la ruta de carpetas
+      const key = folderPath ? `${folderPath}/${fileName}` : fileName;
 
       const uploadParams = {
         Bucket: this.awsConfig.bucketName,
-        Key: key,
+        Key: key, // Aquí se incluye la estructura de carpetas
         Body: stream,
         ContentType: contentType,
       };
@@ -78,9 +83,9 @@ export class FilesService {
       // Subir archivo a S3
       const command = new PutObjectCommand(uploadParams);
       const res = await this.clientAWS.send(command);
+
       return { res, key };
     } catch (error) {
-      // console.error(error);
       throw new BadRequestException(
         'Error uploading file to S3',
         error.message,
@@ -90,17 +95,21 @@ export class FilesService {
 
   async getFileS3({
     fileName,
+    folderPath,
     isEditing,
   }: {
     fileName: string;
+    folderPath?: string;
     isEditing?: boolean;
   }): Promise<Readable> | null {
+    // Construir la clave que incluye la ruta de carpetas
+    const key = folderPath ? `${folderPath}/${fileName}` : fileName;
     const command = new GetObjectCommand({
       Bucket: this.awsConfig.bucketName,
-      Key: fileName,
+      Key: key,
     });
     try {
-      if (!fileName) {
+      if (!key) {
         return null;
       }
       // console.log('Trying to get file from S3');
@@ -110,7 +119,7 @@ export class FilesService {
       // Manejar error si no se encuentra el archivo
       if (error.name === 'NoSuchKey') {
         if (!isEditing)
-          throw new BadRequestException(`No file found with name ${fileName}`);
+          throw new BadRequestException(`No file found with name ${key}`);
         return null;
       }
 
@@ -145,28 +154,42 @@ export class FilesService {
     }
   }
 
-  async downloadFileS3(fileName: string) {
+  async downloadFileS3(fileName: string, folderPath?: string) {
+    const key = folderPath ? `${folderPath}/${fileName}` : fileName;
     const command = new GetObjectCommand({
       Bucket: this.awsConfig.bucketName,
-      Key: fileName,
+      Key: key,
     });
     try {
+      const downloadPath = `./static/downloads/${folderPath}`;
+      // Asegúrate de que el directorio existe, si no, créalo
+      if (!fs.existsSync(downloadPath)) {
+        fs.mkdirSync(downloadPath, { recursive: true });
+      }
       const data = await this.clientAWS.send(command);
       return (data.Body as Readable).pipe(
-        fs.createWriteStream(`./static/downloads/${fileName}`),
+        fs.createWriteStream(`${downloadPath}/${fileName}`),
       );
-    } catch (error) {}
+    } catch (error) {
+      throw new BadRequestException(
+        'Error downloading file from S3',
+        error.message,
+      );
+    }
   }
 
-  async deleteFileS3(fileName: string) {
+  async deleteFileS3(fileUrl: string) {
     try {
+      // Construir la clave que incluye la ruta de carpetas
+      const key = fileUrl.replace(/https?:\/\/([^\/]+)\//, '');
+
       const command = new DeleteObjectCommand({
         Bucket: this.awsConfig.bucketName,
-        Key: fileName,
+        Key: key, // Aquí se incluye la estructura de carpetas
       });
+
       return await this.clientAWS.send(command);
     } catch (error) {
-      // console.error(error);
       throw new Error(`Error deleting file: ${error.message}`);
     }
   }

@@ -25,7 +25,7 @@ export class FilesController {
   ) {}
 
   // Método para obtener archivos
-  @Get(['/:filename', '/*/:filename'])
+  @Get(['get-file/:filename', 'get-file/*/:filename'])
   findProductFile(
     @Param('filename') filename: string,
     @Param() params: Record<string, string>,
@@ -39,14 +39,16 @@ export class FilesController {
   }
 
   // Método para subir archivos
-  @Post(['upload', 'upload/*'])
+  @Post(['upload-file', 'upload-file/*'])
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
       storage: diskStorage({
         destination: (req, file, cb) => {
           const dynamicPath = req.params[0] || ''; // Captura todo lo que está después de 'upload'
-          const uploadPath = `./static/uploads/${dynamicPath}`;
+          //const uploadPath = `./static/uploads/${dynamicPath}`;
+
+          const uploadPath = `./assets/uploads/${dynamicPath}`;
 
           // Asegúrate de que el directorio existe, si no, créalo
           if (!fs.existsSync(uploadPath)) {
@@ -68,24 +70,18 @@ export class FilesController {
     }
 
     const dynamicPath = Object.values(params).join('/');
-    const secureUrl = `${this.configService.get('HOST_API')}/files/${dynamicPath}/${file.filename}`;
+    const secureUrl = `${this.configService.get('HOST_API')}/uploads/${dynamicPath ? dynamicPath + '/' + file.filename : file.filename}`;
     return { secureUrl };
   }
 
   // Método para eliminar archivos
-  @Delete(['/:filename', '/*/:filename'])
-  deleteFile(
-    @Param('filename') filename: string,
-    @Param() params: Record<string, string>,
-  ) {
-    const dynamicPath = Object.values(params)
-      .filter((p) => p !== filename)
-      .join('/');
-    this.filesService.deleteFile(filename, dynamicPath);
+  @Delete('delete-file')
+  deleteFile(@Body('fileUrl') fileUrl: string) {
+    this.filesService.deleteFile(fileUrl);
     return { message: 'File successfully deleted' };
   }
 
-  @Post('upload-file-s3')
+  @Post(['upload-file-s3', 'upload-file-s3/*'])
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFiler,
@@ -99,37 +95,56 @@ export class FilesController {
   async uploadFileS3(
     @UploadedFile() file: Express.Multer.File,
     @Body('customFileName') customFileName: string,
+    @Param() params: Record<string, string>,
   ) {
     // Se extrae la extensión del archivo
     const extension = file.originalname.split('.').pop();
     const fileName = customFileName
       ? `${customFileName}.${extension}`
       : file.originalname;
+    const folderPath = Object.values(params).join('/');
+    const { res, key } = await this.filesService.uploadFileS3(
+      file,
+      fileName,
+      folderPath,
+    );
+    const secureUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${key}`;
 
-    const { res, key } = await this.filesService.uploadFileS3(file, fileName);
-    const imageUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${key}`;
-
-    return { res, imageUrl };
+    return { res, secureUrl };
   }
 
-  @Get('get-file-s3/:filename')
-  async getFileS3(@Param('filename') filename: string, @Res() res: Response) {
+  @Get(['get-file-s3/:filename', 'get-file-s3/*/:filename'])
+  async getFileS3(
+    @Param('filename') filename: string,
+    @Param() params: Record<string, string>,
+    @Res() res: Response,
+  ) {
+    const folderPath = Object.values(params)
+      .filter((p) => p !== filename)
+      .join('/');
     const fileStream = await this.filesService.getFileS3({
       fileName: filename,
+      folderPath,
     });
     fileStream.pipe(res);
   }
 
-  @Get('download-file-s3/:filename')
-  async downloadFileS3(@Param('filename') filename: string) {
+  @Get(['download-file-s3/:filename', 'download-file-s3/*/:filename'])
+  async downloadFileS3(
+    @Param('filename') filename: string,
+    @Param() params: Record<string, string>,
+  ) {
+    const folderPath = Object.values(params)
+      .filter((p) => p !== filename)
+      .join('/');
     try {
-      await this.filesService.downloadFileS3(filename);
+      await this.filesService.downloadFileS3(filename, folderPath);
     } catch (error) {}
   }
 
-  @Delete('delete-file-s3/:filename')
-  async deleteFileS3(@Param('filename') filename: string) {
-    await this.filesService.deleteFileS3(filename);
+  @Delete('delete-file-s3')
+  async deleteFileS3(@Body('fileUrl') fileUrl: string) {
+    await this.filesService.deleteFileS3(fileUrl);
   }
 
   @Post('edit-file-s3')
@@ -154,9 +169,9 @@ export class FilesController {
         customFileName,
         uploadedFileName,
       );
-      const imageUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
+      const secureUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${fileName}`;
 
-      return { res, imageUrl };
+      return { res, secureUrl };
     } catch (error) {
       // console.log('Si hay error', error.response);
       return error.response;
