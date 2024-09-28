@@ -70,7 +70,7 @@ export class FilesController {
     }
 
     const dynamicPath = Object.values(params).join('/');
-    const secureUrl = `${this.configService.get('HOST_API')}/uploads/${dynamicPath}/${file.filename}`;
+    const secureUrl = `${this.configService.get('HOST_API')}/uploads/${dynamicPath ? dynamicPath + '/' + file.filename : file.filename}`;
     return { secureUrl };
   }
 
