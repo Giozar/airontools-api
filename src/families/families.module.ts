@@ -20,6 +20,7 @@ import { CategoriesModule } from 'src/categories/categories.module';
 import { SubcategoriesModule } from 'src/subcategories/subcategories.module';
 import { SpecificationsModule } from 'src/specifications/specifications.module';
 import { ProductsModule } from 'src/products/products.module';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
   controllers: [FamiliesController],
@@ -51,6 +52,7 @@ import { ProductsModule } from 'src/products/products.module';
     SubcategoriesModule,
     SpecificationsModule,
     ProductsModule,
+    FilesModule,
   ],
   exports: [FamiliesService],
 })
