@@ -9,6 +9,7 @@ import { CategoriesService } from 'src/categories/categories.service';
 import { SubcategoriesService } from 'src/subcategories/subcategories.service';
 import { SpecificationsService } from 'src/specifications/specifications.service';
 import { ProductsService } from '../products/products.service';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class FamiliesService {
@@ -20,6 +21,7 @@ export class FamiliesService {
     private readonly subcategoriesService: SubcategoriesService,
     private readonly specificationsService: SpecificationsService,
     private readonly productsService: ProductsService,
+    private readonly filesService: FilesService,
   ) {}
   async create(createFamilyDto: CreateFamilyDto) {
     try {
@@ -74,6 +76,22 @@ export class FamiliesService {
         .findByIdAndDelete(id)
         .populate([this.CREATEDBY, this.UPDATEDBY]);
       ifNotFound({ entity: familyDeleted, id });
+
+      if (familyDeleted.images.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            familyDeleted.images.map((image) =>
+              this.filesService.deleteFileS3(image),
+            ),
+          );
+        } else {
+          await Promise.all(
+            familyDeleted.images.map((image) =>
+              this.filesService.deleteFile(image),
+            ),
+          );
+        }
+      }
 
       // Se ejecuta eliminación en cadena
       validateId(id);

@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { Role, RoleSchema } from 'src/roles/schemas/role.schema';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { Role, RoleSchema } from 'src/roles/schemas/role.schema';
     PassportModule,
     JwtModule,
     AuthService,
+    FilesModule,
   ],
 })
 export class AuthModule {}

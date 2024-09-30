@@ -16,6 +16,7 @@ import {
 import { SubcategoriesModule } from 'src/subcategories/subcategories.module';
 import { SpecificationsModule } from 'src/specifications/specifications.module';
 import { ProductsModule } from 'src/products/products.module';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
   providers: [CategoriesService],
@@ -47,6 +48,7 @@ import { ProductsModule } from 'src/products/products.module';
     SubcategoriesModule,
     SpecificationsModule,
     ProductsModule,
+    FilesModule,
   ],
 })
 export class CategoriesModule {}

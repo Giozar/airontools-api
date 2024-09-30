@@ -13,6 +13,7 @@ import { LoginUserDto, UpdateUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { handleDBErrors } from 'src/handlers/error.handle';
+import { FilesService } from 'src/files/files.service';
 @Injectable()
 export class AuthService {
   private ROLE = 'role';
@@ -22,6 +23,7 @@ export class AuthService {
     @InjectModel(User.name)
     private userModel: Model<User>,
     private readonly jwtService: JwtService,
+    private readonly filesService: FilesService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -109,6 +111,15 @@ export class AuthService {
       .populate([this.ROLE, this.CREATEDBY, this.UPDATEDBY])
       .exec();
     if (!deletedUser) throw new NotFoundException('Usuario no encontrado');
+
+    if (deletedUser.imageUrl.length > 0) {
+      if (process.env.STORAGE === 'S3') {
+        await this.filesService.deleteFileS3(deletedUser.imageUrl);
+      } else {
+        this.filesService.deleteFile(deletedUser.imageUrl);
+      }
+    }
+
     return deletedUser;
   }
 

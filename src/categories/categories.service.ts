@@ -11,6 +11,7 @@ import {
 import { ProductsService } from 'src/products/products.service';
 import { SpecificationsService } from 'src/specifications/specifications.service';
 import { SubcategoriesService } from 'src/subcategories/subcategories.service';
+import { FilesService } from 'src/files/files.service';
 @Injectable()
 export class CategoriesService {
   private FAMILY = 'family';
@@ -21,6 +22,7 @@ export class CategoriesService {
     private readonly subcategoriesService: SubcategoriesService,
     private readonly specificationsService: SpecificationsService,
     private readonly productsService: ProductsService,
+    private readonly filesService: FilesService,
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
     try {
@@ -92,6 +94,21 @@ export class CategoriesService {
         .populate([this.FAMILY, this.CREATEDBY, this.UPDATEDBY])
         .exec();
       ifNotFound({ entity: categoryDeleted, id });
+      if (categoryDeleted.images.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            categoryDeleted.images.map((image) =>
+              this.filesService.deleteFileS3(image),
+            ),
+          );
+        } else {
+          await Promise.all(
+            categoryDeleted.images.map((image) =>
+              this.filesService.deleteFile(image),
+            ),
+          );
+        }
+      }
       validateId(id);
       this.subcategoriesService.removeByCategoryId(id);
       this.specificationsService.removeByCategoryId(id);

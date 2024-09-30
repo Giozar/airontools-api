@@ -11,6 +11,7 @@ import { User } from 'src/auth/schemas/user.schema';
 import { Specification } from 'src/specifications/schemas/specification.schema';
 import { handleDBErrors, validateId } from 'src/handlers';
 import { DateFormatter } from 'src/helpers';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ProductsService {
@@ -22,6 +23,7 @@ export class ProductsService {
   private SPECIFICATIONS = 'specifications.specification';
   constructor(
     @InjectModel(Product.name) private productModel: Model<Product>,
+    private readonly filesService: FilesService,
   ) {}
 
   async create(createdProductDto: CreateProductDto) {
@@ -243,7 +245,7 @@ export class ProductsService {
   }
 
   async remove(id: string) {
-    return this.productModel
+    const productDeleted = await this.productModel
       .findByIdAndDelete(id)
       .populate([
         this.FAMILY,
@@ -254,6 +256,39 @@ export class ProductsService {
         this.SPECIFICATIONS,
       ])
       .exec();
+
+    if (productDeleted.images.length > 0) {
+      if (process.env.STORAGE === 'S3') {
+        await Promise.all(
+          productDeleted.images.map((image) =>
+            this.filesService.deleteFileS3(image),
+          ),
+        );
+      } else {
+        await Promise.all(
+          productDeleted.images.map((image) =>
+            this.filesService.deleteFile(image),
+          ),
+        );
+      }
+    }
+
+    if (productDeleted.manuals.length > 0) {
+      if (process.env.STORAGE === 'S3') {
+        await Promise.all(
+          productDeleted.manuals.map((manual) =>
+            this.filesService.deleteFileS3(manual),
+          ),
+        );
+      } else {
+        await Promise.all(
+          productDeleted.manuals.map((manual) =>
+            this.filesService.deleteFile(manual),
+          ),
+        );
+      }
+    }
+    return productDeleted;
   }
 
   async removeByFamilyId(id: string) {

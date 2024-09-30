@@ -17,6 +17,7 @@ import {
   Specification,
   SpecificationSchema,
 } from 'src/specifications/schemas/specification.schema';
+import { FilesModule } from 'src/files/files.module';
 @Module({
   controllers: [ProductsController],
   providers: [ProductsService],
@@ -48,6 +49,7 @@ import {
         schema: SpecificationSchema,
       },
     ]),
+    FilesModule,
   ],
 })
 export class ProductsModule {}
