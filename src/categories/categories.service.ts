@@ -125,6 +125,21 @@ export class CategoriesService {
         .find({ family: id })
         .deleteMany({ family: id })
         .exec();
+      if (categoryDeleted.images.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            categoryDeleted.images.map((image) =>
+              this.filesService.deleteFileS3(image),
+            ),
+          );
+        } else {
+          await Promise.all(
+            categoryDeleted.images.map((image) =>
+              this.filesService.deleteFile(image),
+            ),
+          );
+        }
+      }
       return categoryDeleted;
     } catch (error) {
       handleDBErrors(error);

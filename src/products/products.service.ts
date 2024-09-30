@@ -297,6 +297,37 @@ export class ProductsService {
         .find({ family: id })
         .deleteMany({ family: id })
         .exec();
+      if (productDeleted.images.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            productDeleted.images.map((image) =>
+              this.filesService.deleteFileS3(image),
+            ),
+          );
+        } else {
+          await Promise.all(
+            productDeleted.images.map((image) =>
+              this.filesService.deleteFile(image),
+            ),
+          );
+        }
+      }
+
+      if (productDeleted.manuals.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            productDeleted.manuals.map((manual) =>
+              this.filesService.deleteFileS3(manual),
+            ),
+          );
+        } else {
+          await Promise.all(
+            productDeleted.manuals.map((manual) =>
+              this.filesService.deleteFile(manual),
+            ),
+          );
+        }
+      }
       return productDeleted;
     } catch (error) {
       handleDBErrors(error);
@@ -309,6 +340,37 @@ export class ProductsService {
         .find({ category: id })
         .deleteMany({ category: id })
         .exec();
+      if (productDeleted.images.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            productDeleted.images.map((image) =>
+              this.filesService.deleteFileS3(image),
+            ),
+          );
+        } else {
+          await Promise.all(
+            productDeleted.images.map((image) =>
+              this.filesService.deleteFile(image),
+            ),
+          );
+        }
+      }
+
+      if (productDeleted.manuals.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            productDeleted.manuals.map((manual) =>
+              this.filesService.deleteFileS3(manual),
+            ),
+          );
+        } else {
+          await Promise.all(
+            productDeleted.manuals.map((manual) =>
+              this.filesService.deleteFile(manual),
+            ),
+          );
+        }
+      }
       return productDeleted;
     } catch (error) {
       handleDBErrors(error);
@@ -322,6 +384,37 @@ export class ProductsService {
         .deleteMany({ subcategory: id })
         .exec();
       //ifNotFound({ entity: productDeleted, id });
+      if (productDeleted.images.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            productDeleted.images.map((image) =>
+              this.filesService.deleteFileS3(image),
+            ),
+          );
+        } else {
+          await Promise.all(
+            productDeleted.images.map((image) =>
+              this.filesService.deleteFile(image),
+            ),
+          );
+        }
+      }
+
+      if (productDeleted.manuals.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            productDeleted.manuals.map((manual) =>
+              this.filesService.deleteFileS3(manual),
+            ),
+          );
+        } else {
+          await Promise.all(
+            productDeleted.manuals.map((manual) =>
+              this.filesService.deleteFile(manual),
+            ),
+          );
+        }
+      }
       return productDeleted;
     } catch (error) {
       handleDBErrors(error);

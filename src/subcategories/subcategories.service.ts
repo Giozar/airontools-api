@@ -137,6 +137,21 @@ export class SubcategoriesService {
         .find({ family: id })
         .deleteMany({ family: id })
         .exec();
+      if (subcategoriesDeleted.images.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            subcategoriesDeleted.images.map((image) =>
+              this.filesService.deleteFileS3(image),
+            ),
+          );
+        } else {
+          await Promise.all(
+            subcategoriesDeleted.images.map((image) =>
+              this.filesService.deleteFile(image),
+            ),
+          );
+        }
+      }
       return subcategoriesDeleted;
     } catch (error) {
       handleDBErrors(error);
@@ -149,6 +164,21 @@ export class SubcategoriesService {
         .find({ category: id })
         .deleteMany({ category: id })
         .exec();
+      if (subcategoriesDeleted.images.length > 0) {
+        if (process.env.STORAGE === 'S3') {
+          await Promise.all(
+            subcategoriesDeleted.images.map((image) =>
+              this.filesService.deleteFileS3(image),
+            ),
+          );
+        } else {
+          await Promise.all(
+            subcategoriesDeleted.images.map((image) =>
+              this.filesService.deleteFile(image),
+            ),
+          );
+        }
+      }
       return subcategoriesDeleted;
     } catch (error) {
       handleDBErrors(error);
