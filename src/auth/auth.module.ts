@@ -41,6 +41,7 @@ import { FilesModule } from 'src/files/files.module';
     //   secret: process.env.JWT_SECRET,
     //   signOptions: { expiresIn: '2h' },
     // }),
+    FilesModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
@@ -50,7 +51,6 @@ import { FilesModule } from 'src/files/files.module';
     PassportModule,
     JwtModule,
     AuthService,
-    FilesModule,
   ],
 })
 export class AuthModule {}
