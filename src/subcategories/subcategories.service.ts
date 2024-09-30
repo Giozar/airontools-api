@@ -133,26 +133,12 @@ export class SubcategoriesService {
 
   async removeByFamilyId(id: string) {
     try {
-      const subcategoriesDeleted = await this.subcategoryModel
-        .find({ family: id })
-        .deleteMany({ family: id })
-        .exec();
-      if (subcategoriesDeleted.images.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            subcategoriesDeleted.images.map((image) =>
-              this.filesService.deleteFileS3(image),
-            ),
-          );
-        } else {
-          await Promise.all(
-            subcategoriesDeleted.images.map((image) =>
-              this.filesService.deleteFile(image),
-            ),
-          );
-        }
+      const subcategoriesFound = await this.findAllByFamilyId(id);
+      if (subcategoriesFound && subcategoriesFound.length > 0) {
+        await Promise.all(
+          subcategoriesFound.map((subcategory) => this.remove(subcategory.id)),
+        );
       }
-      return subcategoriesDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
@@ -160,26 +146,12 @@ export class SubcategoriesService {
 
   async removeByCategoryId(id: string) {
     try {
-      const subcategoriesDeleted = await this.subcategoryModel
-        .find({ category: id })
-        .deleteMany({ category: id })
-        .exec();
-      if (subcategoriesDeleted.images.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            subcategoriesDeleted.images.map((image) =>
-              this.filesService.deleteFileS3(image),
-            ),
-          );
-        } else {
-          await Promise.all(
-            subcategoriesDeleted.images.map((image) =>
-              this.filesService.deleteFile(image),
-            ),
-          );
-        }
+      const subcategoriesFound = await this.findAllByCategoryId(id);
+      if (subcategoriesFound && subcategoriesFound.length > 0) {
+        await Promise.all(
+          subcategoriesFound.map((subcategory) => this.remove(subcategory.id)),
+        );
       }
-      return subcategoriesDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
