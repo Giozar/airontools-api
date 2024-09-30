@@ -16,10 +16,7 @@ import {
   toolList,
 } from './sections/componentsTool.section';
 import { Types } from 'mongoose';
-import path from 'path';
-
-// Function to generate the product technical datasheet
-export const getProductTechnicalDatasheet = (
+interface TechnicalDatasheetProps {
   product: Product & {
     _id: Types.ObjectId;
     family: Family;
@@ -31,9 +28,16 @@ export const getProductTechnicalDatasheet = (
     }[];
     createdBy: User;
     updatedBy: User;
-  },
-  image?: string,
-): TDocumentDefinitions => {
+  };
+  opt?: number;
+  imagePath: string;
+}
+
+// Function to generate the product technical datasheet
+export const getProductTechnicalDatasheet = ({
+  product,
+  imagePath,
+}: TechnicalDatasheetProps): TDocumentDefinitions => {
   const {
     name,
     model,
@@ -44,12 +48,6 @@ export const getProductTechnicalDatasheet = (
     recommendations,
     specifications,
   } = product;
-  const imagePath =
-    image ||
-    path.join(__dirname, '../assets/images/fallback-images/no-image.jpg'); /*
-    images && images.length > 0 && images[opt]
-      ? `./static/uploads/images/products/${_id}/${images[opt].replace(/\S+\/\/\S+\/\w+\//, '')}`
-      : path.join(__dirname, '../assets/images/fallback-images/no-image.jpg');*/
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
     footer: toolFooter,
