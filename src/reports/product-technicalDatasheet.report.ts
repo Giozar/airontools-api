@@ -32,10 +32,9 @@ export const getProductTechnicalDatasheet = (
     createdBy: User;
     updatedBy: User;
   },
-  opt?: number,
+  image?: string,
 ): TDocumentDefinitions => {
   const {
-    _id,
     name,
     model,
     description,
@@ -43,13 +42,14 @@ export const getProductTechnicalDatasheet = (
     operationRequirements,
     applications,
     recommendations,
-    images,
     specifications,
   } = product;
   const imagePath =
+    image ||
+    path.join(__dirname, '../assets/images/fallback-images/no-image.jpg'); /*
     images && images.length > 0 && images[opt]
       ? `./static/uploads/images/products/${_id}/${images[opt].replace(/\S+\/\/\S+\/\w+\//, '')}`
-      : path.join(__dirname, '../assets/images/fallback-images/no-image.jpg');
+      : path.join(__dirname, '../assets/images/fallback-images/no-image.jpg');*/
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
     footer: toolFooter,

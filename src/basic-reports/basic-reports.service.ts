@@ -10,6 +10,7 @@ import {
   getProductTechnicalDatasheet,
 } from 'src/reports';
 import { getEmploymentLetterReport } from 'src/reports/employment-letter.report';
+import * as https from 'https';
 
 @Injectable()
 export class BasicReportsService {
@@ -59,18 +60,55 @@ export class BasicReportsService {
 
     return doc;
   }
-
+  //primero hay que hacer la peticion de la imagen externa
+  private getImageBuffer(imageUrl: string): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      https.get(imageUrl, (response) => {
+        const chunks: Buffer[] = [];
+        response.on('data', (chunk) => {
+          chunks.push(chunk);
+        });
+        response.on('end', () => {
+          resolve(Buffer.concat(chunks));
+        });
+        response.on('error', (error) => {
+          reject(error);
+        });
+      });
+    });
+  }
+  /**
+   *
+   * TODO: hacer bonito el servicio si se puede
+   *
+   *
+   */
   async productTechnicalDatasheet(id: string, opt: string = '0') {
     try {
       const product = await this.productsService.findOne(id);
-
       if (!product) {
         throw new NotFoundException(`Product with id ${id} not found`);
       }
-
       const parsedOpt = parseIntValidate(opt);
-
-      const docDefinition = getProductTechnicalDatasheet(product, parsedOpt);
+      let docDefinition;
+      if (!product.images[parsedOpt].includes('localhost')) {
+        const imagebuffer = await this.getImageBuffer(
+          product.images[parsedOpt] /*|| //imagen de prueba
+            ' https://airontools-admin.s3.amazonaws.com/images/categories/66f84f85de9c3616b4f60748/imagen2.jpg', */,
+        );
+        const imageBase64 = imagebuffer.toString('base64'); //Esto es importante
+        const imageDataUri = `data:image/jpeg;base64,${imageBase64}`; //Esto es importante
+        docDefinition = getProductTechnicalDatasheet(product, imageDataUri);
+      } else if (!product.images[parsedOpt].includes('.gif')) {
+        //Esto es importante de manejar, ya que hay tipos que PDFmake no maneja
+        docDefinition = getProductTechnicalDatasheet(
+          product,
+          `./assets/uploads/images/products/${product._id}/${product.images[opt].replace(/\S+\/\/\S+\/\w+\//, '')}`,
+        );
+      } else {
+        //Por si nada funciono pues vacio y va al fallback image
+        docDefinition = getProductTechnicalDatasheet(product);
+      }
       const doc = this.printerService.createPdf(docDefinition);
       await this.productsService.assignDatasheet(
         id,
