@@ -293,42 +293,8 @@ export class ProductsService {
 
   async removeByFamilyId(id: string) {
     try {
-      const productDeleted = await this.productModel
-        .find({ family: id })
-        .deleteMany({ family: id })
-        .exec();
-      if (productDeleted.images.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            productDeleted.images.map((image) =>
-              this.filesService.deleteFileS3(image),
-            ),
-          );
-        } else {
-          await Promise.all(
-            productDeleted.images.map((image) =>
-              this.filesService.deleteFile(image),
-            ),
-          );
-        }
-      }
-
-      if (productDeleted.manuals.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            productDeleted.manuals.map((manual) =>
-              this.filesService.deleteFileS3(manual),
-            ),
-          );
-        } else {
-          await Promise.all(
-            productDeleted.manuals.map((manual) =>
-              this.filesService.deleteFile(manual),
-            ),
-          );
-        }
-      }
-      return productDeleted;
+      const productsFound = await this.findAllByFamilyId(id);
+      Promise.all(productsFound.map((product) => this.remove(product.id)));
     } catch (error) {
       handleDBErrors(error);
     }
@@ -336,42 +302,8 @@ export class ProductsService {
 
   async removeByCategoryId(id: string) {
     try {
-      const productDeleted = await this.productModel
-        .find({ category: id })
-        .deleteMany({ category: id })
-        .exec();
-      if (productDeleted.images.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            productDeleted.images.map((image) =>
-              this.filesService.deleteFileS3(image),
-            ),
-          );
-        } else {
-          await Promise.all(
-            productDeleted.images.map((image) =>
-              this.filesService.deleteFile(image),
-            ),
-          );
-        }
-      }
-
-      if (productDeleted.manuals.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            productDeleted.manuals.map((manual) =>
-              this.filesService.deleteFileS3(manual),
-            ),
-          );
-        } else {
-          await Promise.all(
-            productDeleted.manuals.map((manual) =>
-              this.filesService.deleteFile(manual),
-            ),
-          );
-        }
-      }
-      return productDeleted;
+      const productsFound = await this.findAllByCategoryId(id);
+      Promise.all(productsFound.map((product) => this.remove(product.id)));
     } catch (error) {
       handleDBErrors(error);
     }
@@ -379,43 +311,8 @@ export class ProductsService {
 
   async removeBySubcategoryId(id: string) {
     try {
-      const productDeleted = await this.productModel
-        .find({ subcategory: id })
-        .deleteMany({ subcategory: id })
-        .exec();
-      //ifNotFound({ entity: productDeleted, id });
-      if (productDeleted.images.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            productDeleted.images.map((image) =>
-              this.filesService.deleteFileS3(image),
-            ),
-          );
-        } else {
-          await Promise.all(
-            productDeleted.images.map((image) =>
-              this.filesService.deleteFile(image),
-            ),
-          );
-        }
-      }
-
-      if (productDeleted.manuals.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            productDeleted.manuals.map((manual) =>
-              this.filesService.deleteFileS3(manual),
-            ),
-          );
-        } else {
-          await Promise.all(
-            productDeleted.manuals.map((manual) =>
-              this.filesService.deleteFile(manual),
-            ),
-          );
-        }
-      }
-      return productDeleted;
+      const productsFound = await this.findAllBySubcategoryId(id);
+      Promise.all(productsFound.map((product) => this.remove(product.id)));
     } catch (error) {
       handleDBErrors(error);
     }

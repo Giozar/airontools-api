@@ -121,26 +121,12 @@ export class CategoriesService {
 
   async removeByFamilyId(id: string) {
     try {
-      const categoryDeleted = await this.categoryModel
-        .find({ family: id })
-        .deleteMany({ family: id })
-        .exec();
-      if (categoryDeleted.images.length > 0) {
-        if (process.env.STORAGE === 'S3') {
-          await Promise.all(
-            categoryDeleted.images.map((image) =>
-              this.filesService.deleteFileS3(image),
-            ),
-          );
-        } else {
-          await Promise.all(
-            categoryDeleted.images.map((image) =>
-              this.filesService.deleteFile(image),
-            ),
-          );
-        }
+      const categoriesFound = await this.findAllByFamilyId(id);
+      if (categoriesFound && categoriesFound.length > 0) {
+        await Promise.all(
+          categoriesFound.map((category) => this.remove(category.id)),
+        );
       }
-      return categoryDeleted;
     } catch (error) {
       handleDBErrors(error);
     }
