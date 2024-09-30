@@ -10,6 +10,7 @@ import {
   getProductTechnicalDatasheet,
 } from 'src/reports';
 import { getEmploymentLetterReport } from 'src/reports/employment-letter.report';
+import validateImageUtil from './utils/validateImage.util';
 
 @Injectable()
 export class BasicReportsService {
@@ -63,14 +64,16 @@ export class BasicReportsService {
   async productTechnicalDatasheet(id: string, opt: string = '0') {
     try {
       const product = await this.productsService.findOne(id);
-
       if (!product) {
         throw new NotFoundException(`Product with id ${id} not found`);
       }
-
-      const parsedOpt = parseIntValidate(opt);
-
-      const docDefinition = getProductTechnicalDatasheet(product, parsedOpt);
+      parseIntValidate(opt);
+      const image = product.images[opt];
+      const imagePath = await validateImageUtil(image, id);
+      const docDefinition = getProductTechnicalDatasheet({
+        product,
+        imagePath: imagePath,
+      });
       const doc = this.printerService.createPdf(docDefinition);
       await this.productsService.assignDatasheet(
         id,
