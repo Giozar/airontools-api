@@ -5,8 +5,14 @@ export default async function validateImageUtil(
   image: string,
   _id,
 ): Promise<string> {
-  const fallbackImage = './assets/images/fallback-images/no-image.jpg';
-  const unsupportedImage = './assets/images/fallback-images/no-support.jpg';
+  const fallbackImage = path.join(
+    __dirname,
+    '../../assets/images/fallback-images/no-image.jpg',
+  );
+  const unsupportedImage = path.join(
+    __dirname,
+    '../../assets/images/fallback-images/no-support.jpg',
+  );
 
   if (!image || image.length === 0) {
     // No hay imagen disponible, devolvemos la imagen por defecto
@@ -36,5 +42,8 @@ export default async function validateImageUtil(
   }
 
   // Si la imagen está almacenada localmente
-  return `./assets/uploads/images/products/${_id}/${image.replace(/\S+\/\/\S+\/\w+\//, '')}`;
+  return path.join(
+    __dirname,
+    `../../assets/uploads/images/products/${_id}/${image.replace(/\S+\/\/\S+\/\w+\//, '')}`,
+  );
 }
