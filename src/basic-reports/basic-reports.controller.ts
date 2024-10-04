@@ -56,4 +56,14 @@ export class BasicReportsController {
     pdfDoc.pipe(response);
     pdfDoc.end();
   }
+
+  @Get('repair-order')
+  async repairOrder(@Res() response: Response) {
+    const pdfDoc = await this.basicReportsService.repairOrder();
+
+    response.setHeader('Content-Type', 'application/pdf');
+    pdfDoc.info.Title = 'Airontools-Herramientas-Industriales';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
 }

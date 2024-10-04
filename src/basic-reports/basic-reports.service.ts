@@ -11,6 +11,7 @@ import {
 } from 'src/reports';
 import { getEmploymentLetterReport } from 'src/reports/employment-letter.report';
 import validateImageUtil from './utils/validateImage.util';
+import { getRepairOrder } from 'src/reports/repair-order.report';
 
 @Injectable()
 export class BasicReportsService {
@@ -84,5 +85,12 @@ export class BasicReportsService {
     } catch (error) {
       handleDBErrors(error);
     }
+  }
+  async repairOrder() {
+    try {
+      const docDefinition = getRepairOrder();
+      const doc = this.printerService.createPdf(docDefinition);
+      return doc;
+    } catch (error) {}
   }
 }
