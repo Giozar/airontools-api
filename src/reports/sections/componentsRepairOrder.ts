@@ -1,3 +1,4 @@
+import path from 'path';
 import { Content, ContentStack } from 'pdfmake/interfaces';
 
 // Mantén las variables iniciales
@@ -57,7 +58,10 @@ export function title(): Content {
         columns: [
           {
             width: 100,
-            image: 'airontools',
+            image: path.join(
+              __dirname,
+              '../../assets/images/fallback-images/no-image.jpg',
+            ),
             height: 70,
           },
           {
@@ -168,7 +172,14 @@ export function diagnostics(): Content {
       {
         columns: [
           { stack: observations().stack },
-          { image: 'placeholder', width: 180, height: 200 },
+          {
+            image: path.join(
+              __dirname,
+              '../../assets/images/fallback-images/no-image.jpg',
+            ),
+            width: 180,
+            height: 200,
+          },
         ],
       },
       { text: '', margin: [0, 10] },
