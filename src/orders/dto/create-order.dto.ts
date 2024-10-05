@@ -13,7 +13,6 @@ import { RepairProductDto } from './repair-product.dto';
 
 export enum OrderType {
   REPAIR = 'repair',
-  PURCHASE = 'purchase',
 }
 
 export class CreateOrderDto {
@@ -48,7 +47,7 @@ export class CreateOrderDto {
 
   @IsNotEmpty()
   @ValidateNested()
-  responsibleEmployee: Types.ObjectId; // Empleado responsable de la orden
+  responsible: Types.ObjectId; // Empleado responsable de la orden
 
   @IsNotEmpty()
   @IsMongoId()
