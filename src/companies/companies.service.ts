@@ -1,26 +1,65 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Company } from './schemas/company.schema';
+import { Model } from 'mongoose';
+import { handleDBErrors } from 'src/handlers';
 
 @Injectable()
 export class CompaniesService {
-  create(createCompanyDto: CreateCompanyDto) {
-    return 'This action adds a new company';
+  constructor(
+    @InjectModel(Company.name)
+    private companyModel: Model<Company>,
+  ) {}
+
+  async create(createCompanyDto: CreateCompanyDto) {
+    try {
+      const companyCreated = new this.companyModel(createCompanyDto);
+      await companyCreated.save;
+      return companyCreated;
+    } catch (error) {
+      handleDBErrors(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all companies`;
+  async findAll() {
+    try {
+      const companiesFound = await this.companyModel.find();
+      return companiesFound;
+    } catch (error) {
+      handleDBErrors(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} company`;
+  async findOne(id: string) {
+    try {
+      const company = await this.companyModel.findById(id);
+      return company;
+    } catch (error) {
+      handleDBErrors(error);
+    }
   }
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
+  async update(id: string, updateCompanyDto: UpdateCompanyDto) {
+    try {
+      const companyUpdated = await this.companyModel.findByIdAndUpdate(
+        id,
+        updateCompanyDto,
+        { new: true },
+      );
+      return companyUpdated;
+    } catch (error) {
+      handleDBErrors(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+  async remove(id: string) {
+    try {
+      const companyRemoved = await this.companyModel.findByIdAndDelete(id);
+      return companyRemoved;
+    } catch (error) {
+      handleDBErrors(error);
+    }
   }
 }

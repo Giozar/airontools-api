@@ -12,14 +12,6 @@ export class RepairProductDto {
   @IsMongoId()
   productId?: Types.ObjectId; // ID del producto si es un producto interno
 
-  @IsNotEmpty()
-  @IsString()
-  brand: string; // Marca del producto, obligatorio en caso de reparación (puede ser externo o interno)
-
-  @IsNotEmpty()
-  @IsString()
-  model: string; // Modelo del producto
-
   @IsOptional()
   @IsString()
   serialNumber?: string; // Número de serie del producto (opcional)
