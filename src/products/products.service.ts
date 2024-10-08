@@ -198,6 +198,10 @@ export class ProductsService {
       .exec();
   }
 
+  async findAllByBrand(brand: string) {
+    return await this.productModel.find({ brand }).exec();
+  }
+
   async searchProduct(
     keywords: string = '',
     limit: number = 10,
