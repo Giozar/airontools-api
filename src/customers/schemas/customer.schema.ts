@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
+import { User } from 'src/auth/schemas/user.schema';
+import { Company } from 'src/companies/schemas/company.schema';
 
 export type CustomerDocument = Customer & Document;
 
@@ -36,8 +38,8 @@ export class Customer {
   @Prop({ type: String, required: true })
   name: string; // Nombre del cliente (nombre completo o nombre de la empresa)
 
-  @Prop({ type: String, required: false })
-  companyName?: string; // Solo si el cliente es una empresa
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Company' })
+  company?: MongooseSchema.Types.ObjectId | Company;
 
   @Prop({ type: String, required: false })
   email?: string; // Correo electrónico del cliente
@@ -50,6 +52,18 @@ export class Customer {
 
   @Prop({ type: [String], required: false })
   additionalContacts?: string[]; // Contactos adicionales, si los hay
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  createdBy: MongooseSchema.Types.ObjectId | User;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  updatedBy: MongooseSchema.Types.ObjectId | User;
+
+  @Prop({ type: Date })
+  createdAt: Date;
+
+  @Prop({ type: Date })
+  updatedAt: Date;
 }
 
 export const CustomerSchema = SchemaFactory.createForClass(Customer);

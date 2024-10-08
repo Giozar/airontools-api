@@ -16,15 +16,15 @@ export type productDocument = HydratedDocument<Product>;
 export class Product {
   @Prop({
     unique: true,
-    required: true,
+    // required: true,
   })
-  name: string;
+  name?: string;
 
-  @Prop({
-    unique: true,
-    required: true,
-  })
-  model: string;
+  @Prop({ type: String, required: true })
+  brand: string; // Marca del producto, obligatorio en caso de reparación (puede ser externo o interno)
+
+  @Prop({ type: String, required: true })
+  model: string; // Modelo del producto
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
   family: MongooseSchema.Types.ObjectId | Family;

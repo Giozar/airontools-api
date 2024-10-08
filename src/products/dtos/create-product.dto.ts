@@ -12,13 +12,18 @@ import { ProductSpecificationDto } from './productSpecification.dto';
 import { TechnicalDatasheetDto } from './technicalDatasheet.dto';
 
 export class CreateProductDto {
-  @IsNotEmpty()
+  // @IsNotEmpty()
+  @IsOptional()
   @IsString()
   name: string;
 
   @IsNotEmpty()
   @IsString()
-  model: string;
+  brand: string; // Marca del producto, obligatorio en caso de reparación (puede ser externo o interno)
+
+  @IsNotEmpty()
+  @IsString()
+  model: string; // Modelo del producto
 
   @IsNotEmpty()
   @IsMongoId()

@@ -8,7 +8,9 @@ import {
   IsArray,
   ValidateNested,
   IsEnum,
+  IsMongoId,
 } from 'class-validator';
+import { Types } from 'mongoose';
 export enum CustomerType {
   INDIVIDUAL = 'individual',
   COMPANY = 'company',
@@ -45,9 +47,9 @@ export class CreateCustomerDto {
   @IsString()
   name: string; // Nombre del cliente (nombre completo o nombre de la empresa)
 
-  @IsOptional()
-  @IsString()
-  companyName?: string; // Solo si el cliente es una empresa
+  @IsNotEmpty()
+  @IsMongoId()
+  company?: Types.ObjectId; // Solo si el cliente es una empresa
 
   @IsOptional()
   @IsEmail()
@@ -65,4 +67,12 @@ export class CreateCustomerDto {
   @IsArray()
   @IsString({ each: true })
   additionalContacts?: string[]; // Contactos adicionales, si los hay
+
+  @IsNotEmpty()
+  @IsMongoId()
+  createdBy: Types.ObjectId;
+
+  @IsOptional()
+  @IsMongoId()
+  updatedBy: Types.ObjectId;
 }
