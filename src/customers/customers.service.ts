@@ -34,6 +34,16 @@ export class CustomersService {
     }
   }
 
+  // Encontrar un clientes por id de empresa
+  async findAllByCompanyId(companyId: string) {
+    try {
+      const customers = await this.customerModel.find({ company: companyId });
+      return customers;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
   // Encontrar un cliente por su ID
   async findOne(id: string) {
     try {
