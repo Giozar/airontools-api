@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types, Schema as MongooseSchema } from 'mongoose';
-import { OrderType } from '../dto/create-order.dto';
+import { OrderStatus, OrderType } from '../dto/create-order.dto';
 import { RepairProductDto } from '../dto/repair-product.dto';
 import { User } from 'src/auth/schemas/user.schema';
 
@@ -33,6 +33,9 @@ export class Order {
 
   @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
   responsible: MongooseSchema.Types.ObjectId | User; // Empleado responsable de la orden
+
+  @Prop({ type: String, enum: OrderStatus, default: OrderStatus.PENDING })
+  orderStatus: OrderStatus; // Estado de la orden
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   createdBy: MongooseSchema.Types.ObjectId | User;

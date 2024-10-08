@@ -15,6 +15,16 @@ export enum OrderType {
   REPAIR = 'repair',
 }
 
+export enum OrderStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  ON_HOLD = 'on_hold',
+  DELIVERED = 'delivered',
+  REJECTED = 'rejected',
+}
+
 export class CreateOrderDto {
   @IsNotEmpty()
   @IsMongoId()
@@ -48,6 +58,10 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @ValidateNested()
   responsible: Types.ObjectId; // Empleado responsable de la orden
+
+  @IsNotEmpty()
+  @IsEnum(OrderStatus)
+  orderStatus: OrderStatus; // Estado de la orden
 
   @IsNotEmpty()
   @IsMongoId()
