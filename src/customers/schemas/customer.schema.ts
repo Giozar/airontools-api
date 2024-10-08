@@ -1,69 +1,39 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
-import { User } from 'src/auth/schemas/user.schema';
-import { Company } from 'src/companies/schemas/company.schema';
+import { Document, Types } from 'mongoose';
+import { AddressDto, CustomerType } from '../dto/create-customer.dto';
 
 export type CustomerDocument = Customer & Document;
 
-export enum CustomerType {
-  INDIVIDUAL = 'individual',
-  COMPANY = 'company',
-}
-
-@Schema()
-class Address {
-  @Prop({ type: String, required: true })
-  street: string;
-
-  @Prop({ type: String, required: true })
-  city: string;
-
-  @Prop({ type: String, required: true })
-  state: string;
-
-  @Prop({ type: String, required: true })
-  postalCode: string;
-
-  @Prop({ type: String, required: false })
-  country?: string; // Opcional, en caso de que necesites registrar países diferentes
-}
-
-const AddressSchema = SchemaFactory.createForClass(Address);
-
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+})
 export class Customer {
-  @Prop({ type: String, enum: CustomerType, required: true })
+  @Prop({ required: true, enum: CustomerType })
   customerType: CustomerType; // Tipo de cliente: individuo o empresa
 
-  @Prop({ type: String, required: true })
-  name: string; // Nombre del cliente (nombre completo o nombre de la empresa)
+  @Prop({ required: true })
+  name: string; // Nombre del cliente
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Company' })
-  company?: MongooseSchema.Types.ObjectId | Company;
+  @Prop({ type: Types.ObjectId, ref: 'Company' }) // Relación con la empresa
+  company?: Types.ObjectId; // Solo si el cliente es una empresa
 
-  @Prop({ type: String, required: false })
-  email?: string; // Correo electrónico del cliente
+  @Prop({ required: false }) // Correo electrónico del cliente (opcional)
+  email?: string;
 
-  @Prop({ type: String, required: false })
-  phoneNumber?: string; // Teléfono de contacto
+  @Prop({ required: true }) // Teléfono de contacto (requerido)
+  phoneNumber: string;
 
-  @Prop({ type: AddressSchema, required: true })
-  address: Address; // Dirección del cliente
+  @Prop({ type: Object, required: false }) // Dirección del cliente (opcional)
+  address?: AddressDto;
 
-  @Prop({ type: [String], required: false })
-  additionalContacts?: string[]; // Contactos adicionales, si los hay
+  @Prop({ type: [String], required: false }) // Contactos adicionales (opcional)
+  additionalContacts?: string[];
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  createdBy: MongooseSchema.Types.ObjectId | User;
+  @Prop({ type: Types.ObjectId, required: true }) // Creador del registro
+  createdBy: Types.ObjectId;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
-  updatedBy: MongooseSchema.Types.ObjectId | User;
-
-  @Prop({ type: Date })
-  createdAt: Date;
-
-  @Prop({ type: Date })
-  updatedAt: Date;
+  @Prop({ type: Types.ObjectId }) // Actualizador del registro (opcional)
+  updatedBy?: Types.ObjectId;
 }
 
 export const CustomerSchema = SchemaFactory.createForClass(Customer);

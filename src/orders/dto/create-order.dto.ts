@@ -34,8 +34,8 @@ export class CreateOrderDto {
   @IsEnum(OrderType)
   orderType: OrderType; // Tipo de orden (en este caso, 'repair')
 
-  @IsNotEmpty()
-  orderDate: Date; // Fecha de creación de la orden
+  @IsOptional()
+  authorizationDate: Date; // Fecha de creación de la orden
 
   @IsArray()
   @ValidateNested({ each: true })
@@ -56,8 +56,8 @@ export class CreateOrderDto {
   receivedBy: Types.ObjectId; // Empleado que recibe el producto
 
   @IsNotEmpty()
-  @ValidateNested()
-  responsible: Types.ObjectId; // Empleado responsable de la orden
+  @IsString()
+  deliveryRepresentative: string; // Empleado responsable de la orden
 
   @IsNotEmpty()
   @IsEnum(OrderStatus)

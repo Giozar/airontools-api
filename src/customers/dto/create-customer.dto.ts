@@ -11,31 +11,32 @@ import {
   IsMongoId,
 } from 'class-validator';
 import { Types } from 'mongoose';
+
 export enum CustomerType {
   INDIVIDUAL = 'individual',
   COMPANY = 'company',
 }
 
 export class AddressDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  street: string;
-
-  @IsNotEmpty()
-  @IsString()
-  city: string;
-
-  @IsNotEmpty()
-  @IsString()
-  state: string;
-
-  @IsNotEmpty()
-  @IsString()
-  postalCode: string;
+  street?: string; // Opcional
 
   @IsOptional()
   @IsString()
-  country?: string; // Opcional, en caso de que necesites registrar países diferentes
+  city?: string; // Opcional
+
+  @IsOptional()
+  @IsString()
+  state?: string; // Opcional
+
+  @IsOptional()
+  @IsString()
+  postalCode?: string; // Opcional
+
+  @IsOptional()
+  @IsString()
+  country?: string; // Opcional
 }
 
 export class CreateCustomerDto {
@@ -47,7 +48,7 @@ export class CreateCustomerDto {
   @IsString()
   name: string; // Nombre del cliente (nombre completo o nombre de la empresa)
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
   company?: Types.ObjectId; // Solo si el cliente es una empresa
 
@@ -55,13 +56,14 @@ export class CreateCustomerDto {
   @IsEmail()
   email?: string; // Correo electrónico del cliente
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsPhoneNumber()
-  phoneNumber?: string; // Teléfono de contacto
+  phoneNumber: string; // Teléfono de contacto (requerido)
 
   @ValidateNested()
   @Type(() => AddressDto)
-  address: AddressDto; // Dirección del cliente
+  @IsOptional()
+  address?: AddressDto; // Dirección del cliente (opcional)
 
   @IsOptional()
   @IsArray()
@@ -74,5 +76,5 @@ export class CreateCustomerDto {
 
   @IsOptional()
   @IsMongoId()
-  updatedBy: Types.ObjectId;
+  updatedBy?: Types.ObjectId; // Opcional
 }

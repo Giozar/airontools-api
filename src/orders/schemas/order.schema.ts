@@ -16,8 +16,8 @@ export class Order {
   @Prop({ type: String, enum: OrderType, required: true })
   orderType: OrderType; // Tipo de orden (en este caso, 'repair')
 
-  @Prop({ type: Date, required: true })
-  orderDate: Date; // Fecha de creación de la orden
+  @Prop({ type: Date, required: false })
+  authorizationDate: Date; // Fecha de creación de la orden
 
   @Prop({ type: [{ type: Object, required: true }], _id: false })
   products: RepairProductDto[]; // Productos a reparar
@@ -31,8 +31,8 @@ export class Order {
   @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
   receivedBy: MongooseSchema.Types.ObjectId | User; // Empleado que recibe el producto
 
-  @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
-  responsible: MongooseSchema.Types.ObjectId | User; // Empleado responsable de la orden
+  @Prop({ type: String, required: true })
+  deliveryRepresentative: string; // Nombre de la persona que entrega la herramienta para reparación
 
   @Prop({ type: String, enum: OrderStatus, default: OrderStatus.PENDING })
   orderStatus: OrderStatus; // Estado de la orden
