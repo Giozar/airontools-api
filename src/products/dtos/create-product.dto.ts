@@ -12,8 +12,7 @@ import { ProductSpecificationDto } from './productSpecification.dto';
 import { TechnicalDatasheetDto } from './technicalDatasheet.dto';
 
 export class CreateProductDto {
-  // @IsNotEmpty()
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   name: string;
 

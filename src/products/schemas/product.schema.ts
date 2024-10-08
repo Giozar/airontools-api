@@ -18,7 +18,7 @@ export class Product {
     unique: true,
     // required: true,
   })
-  name?: string;
+  name: string;
 
   @Prop({ type: String, required: true })
   brand: string; // Marca del producto, obligatorio en caso de reparación (puede ser externo o interno)
