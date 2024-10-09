@@ -3,10 +3,6 @@ import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { Order, OrderSchema } from './schemas/order.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  RepairProduct,
-  RepairProductSchema,
-} from './schemas/repair-product.schema';
 
 @Module({
   controllers: [OrdersController],
@@ -16,10 +12,6 @@ import {
       {
         name: Order.name,
         schema: OrderSchema,
-      },
-      {
-        name: RepairProduct.name,
-        schema: RepairProductSchema,
       },
     ]),
   ],

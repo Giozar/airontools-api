@@ -5,16 +5,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Order } from './schemas/order.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
-import { RepairProduct } from './schemas/repair-product.schema';
-import { RepairProductDto } from './dto/repair-product.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectModel(Order.name)
     private orderModel: Model<Order>,
-    @InjectModel(RepairProduct.name)
-    private repairProductModel: Model<RepairProduct>,
   ) {}
 
   // Crear una nueva orden
@@ -67,60 +63,6 @@ export class OrdersService {
     try {
       const orderRemoved = await this.orderModel.findByIdAndDelete(id);
       return orderRemoved;
-    } catch (error) {
-      handleDBErrors(error);
-    }
-  }
-
-  async createRepairProduct(createRepairProduct: RepairProductDto) {
-    try {
-      const repairProductCreated = new this.repairProductModel(
-        createRepairProduct,
-      );
-      await repairProductCreated.save();
-      return repairProductCreated;
-    } catch (error) {
-      handleDBErrors(error);
-    }
-  }
-
-  async updateRepairProduct(id: string, updateRepairProduct: RepairProductDto) {
-    try {
-      const updatedRepairProduct =
-        await this.repairProductModel.findByIdAndUpdate(
-          id,
-          updateRepairProduct,
-        );
-      return updatedRepairProduct;
-    } catch (error) {
-      handleDBErrors(error);
-    }
-  }
-
-  async findAllRepairProducts() {
-    try {
-      const repairProducts = await this.repairProductModel.find().exec();
-      return repairProducts;
-    } catch (error) {
-      handleDBErrors(error);
-    }
-  }
-
-  async findOneRepairProduct(id: string) {
-    try {
-      const repairProduct = await this.repairProductModel.findById(id).exec();
-      return repairProduct;
-    } catch (error) {
-      handleDBErrors(error);
-    }
-  }
-
-  async removeRepairProduct(id: string) {
-    try {
-      const removedRepairProduct = await this.repairProductModel
-        .findByIdAndDelete(id)
-        .exec();
-      return removedRepairProduct;
     } catch (error) {
       handleDBErrors(error);
     }
