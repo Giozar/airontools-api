@@ -25,6 +25,11 @@ export class OtherProductsController {
     return this.otherProductsService.findAllOtherProducts();
   }
 
+  @Get('brand/:brand')
+  findAllByBrand(@Param('brand') brand: string) {
+    return this.otherProductsService.findAllByBrand(brand);
+  }
+
   @Get(':id')
   findOneOtherProduct(@Param('id') id: string) {
     return this.otherProductsService.findOneOtherProduct(id);
