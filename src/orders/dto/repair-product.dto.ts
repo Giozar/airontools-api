@@ -37,7 +37,6 @@ export class RepairProductDto {
   images?: string[]; // Imágenes opcionales del producto
 
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  observations?: string[]; // Observaciones adicionales específicas de este producto
+  @IsString()
+  observation?: string; // Observaciones adicionales específicas de este producto
 }
