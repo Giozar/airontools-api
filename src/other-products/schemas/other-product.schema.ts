@@ -4,20 +4,17 @@ import { Schema as MongooseSchema } from 'mongoose';
 import { User } from 'src/auth/schemas/user.schema';
 import { Category } from 'src/categories/schemas/category.schema';
 import { Family } from 'src/families/schemas/family.schema';
+import { TechnicalDatasheetDto } from 'src/products/dtos/technicalDatasheet.dto';
 import { Specification } from 'src/specifications/schemas/specification.schema';
 import { Subcategory } from 'src/subcategories/schemas/subcategory.schema';
-import { TechnicalDatasheetDto } from '../dtos/technicalDatasheet.dto';
 
-export type productDocument = HydratedDocument<Product>;
+export type productDocument = HydratedDocument<OtherProduct>;
 
 @Schema({
   timestamps: true,
 })
-export class Product {
-  @Prop({
-    unique: true,
-    required: true,
-  })
+export class OtherProduct {
+  @Prop({ required: false })
   name: string;
 
   @Prop({ type: String, required: true })
@@ -26,24 +23,24 @@ export class Product {
   @Prop({ type: String, required: true })
   model: string; // Modelo del producto
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Family', required: false })
   family: MongooseSchema.Types.ObjectId | Family;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: 'Category',
-    required: true,
+    required: false,
   })
   category: MongooseSchema.Types.ObjectId | Category;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: 'Subcategory',
-    required: true,
+    required: false,
   })
   subcategory: MongooseSchema.Types.ObjectId | Subcategory;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   description: string;
 
   @Prop({})
@@ -74,7 +71,7 @@ export class Product {
           type: MongooseSchema.Types.ObjectId,
           ref: 'Specification',
         },
-        value: { type: String, required: true },
+        value: { type: String, required: false },
       },
     ],
   })
@@ -94,7 +91,7 @@ export class Product {
   @Prop({})
   videos: string[];
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: false })
   createdBy: MongooseSchema.Types.ObjectId | User;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
@@ -107,4 +104,4 @@ export class Product {
   updatedAt: Date;
 }
 
-export const ProductSchema = SchemaFactory.createForClass(Product);
+export const OtherProductSchema = SchemaFactory.createForClass(OtherProduct);
