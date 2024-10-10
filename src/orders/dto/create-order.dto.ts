@@ -35,7 +35,10 @@ export class CreateOrderDto {
   orderType: OrderType; // Tipo de orden (en este caso, 'repair')
 
   @IsOptional()
-  authorizationDate: Date; // Fecha de creación de la orden
+  authorizationDate: Date; // Fecha de autorización de la orden
+
+  @IsOptional()
+  deliveryDate: Date; // Fecha de autorización de entrega
 
   @IsArray()
   @ValidateNested({ each: true })

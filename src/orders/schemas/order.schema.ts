@@ -17,7 +17,10 @@ export class Order {
   orderType: OrderType; // Tipo de orden (en este caso, 'repair')
 
   @Prop({ type: Date, required: false })
-  authorizationDate: Date; // Fecha de creación de la orden
+  authorizationDate: Date; // Fecha de autorización de la orden
+
+  @Prop({ type: Date, required: false })
+  deliveryDate: Date; // Fecha de entrega
 
   @Prop({ type: [{ type: Object, required: true }], _id: false })
   products: RepairProductDto[]; // Productos a reparar
