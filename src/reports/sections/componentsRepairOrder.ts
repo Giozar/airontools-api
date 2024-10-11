@@ -58,11 +58,8 @@ export function title(): Content {
         columns: [
           {
             width: 100,
-            image: path.join(
-              __dirname,
-              '../../assets/images/fallback-images/no-image.jpg',
-            ),
-            height: 70,
+            image: path.join(__dirname, '../../assets/images/logos/logo.png'),
+            height: 60,
           },
           {
             width: 200,
@@ -134,6 +131,7 @@ export function productData(): Content {
         table: {
           headerRows: 1,
           widths: ['auto', 70, 120, '*'],
+          heights: [20],
           body: [
             [
               { text: 'Cantidad', alignment: 'center' },
@@ -141,7 +139,7 @@ export function productData(): Content {
               { text: 'Número de serie', alignment: 'center' },
               { text: 'Descripción', alignment: 'center' },
             ],
-            ...Array(9).fill(['1', '', '', '']), // Genera filas vacías
+            ...Array(9).fill(['1', '2', '3', '4']), // Genera filas vacías
           ],
         },
       },
