@@ -26,6 +26,10 @@ export enum OrderStatus {
 }
 
 export class CreateOrderDto {
+  @IsOptional()
+  @IsMongoId()
+  company?: Types.ObjectId; // Solo si el cliente es una empresa
+
   @IsNotEmpty()
   @IsMongoId()
   customer: Types.ObjectId; // Relación con el cliente (CustomerDto)
@@ -55,7 +59,7 @@ export class CreateOrderDto {
   images?: string[]; // Imágenes opcionales
 
   @IsNotEmpty()
-  @ValidateNested()
+  @IsMongoId()
   receivedBy: Types.ObjectId; // Empleado que recibe el producto
 
   @IsNotEmpty()

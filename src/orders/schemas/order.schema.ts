@@ -10,6 +10,9 @@ export type OrderDocument = Order & Document;
   timestamps: true,
 })
 export class Order {
+  @Prop({ type: Types.ObjectId, ref: 'Company' }) // Relación con la empresa
+  company: Types.ObjectId; // Solo si el cliente es una empresa
+
   @Prop({ type: Types.ObjectId, required: true, ref: 'Customer' })
   customer: Types.ObjectId; // Relación con el cliente (Customer)
 

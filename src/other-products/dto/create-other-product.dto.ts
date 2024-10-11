@@ -75,6 +75,7 @@ export class CreateOtherProductDto {
   @ValidateNested({ each: true })
   technicalDatasheet: TechnicalDatasheetDto;
 
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => ProductSpecificationDto)
   @IsArray()
