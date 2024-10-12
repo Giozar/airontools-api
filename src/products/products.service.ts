@@ -233,7 +233,16 @@ export class ProductsService {
         .sort({
           id: 1,
           // name: 1, // Ordena la propiedad ascendentemente
-        });
+        })
+        .populate([
+          this.FAMILY,
+          this.CATEGORY,
+          this.SUBCATEGORY,
+          this.CREATEDBY,
+          this.UPDATEDBY,
+          this.SPECIFICATIONS,
+        ])
+        .exec();
       // .select('-created_at'); // Indica que en la respuesta no vendrá esta propiedad
 
       // Solo agregamos al resultado si se encontraron productos para la palabra clave actual
