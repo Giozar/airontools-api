@@ -4,7 +4,6 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
-  IsPhoneNumber,
   IsArray,
   ValidateNested,
   IsEnum,
@@ -57,7 +56,7 @@ export class CreateCustomerDto {
   email?: string; // Correo electrónico del cliente
 
   @IsNotEmpty()
-  @IsPhoneNumber()
+  @IsString()
   phoneNumber: string; // Teléfono de contacto (requerido)
 
   @ValidateNested()
