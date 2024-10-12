@@ -16,7 +16,7 @@ export class CompaniesService {
   async create(createCompanyDto: CreateCompanyDto) {
     try {
       const companyCreated = new this.companyModel(createCompanyDto);
-      await companyCreated.save;
+      await companyCreated.save();
       return companyCreated;
     } catch (error) {
       handleDBErrors(error);

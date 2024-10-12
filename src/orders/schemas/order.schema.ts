@@ -19,6 +19,9 @@ export class Order {
   @Prop({ type: String, enum: OrderType, required: true })
   orderType: OrderType; // Tipo de orden (en este caso, 'repair')
 
+  @Prop({ type: String, required: true })
+  quoteDeliveryTime: string;
+
   @Prop({ type: Date, required: false })
   authorizationDate: Date; // Fecha de autorización de la orden
 
@@ -35,7 +38,7 @@ export class Order {
   images?: string[]; // Imágenes opcionales
 
   @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
-  receivedBy: MongooseSchema.Types.ObjectId | User; // Empleado que recibe el producto
+  receivedBy: MongooseSchema.Types.ObjectId; // Empleado que recibe el producto
 
   @Prop({ type: String, required: true })
   deliveryRepresentative: string; // Nombre de la persona que entrega la herramienta para reparación

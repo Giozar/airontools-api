@@ -37,7 +37,12 @@ export class OrdersService {
   // Encontrar una orden por su ID
   async findOne(id: string) {
     try {
-      const order = await this.orderModel.findById(id);
+      const order = (await this.orderModel.findById(id)).populate([
+        'customer',
+        'company',
+        'products',
+        'receivedBy',
+      ]);
       return order;
     } catch (error) {
       handleDBErrors(error);

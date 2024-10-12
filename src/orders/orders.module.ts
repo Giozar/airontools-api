@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   controllers: [OrdersController],
   providers: [OrdersService],
+  exports: [OrdersService],
   imports: [
     MongooseModule.forFeature([
       {

@@ -1,10 +1,9 @@
 import path from 'path';
 import { Content, ContentStack } from 'pdfmake/interfaces';
+import { DateFormatter } from 'src/helpers';
 
 // Mantén las variables iniciales
 const num_de_orden = 4000;
-const fecha_actual = '04 / octubre / 2024';
-const fecha_autorizacion = '04 / octubre / 2024';
 const diag = 'Lorem ipsum...'; // Tu diagnóstico aquí
 
 // Función para crear la orden
@@ -79,42 +78,110 @@ export function title(): Content {
 }
 
 // Función para las fechas
-export function dates(): Content {
+export function dates(order: any): Content {
   return {
     stack: [
       {
         columns: [
           {
-            text: `Fecha de entrada: ${fecha_actual}`,
+            text: `Fecha de entrada: ${DateFormatter.getDDMMMMYYYY(order.createdAt)}`,
             alignment: 'right',
             lineHeight: 1.5,
           },
           {
-            text: `Fecha de Autorización: ${fecha_autorizacion}`,
+            text: `Fecha de Autorización: ${DateFormatter.getDDMMMMYYYY(order.authorizationDate)}`,
             alignment: 'right',
             lineHeight: 1.5,
           },
         ],
       },
       {
-        text: 'Procedencia: ____________________________________________________',
-        lineHeight: 1.5,
+        table: {
+          widths: ['auto', '*'], // Ajuste automático del ancho de la segunda celda
+          body: [
+            [
+              {
+                text: 'Procedencia:',
+                lineHeight: 1.5,
+                border: [false, false, false, false],
+                margin: [0, 5, 10, 0], // Margen en [izquierda, arriba, derecha, abajo]
+              },
+              {
+                text: order.company.name || '',
+                bold: true,
+                border: [false, false, false, true], // Línea debajo
+                margin: [0, 5, 0, 5], // Ajusta márgenes para el texto dentro de la celda
+              },
+            ],
+          ],
+        },
       },
       {
-        text: 'Tiempo de Entrega de Cotización: ___________________________________',
-        lineHeight: 1.5,
+        table: {
+          widths: ['auto', '*'],
+          body: [
+            [
+              {
+                text: 'Tiempo de Entrega de Cotización:',
+                lineHeight: 1.5,
+                border: [false, false, false, false],
+                margin: [0, 5, 10, 0],
+              },
+              {
+                text: order.quoteDeliveryTime || '',
+                bold: true,
+                border: [false, false, false, true],
+                margin: [0, 5, 0, 5],
+              },
+            ],
+          ],
+        },
       },
       {
         columns: [
           {
             width: '60%',
-            text: 'Responsable: ___________________________________',
-            lineHeight: 1.5,
+            table: {
+              widths: ['auto', '*'],
+              body: [
+                [
+                  {
+                    text: 'Responsable:',
+                    lineHeight: 1.5,
+                    border: [false, false, false, false],
+                    margin: [0, 5, 10, 0],
+                  },
+                  {
+                    text: order.customer.name || '',
+                    bold: true,
+                    border: [false, false, false, true],
+                    margin: [0, 5, 0, 5],
+                  },
+                ],
+              ],
+            },
           },
           {
             width: '40%',
-            text: 'Tel: ___________________________',
-            lineHeight: 1.5,
+            table: {
+              widths: ['auto', '*'],
+              body: [
+                [
+                  {
+                    text: 'Tel:',
+                    lineHeight: 1.5,
+                    border: [false, false, false, false],
+                    margin: [0, 5, 10, 0],
+                  },
+                  {
+                    text: order.customer.phoneNumber || '',
+                    bold: true,
+                    border: [false, false, false, true],
+                    margin: [0, 5, 0, 5],
+                  },
+                ],
+              ],
+            },
           },
         ],
       },
@@ -123,10 +190,15 @@ export function dates(): Content {
 }
 
 // Función para los datos del producto
-export function productData(): Content {
+export function productData(order: any): Content {
   return {
     stack: [
-      { text: 'Datos de la herramienta', alignment: 'center', fontSize: 16 },
+      {
+        text: 'Datos de la herramienta',
+        alignment: 'center',
+        fontSize: 16,
+        marginTop: 50,
+      },
       {
         table: {
           headerRows: 1,
@@ -148,13 +220,16 @@ export function productData(): Content {
 }
 
 // Función para las observaciones
-export function observations(): ContentStack {
+export function observations(order: any): ContentStack {
   return {
     stack: [
       {
         table: {
           widths: [350],
-          body: [[{ text: 'Observaciones:', alignment: 'left' }], [diag]],
+          body: [
+            [{ text: 'Observaciones:', alignment: 'left' }],
+            [order.observations],
+          ],
         },
       },
       { text: '', margin: [0, 30] },
@@ -164,12 +239,12 @@ export function observations(): ContentStack {
 }
 
 // Función para el diagnóstico
-export function diagnostics(): Content {
+export function diagnostics(order: any): Content {
   return {
     stack: [
       {
         columns: [
-          { stack: observations().stack },
+          { stack: observations(order).stack },
           {
             image: path.join(
               __dirname,
@@ -186,24 +261,44 @@ export function diagnostics(): Content {
 }
 
 // Función para el pie de página
-export function footer(): Content {
+export function footer(order): Content {
   return {
     stack: [
       {
         columns: [
           {
             width: '50%',
-            text: 'Nombre y Firma de quién recibe la herramienta',
-            decoration: 'overline',
-            alignment: 'center',
-            margin: [0, -40, 0, 0],
+            stack: [
+              {
+                text: 'Nombre y Firma de quién recibe la herramienta',
+                decoration: 'overline',
+                alignment: 'center',
+                margin: [0, -80, 0, 0],
+              },
+              {
+                text: order.receivedBy.name || '', // Se extrae el nombre del que recibe
+                bold: true,
+                alignment: 'center',
+                margin: [0, -30, 0, 0],
+              },
+            ],
           },
           {
             width: '50%',
-            text: 'Responsable',
-            decoration: 'overline',
-            alignment: 'center',
-            margin: [0, -40, 0, 0],
+            stack: [
+              {
+                text: 'Responsable',
+                decoration: 'overline',
+                alignment: 'center',
+                margin: [0, -80, 0, 0],
+              },
+              {
+                text: order.deliveryRepresentative || '', // Se extrae el nombre del quién entrega
+                alignment: 'center',
+                bold: true,
+                margin: [0, -30, 0, 0],
+              },
+            ],
           },
         ],
       },
