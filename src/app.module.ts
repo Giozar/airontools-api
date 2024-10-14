@@ -24,6 +24,10 @@ import { JoiValidationSchema } from '@config/joi.validation';
 import serverConfig from '@config/serverConfig';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { resolve } from 'path';
+import { CustomersModule } from './customers/customers.module';
+import { OrdersModule } from './orders/orders.module';
+import { CompaniesModule } from './companies/companies.module';
+import { OtherProductsModule } from './other-products/other-products.module';
 
 @Module({
   imports: [
@@ -59,6 +63,10 @@ import { resolve } from 'path';
     SeedModule,
     BasicReportsModule,
     PrinterModule,
+    CustomersModule,
+    OrdersModule,
+    CompaniesModule,
+    OtherProductsModule,
   ],
   controllers: [],
   providers: [],

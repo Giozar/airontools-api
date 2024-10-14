@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query, Res } from '@nestjs/common';
 import { BasicReportsService } from './basic-reports.service';
 import { Response } from 'express';
+import { validateId } from 'src/handlers';
 
 @Controller('basic-reports')
 export class BasicReportsController {
@@ -51,6 +52,16 @@ export class BasicReportsController {
       opt,
     );
 
+    response.setHeader('Content-Type', 'application/pdf');
+    pdfDoc.info.Title = 'Airontools-Herramientas-Industriales';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
+
+  @Get('repair-order/:id')
+  async repairOrder(@Res() response: Response, @Param('id') id: string) {
+    validateId(id);
+    const pdfDoc = await this.basicReportsService.repairOrder(id);
     response.setHeader('Content-Type', 'application/pdf');
     pdfDoc.info.Title = 'Airontools-Herramientas-Industriales';
     pdfDoc.pipe(response);

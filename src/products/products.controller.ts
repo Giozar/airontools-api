@@ -86,6 +86,11 @@ export class ProductsController {
     return products;
   }
 
+  @Get('brand/:brand')
+  findAllByBrand(@Param('brand') brand: string) {
+    return this.productsService.findAllByBrand(brand);
+  }
+
   @Get('family/:id')
   findAllByFamilyId(@Param('id') id: string) {
     return this.productsService.findAllByFamilyId(id);

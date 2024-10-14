@@ -1,18 +1,18 @@
 import { Type } from 'class-transformer';
 import {
   IsString,
-  IsNotEmpty,
   IsOptional,
   IsArray,
   ValidateNested,
   IsMongoId,
+  IsNotEmpty,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { ProductSpecificationDto } from './productSpecification.dto';
-import { TechnicalDatasheetDto } from './technicalDatasheet.dto';
+import { ProductSpecificationDto } from 'src/products/dtos';
+import { TechnicalDatasheetDto } from 'src/products/dtos/technicalDatasheet.dto';
 
-export class CreateProductDto {
-  @IsNotEmpty()
+export class CreateOtherProductDto {
+  @IsOptional()
   @IsString()
   name: string;
 
@@ -24,11 +24,11 @@ export class CreateProductDto {
   @IsString()
   model: string; // Modelo del producto
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
   family: Types.ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
   category: Types.ObjectId;
 
@@ -37,7 +37,7 @@ export class CreateProductDto {
   subcategory: Types.ObjectId;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @IsOptional()
@@ -75,6 +75,7 @@ export class CreateProductDto {
   @ValidateNested({ each: true })
   technicalDatasheet: TechnicalDatasheetDto;
 
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => ProductSpecificationDto)
   @IsArray()

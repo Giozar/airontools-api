@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
-import { handleDBErrors } from 'src/handlers';
+import { handleDBErrors, ifNotFound } from 'src/handlers';
 import { parseIntValidate } from 'src/handlers/parseIntValidate.handle';
 import { PrinterService } from 'src/printer/printer.service';
 import { ProductsService } from 'src/products/products.service';
@@ -11,6 +11,8 @@ import {
 } from 'src/reports';
 import { getEmploymentLetterReport } from 'src/reports/employment-letter.report';
 import validateImageUtil from './utils/validateImage.util';
+import { getRepairOrder } from 'src/reports/repair-order.report';
+import { OrdersService } from 'src/orders/orders.service';
 
 @Injectable()
 export class BasicReportsService {
@@ -18,6 +20,7 @@ export class BasicReportsService {
     private readonly printerService: PrinterService,
     private readonly authService: AuthService,
     private readonly productsService: ProductsService,
+    private readonly ordersService: OrdersService,
   ) {
     // super();
   }
@@ -84,5 +87,15 @@ export class BasicReportsService {
     } catch (error) {
       handleDBErrors(error);
     }
+  }
+  async repairOrder(id: string) {
+    try {
+      const searchedOrder = await this.ordersService.findOne(id);
+      ifNotFound({ id, entity: searchedOrder });
+      console.log(searchedOrder);
+      const docDefinition = getRepairOrder(searchedOrder);
+      const doc = this.printerService.createPdf(docDefinition);
+      return doc;
+    } catch (error) {}
   }
 }
