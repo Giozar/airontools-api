@@ -41,13 +41,10 @@ export class CreateOrderDto {
   @IsOptional()
   authorizationDate: Date; // Fecha de autorización de la orden
 
-<<<<<<< HEAD
   @IsNotEmpty()
   @IsString()
   quoteDeliveryTime: string;
 
-=======
->>>>>>> c559882c19d48a6cf27d77b01e57049b2af6157d
   @IsOptional()
   deliveryDate: Date; // Fecha de autorización de entrega
 
