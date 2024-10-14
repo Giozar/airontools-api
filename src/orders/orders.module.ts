@@ -17,7 +17,10 @@ import databaseConfig from '@config/databaseConfig';
         useFactory: (connection) => {
           const schema = OrderSchema;
           const AutoIncrement = AutoIncrementFactory(connection);
-          schema.plugin(AutoIncrement, { inc_field: 'control', start_seq: 1 });
+          schema.plugin(AutoIncrement, {
+            inc_field: 'control',
+            start_seq: 4000,
+          });
           return schema;
         },
         inject: [getConnectionToken(databaseConfig().database.host)],
