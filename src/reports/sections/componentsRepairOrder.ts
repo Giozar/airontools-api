@@ -2,12 +2,8 @@ import path from 'path';
 import { Content, ContentStack } from 'pdfmake/interfaces';
 import { DateFormatter } from 'src/helpers';
 
-// Mantén las variables iniciales
-const num_de_orden = 4000;
-const diag = 'Lorem ipsum...'; // Tu diagnóstico aquí
-
 // Función para crear la orden
-export function order(): ContentStack {
+export function order(searchedOrder: any): ContentStack {
   return {
     stack: [
       {
@@ -31,7 +27,7 @@ export function order(): ContentStack {
             [{ text: '', lineHeight: 2 }],
             [
               {
-                text: 'AT' + num_de_orden,
+                text: 'AT' + searchedOrder.control,
                 alignment: 'center',
                 color: '#FF0000',
                 fontSize: 20,
@@ -50,7 +46,7 @@ export function order(): ContentStack {
 }
 
 // Función para crear el título
-export function title(): Content {
+export function title(searchedOrder: any): Content {
   return {
     stack: [
       {
@@ -68,7 +64,7 @@ export function title(): Content {
           },
           {
             width: 150,
-            stack: order().stack,
+            stack: order(searchedOrder).stack,
           },
         ],
         columnGap: 10,
@@ -189,7 +185,6 @@ export function dates(order: any): Content {
   };
 }
 
-// Función para los datos del producto
 export function productData(order: any): Content {
   return {
     stack: [
@@ -197,13 +192,13 @@ export function productData(order: any): Content {
         text: 'Datos de la herramienta',
         alignment: 'center',
         fontSize: 16,
-        marginTop: 50,
+        margin: [0, 20, 0, 10],
       },
       {
         table: {
           headerRows: 1,
           widths: ['auto', 70, 120, '*'],
-          heights: [20],
+          heights: 15, // Altura de todas las filas
           body: [
             [
               { text: 'Cantidad', alignment: 'center' },
@@ -211,7 +206,21 @@ export function productData(order: any): Content {
               { text: 'Número de serie', alignment: 'center' },
               { text: 'Descripción', alignment: 'center' },
             ],
-            ...Array(9).fill(['1', '2', '3', '4']), // Genera filas vacías
+            ...order.products.map((product: any) => [
+              { text: product.quantity.toString(), alignment: 'center' },
+              { text: product.model || 'N/A', alignment: 'center' },
+              { text: product.serialNumber || 'N/A', alignment: 'center' },
+              {
+                text: product.description || 'Sin descripción',
+                alignment: 'center',
+              },
+            ]),
+            ...Array(9 - order.products.length).fill([
+              { text: ' ', alignment: 'center' },
+              { text: ' ', alignment: 'center' },
+              { text: ' ', alignment: 'center' },
+              { text: ' ', alignment: 'center' },
+            ]),
           ],
         },
       },
@@ -224,6 +233,7 @@ export function observations(order: any): ContentStack {
   return {
     stack: [
       {
+        margin: [0, 20, 0, 10],
         table: {
           widths: [350],
           body: [

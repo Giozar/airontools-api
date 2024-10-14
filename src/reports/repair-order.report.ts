@@ -12,7 +12,7 @@ export const getRepairOrder = (searchedOrder: Order): TDocumentDefinitions => {
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
     content: [
-      title(),
+      title(searchedOrder),
       dates(searchedOrder),
       productData(searchedOrder),
       diagnostics(searchedOrder),
