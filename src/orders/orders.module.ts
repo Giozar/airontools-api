@@ -2,17 +2,28 @@ import { Module } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { Order, OrderSchema } from './schemas/order.schema';
-import { MongooseModule } from '@nestjs/mongoose';
+import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
+import AutoIncrementFactory from 'mongoose-sequence';
+import databaseConfig from '@config/databaseConfig';
 
 @Module({
   controllers: [OrdersController],
   providers: [OrdersService],
   exports: [OrdersService],
   imports: [
-    MongooseModule.forFeature([
+    MongooseModule.forFeatureAsync([
       {
         name: Order.name,
-        schema: OrderSchema,
+        useFactory: (connection) => {
+          const schema = OrderSchema;
+          const AutoIncrement = AutoIncrementFactory(connection);
+          schema.plugin(AutoIncrement, {
+            inc_field: 'control',
+            start_seq: 4000,
+          });
+          return schema;
+        },
+        inject: [getConnectionToken(databaseConfig().database.host)],
       },
     ]),
   ],

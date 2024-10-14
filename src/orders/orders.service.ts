@@ -24,6 +24,23 @@ export class OrdersService {
     }
   }
 
+  // Método para reiniciar el contador
+  async resetCounter(): Promise<void> {
+    const model = this.orderModel as any;
+    if (model.counterReset) {
+      await new Promise<void>((resolve, reject) => {
+        model.counterReset('control', (err: any) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+    } else {
+      throw new Error('counterReset method is not available on the model');
+    }
+  }
+
   // Encontrar todas las órdenes
   async findAll() {
     try {
