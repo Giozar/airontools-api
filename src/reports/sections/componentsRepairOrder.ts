@@ -2,12 +2,8 @@ import path from 'path';
 import { Content, ContentStack } from 'pdfmake/interfaces';
 import { DateFormatter } from 'src/helpers';
 
-// Mantén las variables iniciales
-const num_de_orden = 4000;
-const diag = 'Lorem ipsum...'; // Tu diagnóstico aquí
-
 // Función para crear la orden
-export function order(): ContentStack {
+export function order(searchedOrder: any): ContentStack {
   return {
     stack: [
       {
@@ -31,7 +27,7 @@ export function order(): ContentStack {
             [{ text: '', lineHeight: 2 }],
             [
               {
-                text: 'AT' + num_de_orden,
+                text: 'AT' + searchedOrder.control,
                 alignment: 'center',
                 color: '#FF0000',
                 fontSize: 20,
@@ -50,7 +46,7 @@ export function order(): ContentStack {
 }
 
 // Función para crear el título
-export function title(): Content {
+export function title(searchedOrder: any): Content {
   return {
     stack: [
       {
@@ -68,7 +64,7 @@ export function title(): Content {
           },
           {
             width: 150,
-            stack: order().stack,
+            stack: order(searchedOrder).stack,
           },
         ],
         columnGap: 10,
