@@ -8,10 +8,7 @@ export class CountersService {
     @InjectModel(Counter.name)
     private counterModel: Model<Counter>,
   ) {}
-  async getNextSequence(
-    entity: string,
-    startAt: number = 1000,
-  ): Promise<number> {
+  async getNextSequence(entity: string, startAt: number = 1): Promise<number> {
     const counter = await this.counterModel.findOneAndUpdate(
       { entity }, // Busca el documento correspondiente a la entidad
       { $inc: { count: 1 } }, // Incrementa el contador en 1
@@ -31,10 +28,10 @@ export class CountersService {
     return counter.count;
   }
 
-  async resetSequence(entity: string, startAt: number = 1000): Promise<void> {
+  async resetSequence(entity: string, startAt: number = 1): Promise<void> {
     await this.counterModel.findOneAndUpdate(
       { entity }, // Busca el documento del contador por la entidad
-      { count: startAt }, // Establece el valor del contador al valor deseado
+      { count: startAt }, // Establece el valor del contador al valor requerido
       { new: true, upsert: true }, // Si no existe, lo crea con el valor `startAt`
     );
   }

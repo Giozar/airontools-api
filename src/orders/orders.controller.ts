@@ -20,13 +20,6 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto);
   }
 
-  // Endpoint para reiniciar el contador
-  // @Post('reset-counter')
-  // async resetCounter() {
-  //   await this.ordersService.resetOrderCounter();
-  //   return { message: 'Counter reset successfully' };
-  // }
-
   @Get()
   findAll() {
     return this.ordersService.findAll();
