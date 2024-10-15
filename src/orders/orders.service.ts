@@ -5,19 +5,31 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Order } from './schemas/order.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
+import { CountersService } from 'src/counters/counters.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectModel(Order.name)
     private orderModel: Model<Order>,
+    private readonly countersService: CountersService,
   ) {}
 
-  // Crear una nueva orden
   async create(createOrderDto: CreateOrderDto) {
     try {
-      const orderCreated = new this.orderModel(createOrderDto);
+      // Obtener el siguiente número autoincrementable
+      const control = await this.countersService.getNextSequence('order', 4000);
+
+      // Crear el nuevo objeto de la orden
+      const orderCreated = new this.orderModel({
+        ...createOrderDto, // Copiar los datos de createOrderDto
+        control, // Asignar el valor autoincrementado al campo `control`
+      });
+
+      // Guardar la nueva orden en la base de datos
       await orderCreated.save();
+
+      // Devolver la orden creada
       return orderCreated;
     } catch (error) {
       handleDBErrors(error);
@@ -25,6 +37,11 @@ export class OrdersService {
   }
 
   // Método para reiniciar el contador
+  async resetOrderCounter() {
+    await this.countersService.resetSequence('order', 4000); // Reinicia el contador a 1000
+    console.log('El contador de órdenes ha sido reiniciado.');
+  }
+
   async resetCounter(): Promise<void> {
     const model = this.orderModel as any;
     if (model.counterReset) {
