@@ -5,56 +5,25 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Order } from './schemas/order.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
-import { Counter } from './schemas/counter.schema';
+import { CountersService } from 'src/counters/counters.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectModel(Order.name)
     private orderModel: Model<Order>,
-    @InjectModel(Counter.name) private counterModel: Model<Counter>,
+    private readonly countersService: CountersService,
   ) {}
-
-  async getNextSequence(
-    entity: string,
-    startAt: number = 1000,
-  ): Promise<number> {
-    const counter = await this.counterModel.findOneAndUpdate(
-      { entity }, // Busca el documento correspondiente a la entidad
-      { $inc: { count: 1 } }, // Incrementa el contador en 1
-      {
-        new: true, // Devuelve el documento actualizado
-        upsert: true, // Si no existe, lo crea
-        setDefaultsOnInsert: true, // Establece los valores predeterminados en caso de inserción
-      },
-    );
-
-    // Si es la primera vez que se crea el contador, inicializa con `startAt`
-    if (counter.count === 1) {
-      counter.count = startAt;
-      await counter.save();
-    }
-
-    return counter.count;
-  }
-
-  async resetSequence(entity: string, startAt: number = 1000): Promise<void> {
-    await this.counterModel.findOneAndUpdate(
-      { entity }, // Busca el documento del contador por la entidad
-      { count: startAt }, // Establece el valor del contador al valor deseado
-      { new: true, upsert: true }, // Si no existe, lo crea con el valor `startAt`
-    );
-  }
 
   async create(createOrderDto: CreateOrderDto) {
     try {
       // Obtener el siguiente número autoincrementable
-      const control = await this.getNextSequence('order', 4000);
+      const control = await this.countersService.getNextSequence('order', 4000);
 
       // Crear el nuevo objeto de la orden
       const orderCreated = new this.orderModel({
         ...createOrderDto, // Copiar los datos de createOrderDto
-        control, // Asignar el valor autoincrementado al campo `id`
+        control, // Asignar el valor autoincrementado al campo `control`
       });
 
       // Guardar la nueva orden en la base de datos
@@ -69,7 +38,7 @@ export class OrdersService {
 
   // Método para reiniciar el contador
   async resetOrderCounter() {
-    await this.resetSequence('order', 4000); // Reinicia el contador a 1000
+    await this.countersService.resetSequence('order', 4000); // Reinicia el contador a 1000
     console.log('El contador de órdenes ha sido reiniciado.');
   }
 

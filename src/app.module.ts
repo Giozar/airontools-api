@@ -28,6 +28,7 @@ import { CustomersModule } from './customers/customers.module';
 import { OrdersModule } from './orders/orders.module';
 import { CompaniesModule } from './companies/companies.module';
 import { OtherProductsModule } from './other-products/other-products.module';
+import { CountersModule } from './counters/counters.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { OtherProductsModule } from './other-products/other-products.module';
     OrdersModule,
     CompaniesModule,
     OtherProductsModule,
+    CountersModule,
   ],
   controllers: [],
   providers: [],

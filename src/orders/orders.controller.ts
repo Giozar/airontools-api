@@ -21,11 +21,11 @@ export class OrdersController {
   }
 
   // Endpoint para reiniciar el contador
-  @Post('reset-counter')
-  async resetCounter() {
-    await this.ordersService.resetOrderCounter();
-    return { message: 'Counter reset successfully' };
-  }
+  // @Post('reset-counter')
+  // async resetCounter() {
+  //   await this.ordersService.resetOrderCounter();
+  //   return { message: 'Counter reset successfully' };
+  // }
 
   @Get()
   findAll() {
