@@ -7,7 +7,7 @@ export class CountersController {
 
   @Post('reset/order')
   async resetOrderCounter() {
-    await this.countersService.resetSequence('order', 1000); // Reinicia el contador a 1000
-    return { message: 'El contador de órdenes ha sido reiniciado a 1000.' };
+    await this.countersService.resetSequence('order', 4000); // Reinicia el contador al número requerido
+    return { message: 'El contador de órdenes ha sido reiniciado.' };
   }
 }
