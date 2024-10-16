@@ -61,7 +61,9 @@ export class OrdersService {
   // Encontrar todas las órdenes
   async findAll() {
     try {
-      const ordersFound = await this.orderModel.find();
+      const ordersFound = await this.orderModel
+        .find()
+        .populate(['customer', 'company', 'products', 'receivedBy']);
       return ordersFound;
     } catch (error) {
       handleDBErrors(error);
