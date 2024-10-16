@@ -93,7 +93,10 @@ export class BasicReportsService {
       const searchedOrder = await this.ordersService.findOne(id);
       ifNotFound({ id, entity: searchedOrder });
       console.log(searchedOrder);
-      const docDefinition = getRepairOrder(searchedOrder);
+      const imagePath = searchedOrder.images[0]
+        ? await validateImageUtil(searchedOrder.images[0], id)
+        : '';
+      const docDefinition = getRepairOrder(searchedOrder, imagePath);
       const doc = this.printerService.createPdf(docDefinition);
       return doc;
     } catch (error) {}

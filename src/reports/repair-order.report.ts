@@ -8,14 +8,17 @@ import {
 } from './sections/componentsRepairOrder';
 import { Order } from 'src/orders/schemas/order.schema';
 
-export const getRepairOrder = (searchedOrder: Order): TDocumentDefinitions => {
+export const getRepairOrder = (
+  searchedOrder: Order,
+  imagePath: string,
+): TDocumentDefinitions => {
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'LETTER',
     content: [
       title(searchedOrder),
       dates(searchedOrder),
       productData(searchedOrder),
-      diagnostics(searchedOrder),
+      diagnostics(searchedOrder, imagePath),
     ],
     footer: footer(searchedOrder),
     pageMargins: [20, 20, 20, 20],
