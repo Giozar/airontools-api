@@ -12,17 +12,17 @@ import { Types } from 'mongoose';
 import { RepairProductDto } from './repair-product.dto';
 
 export enum OrderType {
-  REPAIR = 'repair',
+  REPAIR = 'Reparación',
 }
 
 export enum OrderStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-  ON_HOLD = 'on_hold',
-  DELIVERED = 'delivered',
-  REJECTED = 'rejected',
+  PENDING = 'Pendiente',
+  IN_PROGRESS = 'En progreso',
+  COMPLETED = 'Completado',
+  CANCELLED = 'Cancelado',
+  ON_HOLD = 'En espera',
+  DELIVERED = 'Entregado',
+  REJECTED = 'Rechazado',
 }
 
 export class CreateOrderDto {
