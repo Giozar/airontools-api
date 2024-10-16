@@ -249,21 +249,21 @@ export function observations(order: any): ContentStack {
 }
 
 // Función para el diagnóstico
-export function diagnostics(order: any): Content {
+
+function renderImage(imagePath?: any) {
+  if (imagePath.length > 0) {
+    return {
+      image: imagePath,
+      width: 180,
+      height: 200,
+    };
+  }
+}
+export function diagnostics(order: any, imagePath?: any): Content {
   return {
     stack: [
       {
-        columns: [
-          { stack: observations(order).stack },
-          {
-            image: path.join(
-              __dirname,
-              '../../assets/images/fallback-images/no-image.jpg',
-            ),
-            width: 180,
-            height: 200,
-          },
-        ],
+        columns: [{ stack: observations(order).stack }, renderImage(imagePath)],
       },
       { text: '', margin: [0, 10] },
     ],
