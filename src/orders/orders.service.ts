@@ -85,6 +85,47 @@ export class OrdersService {
     }
   }
 
+  async searchOrder(
+    keywords: string = '',
+    limit: number = 10,
+    offset: number = 0,
+  ): Promise<any> {
+    const ordersFound: Order[] = [];
+    const keywordArray = keywords.split(' ');
+
+    for (const keyword of keywordArray) {
+      const orders = await this.orderModel
+        .aggregate([
+          {
+            $match: {
+              $or: [
+                {
+                  $expr: {
+                    $regexMatch: {
+                      input: { $toString: '$control' },
+                      regex: keyword,
+                      options: 'i',
+                    },
+                  },
+                },
+                { customer: { $regex: keyword, $options: 'i' } },
+              ],
+            },
+          },
+          { $limit: limit },
+          { $skip: offset },
+          { $sort: { createdAt: 1 } },
+        ])
+        .exec();
+
+      if (orders.length > 0) {
+        ordersFound.push(...orders);
+      }
+    }
+
+    return ordersFound;
+  }
+
   // Actualizar una orden por su ID
   async update(id: string, updateOrderDto: UpdateOrderDto) {
     try {
