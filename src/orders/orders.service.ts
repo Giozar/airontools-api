@@ -92,13 +92,14 @@ export class OrdersService {
   ): Promise<any> {
     const ordersFound: Order[] = [];
 
-    // Si no hay palabras clave, devolver paginación básica
+    // Si no hay palabras clave, devolver paginación básica con populate
     if (!keywords.trim()) {
       return this.orderModel
         .find()
         .sort({ createdAt: 1 })
         .skip(offset)
         .limit(limit)
+        .populate(['customer', 'company', 'products', 'receivedBy']) // Popula entidades relacionadas
         .exec();
     }
 
@@ -165,7 +166,13 @@ export class OrdersService {
       }
     }
 
-    return ordersFound;
+    // Después de obtener los resultados, aplicar populate
+    const populatedOrders = await this.orderModel.populate(
+      ordersFound,
+      'customer company products receivedBy',
+    ); // Realizar el populate de las relaciones
+
+    return populatedOrders;
   }
 
   // Actualizar una orden por su ID
