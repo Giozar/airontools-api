@@ -91,32 +91,74 @@ export class OrdersService {
     offset: number = 0,
   ): Promise<any> {
     const ordersFound: Order[] = [];
-    const keywordArray = keywords.split(' ');
+
+    // Si no hay palabras clave, devolver paginación básica
+    if (!keywords.trim()) {
+      return this.orderModel
+        .find()
+        .sort({ createdAt: 1 })
+        .skip(offset)
+        .limit(limit)
+        .exec();
+    }
+
+    const keywordArray = keywords.split(' ').filter((k) => k.trim()); // Filtrar palabras vacías
 
     for (const keyword of keywordArray) {
-      const orders = await this.orderModel
-        .aggregate([
-          {
-            $match: {
-              $or: [
-                {
-                  $expr: {
-                    $regexMatch: {
-                      input: { $toString: '$control' },
-                      regex: keyword,
-                      options: 'i',
-                    },
+      // Verificar si el keyword es solo números
+      const isNumeric = /^\d+$/.test(keyword);
+
+      let orders = [];
+
+      if (isNumeric) {
+        // Si el keyword es solo números, buscar en 'control'
+        orders = await this.orderModel
+          .aggregate([
+            {
+              $match: {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$control' }, // Convertir 'control' a string y buscar
+                    regex: keyword,
+                    options: 'i', // Búsqueda insensible a mayúsculas/minúsculas
                   },
                 },
-                { customer: { $regex: keyword, $options: 'i' } },
-              ],
+              },
             },
-          },
-          { $limit: limit },
-          { $skip: offset },
-          { $sort: { createdAt: 1 } },
-        ])
-        .exec();
+            { $sort: { createdAt: 1 } }, // Ordenar por fecha de creación
+            { $skip: offset }, // Saltar 'offset' documentos para paginación
+            { $limit: limit }, // Limitar el número de resultados
+          ])
+          .exec();
+      } else {
+        // Si el keyword no es solo números, buscar por el nombre del cliente
+        orders = await this.orderModel
+          .aggregate([
+            {
+              $addFields: {
+                customerObjectId: { $toObjectId: '$customer' }, // Convertir 'customer' a ObjectId
+              },
+            },
+            {
+              $lookup: {
+                from: 'customers',
+                localField: 'customerObjectId', // Campo convertido a ObjectId
+                foreignField: '_id',
+                as: 'customerDetails', // Nombre del campo unido
+              },
+            },
+            { $unwind: '$customerDetails' }, // Desenrollar el array de customerDetails
+            {
+              $match: {
+                'customerDetails.name': { $regex: keyword, $options: 'i' }, // Buscar por el nombre del cliente
+              },
+            },
+            { $sort: { createdAt: 1 } }, // Ordenar por fecha de creación
+            { $skip: offset }, // Saltar 'offset' documentos para paginación
+            { $limit: limit }, // Limitar el número de resultados
+          ])
+          .exec();
+      }
 
       if (orders.length > 0) {
         ordersFound.push(...orders);
