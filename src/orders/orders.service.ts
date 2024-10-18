@@ -85,6 +85,96 @@ export class OrdersService {
     }
   }
 
+  async searchOrder(
+    keywords: string = '',
+    limit: number = 10,
+    offset: number = 0,
+  ): Promise<any> {
+    const ordersFound: Order[] = [];
+
+    // Si no hay palabras clave, devolver paginación básica con populate
+    if (!keywords.trim()) {
+      return this.orderModel
+        .find()
+        .sort({ createdAt: 1 })
+        .skip(offset)
+        .limit(limit)
+        .populate(['customer', 'company', 'products', 'receivedBy']) // Popula entidades relacionadas
+        .exec();
+    }
+
+    const keywordArray = keywords.split(' ').filter((k) => k.trim()); // Filtrar palabras vacías
+
+    for (const keyword of keywordArray) {
+      // Verificar si el keyword es solo números
+      const isNumeric = /^\d+$/.test(keyword);
+
+      let orders = [];
+
+      if (isNumeric) {
+        // Si el keyword es solo números, buscar en 'control'
+        orders = await this.orderModel
+          .aggregate([
+            {
+              $match: {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$control' }, // Convertir 'control' a string y buscar
+                    regex: keyword,
+                    options: 'i', // Búsqueda insensible a mayúsculas/minúsculas
+                  },
+                },
+              },
+            },
+            { $sort: { createdAt: 1 } }, // Ordenar por fecha de creación
+            { $skip: offset }, // Saltar 'offset' documentos para paginación
+            { $limit: limit }, // Limitar el número de resultados
+          ])
+          .exec();
+      } else {
+        // Si el keyword no es solo números, buscar por el nombre del cliente
+        orders = await this.orderModel
+          .aggregate([
+            {
+              $addFields: {
+                customerObjectId: { $toObjectId: '$customer' }, // Convertir 'customer' a ObjectId
+              },
+            },
+            {
+              $lookup: {
+                from: 'customers',
+                localField: 'customerObjectId', // Campo convertido a ObjectId
+                foreignField: '_id',
+                as: 'customerDetails', // Nombre del campo unido
+              },
+            },
+            { $unwind: '$customerDetails' }, // Desenrollar el array de customerDetails
+            {
+              $match: {
+                'customerDetails.name': { $regex: keyword, $options: 'i' }, // Buscar por el nombre del cliente
+              },
+            },
+            { $sort: { createdAt: 1 } }, // Ordenar por fecha de creación
+            { $skip: offset }, // Saltar 'offset' documentos para paginación
+            { $limit: limit }, // Limitar el número de resultados
+          ])
+          .exec();
+      }
+
+      if (orders.length > 0) {
+        ordersFound.push(...orders);
+      }
+    }
+
+    // Después de obtener los resultados, aplicar populate
+    const populatedOrders = await this.orderModel.populate(
+      ordersFound,
+      'customer company products receivedBy',
+    ); // Realizar el populate de las relaciones
+
+    return populatedOrders;
+  }
+
   // Actualizar una orden por su ID
   async update(id: string, updateOrderDto: UpdateOrderDto) {
     try {
