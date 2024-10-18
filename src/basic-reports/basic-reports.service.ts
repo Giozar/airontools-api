@@ -72,7 +72,7 @@ export class BasicReportsService {
       }
       parseIntValidate(opt);
       const image = product.images[opt];
-      const imagePath = await validateImageUtil(image, id);
+      const imagePath = await validateImageUtil(image, 'products', id);
       const docDefinition = getProductTechnicalDatasheet({
         product,
         imagePath: imagePath,
@@ -94,7 +94,7 @@ export class BasicReportsService {
       ifNotFound({ id, entity: searchedOrder });
       console.log(searchedOrder);
       const imagePath = searchedOrder.images[0]
-        ? await validateImageUtil(searchedOrder.images[0], id)
+        ? await validateImageUtil(searchedOrder.images[0], 'orders', id)
         : '';
       const docDefinition = getRepairOrder(searchedOrder, imagePath);
       const doc = this.printerService.createPdf(docDefinition);

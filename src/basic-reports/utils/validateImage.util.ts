@@ -3,6 +3,7 @@ import getImageBufferUtil from './getImageBuffer.util';
 
 export default async function validateImageUtil(
   image: string,
+  entity: string,
   _id,
 ): Promise<string> {
   const fallbackImage = path.join(
@@ -44,6 +45,6 @@ export default async function validateImageUtil(
   // Si la imagen está almacenada localmente
   return path.join(
     __dirname,
-    `../../assets/uploads/images/products/${_id}/${image.replace(/\S+\/\/\S+\/\w+\//, '')}`,
+    `../../assets/uploads/images/${entity}/${_id}/${image.replace(/\S+\/\/\S+\/\w+\//, '')}`,
   );
 }
