@@ -96,7 +96,7 @@ export class OrdersService {
     if (!keywords.trim()) {
       return this.orderModel
         .find()
-        .sort({ createdAt: 1 })
+        .sort({ createdAt: -1 }) // Ordenar por fecha de creación, 1 de forma ascendente, -1 de forma descendente
         .skip(offset)
         .limit(limit)
         .populate(['customer', 'company', 'products', 'receivedBy']) // Popula entidades relacionadas
@@ -126,7 +126,7 @@ export class OrdersService {
                 },
               },
             },
-            { $sort: { createdAt: 1 } }, // Ordenar por fecha de creación
+            { $sort: { createdAt: -1 } }, // Ordenar por fecha de creación
             { $skip: offset }, // Saltar 'offset' documentos para paginación
             { $limit: limit }, // Limitar el número de resultados
           ])
@@ -154,7 +154,7 @@ export class OrdersService {
                 'customerDetails.name': { $regex: keyword, $options: 'i' }, // Buscar por el nombre del cliente
               },
             },
-            { $sort: { createdAt: 1 } }, // Ordenar por fecha de creación
+            { $sort: { createdAt: -1 } }, // Ordenar por fecha de creación
             { $skip: offset }, // Saltar 'offset' documentos para paginación
             { $limit: limit }, // Limitar el número de resultados
           ])
