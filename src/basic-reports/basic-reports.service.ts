@@ -92,13 +92,21 @@ export class BasicReportsService {
     try {
       const searchedOrder = await this.ordersService.findOne(id);
       ifNotFound({ id, entity: searchedOrder });
-      console.log(searchedOrder);
+      // console.log('Order found:', searchedOrder);
+
       const imagePath = searchedOrder.images[0]
         ? await validateImageUtil(searchedOrder.images[0], 'orders', id)
         : '';
+
+      console.log('Image path:', imagePath); // Loguear el resultado de validateImageUtil
+
       const docDefinition = getRepairOrder(searchedOrder, imagePath);
       const doc = this.printerService.createPdf(docDefinition);
+
       return doc;
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error in repairOrder:', error); // Loguear el error
+      throw error; // Re-lanzar el error si es necesario
+    }
   }
 }
