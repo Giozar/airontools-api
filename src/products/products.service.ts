@@ -123,7 +123,7 @@ export class ProductsService {
   async findAllByFamilyId(id: string) {
     try {
       const productSearched = await this.productModel
-        .find({ FAMILY: id })
+        .find({ family: id })
         .populate([
           this.FAMILY,
           this.CATEGORY,
@@ -141,7 +141,7 @@ export class ProductsService {
   async findAllByCategoryId(id: string) {
     try {
       const productSearched = await this.productModel
-        .find({ CATEGORY: id })
+        .find({ category: id })
         .populate([
           this.FAMILY,
           this.CATEGORY,
@@ -159,7 +159,7 @@ export class ProductsService {
   async findAllBySubcategoryId(id: string) {
     try {
       const productSearched = await this.productModel
-        .find({ subCATEGORY: id })
+        .find({ subcategory: id })
         .populate([
           this.FAMILY,
           this.CATEGORY,
