@@ -1,9 +1,11 @@
 import path from 'path';
+import fs from 'fs';
 import getImageBufferUtil from './getImageBuffer.util';
 
 export default async function validateImageUtil(
   image: string,
-  _id,
+  entity: string,
+  _id: string,
 ): Promise<string> {
   const fallbackImage = path.join(
     __dirname,
@@ -13,37 +15,46 @@ export default async function validateImageUtil(
     __dirname,
     '../../assets/images/fallback-images/no-support.jpg',
   );
+  const notFoundImage = path.join(
+    __dirname,
+    '../../assets/images/fallback-images/image-not-found.jpg',
+  );
 
+  // Validación si no hay imagen
   if (!image || image.length === 0) {
-    // No hay imagen disponible, devolvemos la imagen por defecto
     return fallbackImage;
   }
 
   const supportedFormats = ['.png', '.jpg', '.jpeg'];
-
-  // Verificamos si la imagen está en un formato soportado
   const ext = path.extname(image).toLowerCase();
+
+  // Validación de formato soportado
   if (!supportedFormats.includes(ext)) {
-    // Formato no soportado, devolvemos la imagen de "no soportado"
     return unsupportedImage;
   }
 
-  // Si estamos usando S3
+  // Manejo de imágenes en S3
   if (process.env.STORAGE === 'S3') {
     try {
       const imageBuffer = await getImageBufferUtil(image);
       const imageBase64 = imageBuffer.toString('base64');
       return `data:image/${ext.replace('.', '')};base64,${imageBase64}`;
     } catch (error) {
-      // Si falla obtener la imagen de S3, devolvemos la imagen por defecto
       console.error('Error fetching image from S3:', error);
-      return fallbackImage;
+      return notFoundImage;
     }
   }
 
-  // Si la imagen está almacenada localmente
-  return path.join(
+  // Manejo de imágenes almacenadas localmente
+  const localImagePath = path.join(
     __dirname,
-    `../../assets/uploads/images/products/${_id}/${image.replace(/\S+\/\/\S+\/\w+\//, '')}`,
+    `../../assets/uploads/images/${entity}/${_id}/${image.replace(/\S+\/\/\S+\/\w+\//, '')}`,
   );
+
+  // Verificamos si la imagen existe en el sistema de archivos
+  if (fs.existsSync(localImagePath)) {
+    return localImagePath;
+  } else {
+    return notFoundImage;
+  }
 }
