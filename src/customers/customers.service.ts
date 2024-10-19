@@ -39,7 +39,7 @@ export class CustomersService {
     keywords: string = '',
     limit: number = 10,
     offset: number = 0,
-    maxDistance: number = 3, // Distancia máxima de Levenshtein permitida
+    maxDistance: number = 2, // Distancia máxima de Levenshtein permitida
   ): Promise<any> {
     const customersFound: Customer[] = [];
 
@@ -65,25 +65,40 @@ export class CustomersService {
       .populate(['createdBy', 'updatedBy'])
       .exec();
 
-    // Filtrar clientes utilizando la distancia de Levenshtein
+    // Filtrar clientes utilizando la distancia de Levenshtein o coincidencia parcial
     for (const customer of allCustomers) {
-      for (const keyword of keywordArray) {
-        // Comparación insensible a mayúsculas y minúsculas
-        const distance = levenshteinDistance(
-          customer.name.toLowerCase(),
-          keyword.toLowerCase(),
-        );
+      const nameParts = customer.name.toLowerCase().split(' '); // Dividimos el nombre en partes
 
-        if (distance <= maxDistance) {
-          customersFound.push(customer);
-          break; // Si encontramos una coincidencia con una palabra clave, pasamos al siguiente cliente
+      let matchFound = false;
+
+      for (const keyword of keywordArray) {
+        const loweredKeyword = keyword.toLowerCase();
+
+        // Comprobamos cada parte del nombre
+        for (const part of nameParts) {
+          const distance = levenshteinDistance(part, loweredKeyword);
+
+          // Coincidencia directa (keyword coincide con el inicio de alguna parte del nombre)
+          if (part.startsWith(loweredKeyword)) {
+            customersFound.push(customer);
+            matchFound = true;
+            break; // No necesitamos seguir si ya encontramos coincidencia
+          }
+
+          // Coincidencia aproximada (usamos Levenshtein)
+          if (distance <= maxDistance) {
+            customersFound.push(customer);
+            matchFound = true;
+            break;
+          }
         }
+
+        if (matchFound) break; // Si ya encontramos coincidencia, pasamos al siguiente cliente
       }
     }
 
     return customersFound;
   }
-
   // async searchCustomer(
   //   keywords: string = '',
   //   limit: number = 10,
