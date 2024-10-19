@@ -10,8 +10,8 @@ export function order(searchedOrder: any): ContentStack {
         canvas: [
           {
             type: 'rect',
-            x: 100,
-            y: 0,
+            x: 75,
+            y: -15,
             w: 140,
             h: 60,
             r: 5,

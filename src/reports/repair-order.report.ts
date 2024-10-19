@@ -21,7 +21,6 @@ export const getRepairOrder = (
       diagnostics(searchedOrder, imagePath),
     ],
     footer: footer(searchedOrder),
-    pageMargins: [20, 20, 20, 20],
   };
   return docDefinition;
 };
