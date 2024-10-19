@@ -27,7 +27,7 @@ export function order(searchedOrder: any): ContentStack {
             [{ text: '', lineHeight: 2 }],
             [
               {
-                text: 'AT' + searchedOrder.control,
+                text: `AT${searchedOrder.control ? searchedOrder.control : ''}`,
                 alignment: 'center',
                 color: '#FF0000',
                 fontSize: 20,
@@ -80,12 +80,12 @@ export function dates(order: any): Content {
       {
         columns: [
           {
-            text: `Fecha de entrada: ${DateFormatter.getDDMMMMYYYY(order.createdAt)}`,
+            text: `Fecha de entrada: ${DateFormatter.getDDMMMMYYYY(order.createdAt || new Date())}`,
             alignment: 'right',
             lineHeight: 1.5,
           },
           {
-            text: `Fecha de Autorización: ${DateFormatter.getDDMMMMYYYY(order.authorizationDate)}`,
+            text: `Fecha de Autorización: ${DateFormatter.getDDMMMMYYYY(order.authorizationDate || new Date())}`,
             alignment: 'right',
             lineHeight: 1.5,
           },
@@ -103,7 +103,7 @@ export function dates(order: any): Content {
                 margin: [0, 5, 10, 0], // Margen en [izquierda, arriba, derecha, abajo]
               },
               {
-                text: order.company.name || '',
+                text: `${order.company ? order.company.name : ''}`,
                 bold: true,
                 border: [false, false, false, true], // Línea debajo
                 margin: [0, 5, 0, 5], // Ajusta márgenes para el texto dentro de la celda
@@ -124,7 +124,7 @@ export function dates(order: any): Content {
                 margin: [0, 5, 10, 0],
               },
               {
-                text: order.quoteDeliveryTime || '',
+                text: `${order.quoteDeliveryTime ? order.quoteDeliveryTime : ''}`,
                 bold: true,
                 border: [false, false, false, true],
                 margin: [0, 5, 0, 5],
@@ -148,7 +148,7 @@ export function dates(order: any): Content {
                     margin: [0, 5, 10, 0],
                   },
                   {
-                    text: order.customer.name || '',
+                    text: `${order.customer ? order.customer.name : ''}`,
                     bold: true,
                     border: [false, false, false, true],
                     margin: [0, 5, 0, 5],
@@ -170,7 +170,7 @@ export function dates(order: any): Content {
                     margin: [0, 5, 10, 0],
                   },
                   {
-                    text: order.customer.phoneNumber || '',
+                    text: `${order.customer ? order.customer.phoneNumber : ''}`,
                     bold: true,
                     border: [false, false, false, true],
                     margin: [0, 5, 0, 5],
@@ -286,7 +286,7 @@ export function footer(order): Content {
                 margin: [0, -80, 0, 0],
               },
               {
-                text: order.receivedBy.name || '', // Se extrae el nombre del que recibe
+                text: `${order.receivedBy ? order.receivedBy.name : ''}`, // Se extrae el nombre del que recibe
                 bold: true,
                 alignment: 'center',
                 margin: [0, -30, 0, 0],
@@ -303,7 +303,7 @@ export function footer(order): Content {
                 margin: [0, -80, 0, 0],
               },
               {
-                text: order.deliveryRepresentative || '', // Se extrae el nombre del quién entrega
+                text: `${order.deliveryRepresentative ? order.deliveryRepresentative : ''}`, // Se extrae el nombre del quién entrega
                 alignment: 'center',
                 bold: true,
                 margin: [0, -30, 0, 0],
