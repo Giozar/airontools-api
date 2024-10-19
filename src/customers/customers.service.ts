@@ -34,6 +34,45 @@ export class CustomersService {
     }
   }
 
+  async searchCustomer(
+    keywords: string = '',
+    limit: number = 10,
+    offset: number = 0,
+  ): Promise<any> {
+    const customersFound: Customer[] = [];
+
+    // Si no hay palabras clave, devolver paginación básica con populate
+    if (!keywords.trim()) {
+      return this.customerModel
+        .find()
+        .sort({ createdAt: -1 }) // Ordenar por fecha de creación
+        .skip(offset)
+        .limit(limit)
+        .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
+        .exec();
+    }
+
+    const keywordArray = keywords.split(' ').filter((k) => k.trim());
+
+    for (const keyword of keywordArray) {
+      const customers = await this.customerModel
+        .find({
+          name: { $regex: keyword, $options: 'i' }, // Buscar por nombre
+        })
+        .limit(limit)
+        .skip(offset)
+        .sort({ createdAt: -1 }) // Ordenar por fecha de creación
+        .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
+        .exec();
+
+      if (customers.length > 0) {
+        customersFound.push(...customers);
+      }
+    }
+
+    return customersFound;
+  }
+
   // Encontrar un clientes por id de empresa
   async findAllByCompanyId(companyId: string) {
     try {

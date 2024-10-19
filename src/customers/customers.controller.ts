@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { SearchDto } from 'src/common/dtos/search.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('customers')
 export class CustomersController {
@@ -28,6 +31,19 @@ export class CustomersController {
   @Get('company/:companyId')
   findAllByCompanyId(@Param('companyId') companyId: string) {
     return this.customersService.findAllByCompanyId(companyId);
+  }
+
+  @Post('search')
+  async searchProduct(
+    @Body() search: SearchDto,
+    @Query() { limit, offset }: PaginationDto,
+  ) {
+    const response = await this.customersService.searchCustomer(
+      search.keywords,
+      limit,
+      offset,
+    );
+    return response;
   }
 
   @Get(':id')
