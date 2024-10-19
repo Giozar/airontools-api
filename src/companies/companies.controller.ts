@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { SearchDto } from 'src/common/dtos/search.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('companies')
 export class CompaniesController {
@@ -23,6 +26,19 @@ export class CompaniesController {
   @Get()
   findAll() {
     return this.companiesService.findAll();
+  }
+
+  @Post('search')
+  async searchProduct(
+    @Body() search: SearchDto,
+    @Query() { limit, offset }: PaginationDto,
+  ) {
+    const response = await this.companiesService.searchCompany(
+      search.keywords,
+      limit,
+      offset,
+    );
+    return response;
   }
 
   @Get(':id')
