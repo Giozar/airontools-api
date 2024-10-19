@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Customer } from './schemas/customer.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
+import { levenshteinDistance } from 'src/utils/levenshteinDistance';
 
 @Injectable()
 export class CustomersService {
@@ -38,6 +39,7 @@ export class CustomersService {
     keywords: string = '',
     limit: number = 10,
     offset: number = 0,
+    maxDistance: number = 3, // Distancia máxima de Levenshtein permitida
   ): Promise<any> {
     const customersFound: Customer[] = [];
 
@@ -54,24 +56,72 @@ export class CustomersService {
 
     const keywordArray = keywords.split(' ').filter((k) => k.trim());
 
-    for (const keyword of keywordArray) {
-      const customers = await this.customerModel
-        .find({
-          name: { $regex: keyword, $options: 'i' }, // Buscar por nombre
-        })
-        .limit(limit)
-        .skip(offset)
-        .sort({ createdAt: -1 }) // Ordenar por fecha de creación
-        .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
-        .exec();
+    // Obtener todos los clientes limitados por paginación
+    const allCustomers = await this.customerModel
+      .find()
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit)
+      .populate(['createdBy', 'updatedBy'])
+      .exec();
 
-      if (customers.length > 0) {
-        customersFound.push(...customers);
+    // Filtrar clientes utilizando la distancia de Levenshtein
+    for (const customer of allCustomers) {
+      for (const keyword of keywordArray) {
+        // Comparación insensible a mayúsculas y minúsculas
+        const distance = levenshteinDistance(
+          customer.name.toLowerCase(),
+          keyword.toLowerCase(),
+        );
+
+        if (distance <= maxDistance) {
+          customersFound.push(customer);
+          break; // Si encontramos una coincidencia con una palabra clave, pasamos al siguiente cliente
+        }
       }
     }
 
     return customersFound;
   }
+
+  // async searchCustomer(
+  //   keywords: string = '',
+  //   limit: number = 10,
+  //   offset: number = 0,
+  // ): Promise<any> {
+  //   const customersFound: Customer[] = [];
+
+  //   // Si no hay palabras clave, devolver paginación básica con populate
+  //   if (!keywords.trim()) {
+  //     return this.customerModel
+  //       .find()
+  //       .sort({ createdAt: -1 }) // Ordenar por fecha de creación
+  //       .skip(offset)
+  //       .limit(limit)
+  //       .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
+  //       .exec();
+  //   }
+
+  //   const keywordArray = keywords.split(' ').filter((k) => k.trim());
+
+  //   for (const keyword of keywordArray) {
+  //     const customers = await this.customerModel
+  //       .find({
+  //         name: { $regex: keyword, $options: 'i' }, // Buscar por nombre
+  //       })
+  //       .limit(limit)
+  //       .skip(offset)
+  //       .sort({ createdAt: -1 }) // Ordenar por fecha de creación
+  //       .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
+  //       .exec();
+
+  //     if (customers.length > 0) {
+  //       customersFound.push(...customers);
+  //     }
+  //   }
+
+  //   return customersFound;
+  // }
 
   // Encontrar un clientes por id de empresa
   async findAllByCompanyId(companyId: string) {
