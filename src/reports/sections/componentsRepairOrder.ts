@@ -10,8 +10,8 @@ export function order(searchedOrder: any): ContentStack {
         canvas: [
           {
             type: 'rect',
-            x: 75,
-            y: -15,
+            x: 65,
+            y: 3,
             w: 140,
             h: 60,
             r: 5,
@@ -39,7 +39,7 @@ export function order(searchedOrder: any): ContentStack {
           vLineWidth: () => 0,
           hLineWidth: (i: number) => (i === 1 ? 1 : 0),
         },
-        absolutePosition: { x: 440, y: 22 },
+        absolutePosition: { x: 425, y: 50 },
       },
     ],
   };
@@ -84,11 +84,11 @@ export function dates(order: any): Content {
             alignment: 'right',
             lineHeight: 1.5,
           },
-          {
+          /*{
             text: `Fecha de Autorización: ${DateFormatter.getDDMMMMYYYY(order.authorizationDate || new Date())}`,
             alignment: 'right',
             lineHeight: 1.5,
-          },
+          },*/
         ],
       },
       {
@@ -233,9 +233,9 @@ export function observations(order: any): ContentStack {
   return {
     stack: [
       {
-        margin: [0, 20, 0, 10],
+        margin: [0, 0, 0, 10],
         table: {
-          widths: [350],
+          widths: [325],
           body: [
             [{ text: 'Observaciones:', alignment: 'left' }],
             [order.observations],
@@ -262,10 +262,10 @@ function renderImage(imagePath?: any) {
 export function diagnostics(order: any, imagePath?: any): Content {
   return {
     stack: [
+      { text: '', margin: [0, 5] },
       {
         columns: [{ stack: observations(order).stack }, renderImage(imagePath)],
       },
-      { text: '', margin: [0, 10] },
     ],
   };
 }
@@ -283,13 +283,13 @@ export function footer(order): Content {
                 text: 'Nombre y Firma de quién recibe la herramienta',
                 decoration: 'overline',
                 alignment: 'center',
-                margin: [0, -80, 0, 0],
+                margin: [20, -40, 0, 0],
               },
               {
                 text: `${order.receivedBy ? order.receivedBy.name : ''}`, // Se extrae el nombre del que recibe
                 bold: true,
                 alignment: 'center',
-                margin: [0, -30, 0, 0],
+                margin: [20, -30, 0, 0],
               },
             ],
           },
@@ -297,16 +297,16 @@ export function footer(order): Content {
             width: '50%',
             stack: [
               {
-                text: 'Responsable',
+                text: '   Responsable   ',
                 decoration: 'overline',
                 alignment: 'center',
-                margin: [0, -80, 0, 0],
+                margin: [20, -40, 0, 0],
               },
               {
                 text: `${order.deliveryRepresentative ? order.deliveryRepresentative : ''}`, // Se extrae el nombre del quién entrega
                 alignment: 'center',
                 bold: true,
-                margin: [0, -30, 0, 0],
+                margin: [20, -30, 0, 0],
               },
             ],
           },
@@ -315,7 +315,7 @@ export function footer(order): Content {
       {
         text: 'Calz. de Guadalupe No. 572 Col. Industrial C.P. 07800 Tel. 8589-7373 www.airontools.com',
         alignment: 'center',
-        margin: [0, -10],
+        margin: [0, -20],
       },
     ],
   };
