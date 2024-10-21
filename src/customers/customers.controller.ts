@@ -11,8 +11,8 @@ import {
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { SearchDto } from 'src/common/dtos/search.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { SearchCustomerDto } from './dto/search-customer.dto';
 
 @Controller('customers')
 export class CustomersController {
@@ -34,14 +34,15 @@ export class CustomersController {
   }
 
   @Post('search')
-  async searchProduct(
-    @Body() search: SearchDto,
+  async searchCustomer(
+    @Body() search: SearchCustomerDto,
     @Query() { limit, offset }: PaginationDto,
   ) {
     const response = await this.customersService.searchCustomer(
       search.keywords,
       limit,
       offset,
+      search.companyId,
     );
     return response;
   }

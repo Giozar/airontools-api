@@ -39,36 +39,43 @@ export class CustomersService {
     keywords: string = '',
     limit: number = 10,
     offset: number = 0,
-    maxDistance: number = 2, // Distancia máxima de Levenshtein permitida
+    company: string = '',
+    maxDistance: number = 3, // Distancia máxima de Levenshtein permitida
   ): Promise<any> {
-    const customersFound: Customer[] = [];
+    const exactMatches: Customer[] = [];
+    const approximateMatches: Customer[] = [];
+    const query: any = {};
 
-    // Si no hay palabras clave, devolver paginación básica con populate
+    // Aplicamos filtro por company si está presente
+    if (company) {
+      query.company = company;
+    }
+
+    // Si no hay palabras clave, devolver paginación básica
     if (!keywords.trim()) {
-      return this.customerModel
-        .find()
-        .sort({ createdAt: -1 }) // Ordenar por fecha de creación
-        .skip(offset)
-        .limit(limit)
-        .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
-        .exec();
+      return (
+        this.customerModel
+          .find(query)
+          .sort({ createdAt: -1 }) // Ordenar por fecha de creación
+          .skip(offset)
+          .limit(limit)
+          // .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
+          .exec()
+      );
     }
 
     const keywordArray = keywords.split(' ').filter((k) => k.trim());
 
-    // Obtener todos los clientes limitados por paginación
+    // Obtener todos los clientes limitados por paginación y aplicar filtro de company
     const allCustomers = await this.customerModel
-      .find()
+      .find(query)
       .sort({ createdAt: -1 })
-      .skip(offset)
-      .limit(limit)
       .populate(['createdBy', 'updatedBy'])
       .exec();
 
-    // Filtrar clientes utilizando la distancia de Levenshtein o coincidencia parcial
+    // Filtrar clientes utilizando coincidencias exactas o la distancia de Levenshtein
     for (const customer of allCustomers) {
       const nameParts = customer.name.toLowerCase().split(' '); // Dividimos el nombre en partes
-
       let matchFound = false;
 
       for (const keyword of keywordArray) {
@@ -78,16 +85,16 @@ export class CustomersService {
         for (const part of nameParts) {
           const distance = levenshteinDistance(part, loweredKeyword);
 
-          // Coincidencia directa (keyword coincide con el inicio de alguna parte del nombre)
-          if (part.startsWith(loweredKeyword)) {
-            customersFound.push(customer);
+          // Coincidencia directa (keyword coincide exactamente con alguna parte del nombre)
+          if (part === loweredKeyword) {
+            exactMatches.push(customer);
             matchFound = true;
-            break; // No necesitamos seguir si ya encontramos coincidencia
+            break; // No necesitamos seguir si ya encontramos coincidencia exacta
           }
 
-          // Coincidencia aproximada (usamos Levenshtein)
-          if (distance <= maxDistance) {
-            customersFound.push(customer);
+          // Coincidencia aproximada usando Levenshtein
+          if (!matchFound && distance <= maxDistance) {
+            approximateMatches.push(customer);
             matchFound = true;
             break;
           }
@@ -97,8 +104,15 @@ export class CustomersService {
       }
     }
 
-    return customersFound;
+    // Unir coincidencias exactas y aproximadas, dando prioridad a las exactas
+    const customersFound = [...exactMatches, ...approximateMatches];
+
+    // Aplicar paginación manualmente
+    const paginatedResults = customersFound.slice(offset, offset + limit);
+
+    return paginatedResults;
   }
+
   // async searchCustomer(
   //   keywords: string = '',
   //   limit: number = 10,
@@ -139,9 +153,9 @@ export class CustomersService {
   // }
 
   // Encontrar un clientes por id de empresa
-  async findAllByCompanyId(companyId: string) {
+  async findAllByCompanyId(company: string) {
     try {
-      const customers = await this.customerModel.find({ company: companyId });
+      const customers = await this.customerModel.find({ company: company });
       return customers;
     } catch (error) {
       handleDBErrors(error);
