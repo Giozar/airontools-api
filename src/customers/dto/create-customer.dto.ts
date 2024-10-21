@@ -12,8 +12,8 @@ import {
 import { Types } from 'mongoose';
 
 export enum CustomerType {
-  INDIVIDUAL = 'individual',
-  COMPANY = 'empresa',
+  INDIVIDUAL = 'Individual',
+  COMPANY = 'Empresa',
 }
 
 export class AddressDto {
