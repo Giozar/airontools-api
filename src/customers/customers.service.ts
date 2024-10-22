@@ -41,6 +41,7 @@ export class CustomersService {
     limit = 10,
     offset = 0,
     company = '',
+    customerType = '',
     maxDistance = 3,
     autocomplete = false,
   }: SearchCustomerParams): Promise<any> {
@@ -51,6 +52,10 @@ export class CustomersService {
     // Aplicamos filtro por company si está presente
     if (company) {
       query.company = company;
+    }
+
+    if (customerType) {
+      query.customerType = customerType;
     }
 
     // Si no hay palabras clave, devolver paginación básica

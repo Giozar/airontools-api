@@ -44,6 +44,7 @@ export class CustomersController {
       offset,
       company: search.companyId,
       autocomplete: search.autocomplete,
+      customerType: search.customerType,
     });
     return response;
   }
