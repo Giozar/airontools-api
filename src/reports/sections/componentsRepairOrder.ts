@@ -235,7 +235,7 @@ export function observations(order: any): ContentStack {
       {
         margin: [0, 0, 0, 10],
         table: {
-          widths: [325],
+          widths: [260],
           body: [
             [{ text: 'Observaciones:', alignment: 'left' }],
             [order.observations],
@@ -254,7 +254,7 @@ function renderImage(imagePath?: any) {
   if (imagePath.length > 0) {
     return {
       image: imagePath,
-      width: 180,
+      width: 250,
       height: 200,
     };
   }
