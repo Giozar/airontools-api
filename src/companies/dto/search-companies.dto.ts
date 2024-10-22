@@ -1,13 +1,9 @@
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
-export class SearchCustomerDto {
+export class SearchCompaniesDto {
   @IsOptional()
   @IsString()
   keywords: string;
-
-  @IsOptional()
-  @IsString()
-  companyId: string;
 
   @IsOptional()
   @IsBoolean()

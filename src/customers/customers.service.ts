@@ -41,6 +41,7 @@ export class CustomersService {
     offset: number = 0,
     company: string = '',
     maxDistance: number = 3, // Distancia máxima de Levenshtein permitida
+    autocomplete: boolean = false, // Si se busca en un input autocomplete, para no mostrar todo
   ): Promise<any> {
     const exactMatches: Customer[] = [];
     const approximateMatches: Customer[] = [];
@@ -52,7 +53,7 @@ export class CustomersService {
     }
 
     // Si no hay palabras clave, devolver paginación básica
-    if (!keywords.trim()) {
+    if (!keywords.trim() && !autocomplete) {
       return (
         this.customerModel
           .find(query)

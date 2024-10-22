@@ -38,11 +38,12 @@ export class CompaniesService {
     limit: number = 10,
     offset: number = 0,
     maxDistance: number = 3, // Distancia máxima de Levenshtein
+    autocomplete: boolean = false, // Si se busca en un input autocomplete, para no mostrar todo
   ): Promise<any> {
     const companiesFound: Company[] = [];
 
     // Si no hay palabras clave, devolver paginación básica con populate
-    if (!keywords.trim()) {
+    if (!keywords.trim() && !autocomplete) {
       return this.companyModel
         .find()
         .sort({ createdAt: -1 }) // Ordenar por fecha de creación
