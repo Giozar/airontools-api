@@ -11,3 +11,15 @@ export class PaginationDto {
   @Min(0)
   offset?: number;
 }
+export class PaginationDtoTemp {
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Min(1)
+  limit?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  page?: number;
+}

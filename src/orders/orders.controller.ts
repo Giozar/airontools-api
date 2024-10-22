@@ -12,7 +12,7 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { SearchDto } from 'src/common/dtos/search.dto';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { PaginationDtoTemp } from 'src/common/dtos/pagination.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -36,12 +36,12 @@ export class OrdersController {
   @Post('search')
   async searchProduct(
     @Body() search: SearchDto,
-    @Query() { limit, offset }: PaginationDto,
+    @Query() { limit, page }: PaginationDtoTemp,
   ) {
     const response = await this.ordersService.searchOrder(
       search.keywords,
       limit,
-      offset,
+      page,
     );
     return response;
   }
