@@ -6,16 +6,16 @@ export type CompanyDocument = Company & Document;
 
 @Schema({ timestamps: true })
 export class Company {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, unique: true })
   name: string; // Nombre de la empresa
 
   @Prop({ type: String, required: false })
   industry?: string; // Industria a la que pertenece la empresa
 
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: false, unique: true })
   email?: string; // Correo electrónico de contacto de la empresa
 
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: false, unique: true })
   phoneNumber?: string; // Número de teléfono de la empresa
 
   @Prop({ type: String, required: false })

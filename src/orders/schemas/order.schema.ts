@@ -13,7 +13,7 @@ export class Order {
   @Prop()
   control: number;
 
-  @Prop({ type: Types.ObjectId, ref: 'Company' }) // Relación con la empresa
+  @Prop({ type: Types.ObjectId, ref: 'Company', required: false }) // Relación con la empresa
   company: Types.ObjectId; // Solo si el cliente es una empresa
 
   @Prop({ type: Types.ObjectId, required: true, ref: 'Customer' })
