@@ -6,6 +6,7 @@ import { Customer } from './schemas/customer.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
 import { levenshteinDistance } from 'src/utils/levenshteinDistance';
+import { SearchCustomerParams } from './dto/search-customer.dto';
 
 @Injectable()
 export class CustomersService {
@@ -35,14 +36,14 @@ export class CustomersService {
     }
   }
 
-  async searchCustomer(
-    keywords: string = '',
-    limit: number = 10,
-    offset: number = 0,
-    company: string = '',
-    maxDistance: number = 3, // Distancia máxima de Levenshtein permitida
-    autocomplete: boolean = false, // Si se busca en un input autocomplete, para no mostrar todo
-  ): Promise<any> {
+  async searchCustomer({
+    keywords = '',
+    limit = 10,
+    offset = 0,
+    company = '',
+    maxDistance = 3,
+    autocomplete = false,
+  }: SearchCustomerParams): Promise<any> {
     const exactMatches: Customer[] = [];
     const approximateMatches: Customer[] = [];
     const query: any = {};

@@ -38,14 +38,13 @@ export class CustomersController {
     @Body() search: SearchCustomerDto,
     @Query() { limit, offset }: PaginationDto,
   ) {
-    const response = await this.customersService.searchCustomer(
-      search.keywords,
+    const response = await this.customersService.searchCustomer({
+      keywords: search.keywords,
       limit,
       offset,
-      search.companyId,
-      3,
-      search.autocomplete,
-    );
+      company: search.companyId,
+      autocomplete: search.autocomplete,
+    });
     return response;
   }
 
