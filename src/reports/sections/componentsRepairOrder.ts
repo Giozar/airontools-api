@@ -103,7 +103,7 @@ export function dates(order: any): Content {
                 margin: [0, 5, 10, 0], // Margen en [izquierda, arriba, derecha, abajo]
               },
               {
-                text: `${order.company ? order.company.name : ''}`,
+                text: `${order.company ? order.company.name : order.customer ? order.customer.name : ''}`,
                 bold: true,
                 border: [false, false, false, true], // Línea debajo
                 margin: [0, 5, 0, 5], // Ajusta márgenes para el texto dentro de la celda
