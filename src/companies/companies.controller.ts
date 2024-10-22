@@ -29,17 +29,16 @@ export class CompaniesController {
   }
 
   @Post('search')
-  async searchProduct(
+  async searchCompany(
     @Body() search: SearchCompaniesDto,
     @Query() { limit, offset }: PaginationDto,
   ) {
-    const response = await this.companiesService.searchCompany(
-      search.keywords,
+    const response = await this.companiesService.searchCompany({
+      keywords: search.keywords,
       limit,
       offset,
-      3,
-      search.autocomplete,
-    );
+      autocomplete: search.autocomplete,
+    });
     return response;
   }
 

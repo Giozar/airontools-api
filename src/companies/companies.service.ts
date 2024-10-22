@@ -6,6 +6,7 @@ import { Company } from './schemas/company.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
 import { levenshteinDistance } from 'src/utils/levenshteinDistance';
+import { SearchCompanyParams } from './dto/search-companies.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -33,13 +34,13 @@ export class CompaniesService {
     }
   }
 
-  async searchCompany(
-    keywords: string = '',
-    limit: number = 10,
-    offset: number = 0,
-    maxDistance: number = 3, // Distancia máxima de Levenshtein
-    autocomplete: boolean = false, // Si se busca en un input autocomplete, para no mostrar todo
-  ): Promise<any> {
+  async searchCompany({
+    keywords = '',
+    limit = 10,
+    offset = 0,
+    maxDistance = 3, // Distancia máxima de Levenshtein
+    autocomplete = false, // Si se busca en un input autocomplete, para no mostrar todo
+  }: SearchCompanyParams): Promise<any> {
     const companiesFound: Company[] = [];
 
     // Si no hay palabras clave, devolver paginación básica con populate
