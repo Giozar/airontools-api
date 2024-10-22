@@ -17,10 +17,10 @@ export class Customer {
   @Prop({ type: Types.ObjectId, ref: 'Company' }) // Relación con la empresa
   company?: Types.ObjectId; // Solo si el cliente es una empresa
 
-  @Prop({ required: false, unique: true }) // Correo electrónico del cliente (opcional)
+  @Prop({ required: false }) // Correo electrónico del cliente (opcional)
   email?: string;
 
-  @Prop({ required: true, unique: true }) // Teléfono de contacto (requerido)
+  @Prop({ required: true }) // Teléfono de contacto (requerido)
   phoneNumber: string;
 
   @Prop({ type: Object, required: false }) // Dirección del cliente (opcional)

@@ -12,10 +12,10 @@ export class Company {
   @Prop({ type: String, required: false })
   industry?: string; // Industria a la que pertenece la empresa
 
-  @Prop({ type: String, required: false, unique: true })
+  @Prop({ type: String, required: false })
   email?: string; // Correo electrónico de contacto de la empresa
 
-  @Prop({ type: String, required: false, unique: true })
+  @Prop({ type: String, required: false })
   phoneNumber?: string; // Número de teléfono de la empresa
 
   @Prop({ type: String, required: false })
