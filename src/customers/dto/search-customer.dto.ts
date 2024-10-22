@@ -12,11 +12,16 @@ export class SearchCustomerDto {
   @IsOptional()
   @IsBoolean()
   autocomplete: boolean;
+
+  @IsOptional()
+  @IsString()
+  customerType: string;
 }
 
 export interface SearchCustomerParams {
   keywords?: string;
   company: string;
+  customerType?: string;
   limit?: number;
   offset?: number;
   maxDistance?: number;
