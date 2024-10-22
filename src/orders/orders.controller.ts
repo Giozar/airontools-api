@@ -36,12 +36,12 @@ export class OrdersController {
   @Post('search')
   async searchProduct(
     @Body() search: SearchDto,
-    @Query() { limit, offset }: PaginationDto,
+    @Query() { limit, page }: PaginationDto,
   ) {
     const response = await this.ordersService.searchOrder(
       search.keywords,
       limit,
-      offset,
+      page,
     );
     return response;
   }

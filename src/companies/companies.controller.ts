@@ -31,12 +31,12 @@ export class CompaniesController {
   @Post('search')
   async searchProduct(
     @Body() search: SearchDto,
-    @Query() { limit, offset }: PaginationDto,
+    @Query() { limit, page }: PaginationDto,
   ) {
     const response = await this.companiesService.searchCompany(
       search.keywords,
       limit,
-      offset,
+      page,
     );
     return response;
   }
