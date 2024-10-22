@@ -11,8 +11,8 @@ import {
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { SearchDto } from 'src/common/dtos/search.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { SearchCompaniesDto } from './dto/search-companies.dto';
 
 @Controller('companies')
 export class CompaniesController {
@@ -30,13 +30,15 @@ export class CompaniesController {
 
   @Post('search')
   async searchProduct(
-    @Body() search: SearchDto,
+    @Body() search: SearchCompaniesDto,
     @Query() { limit, offset }: PaginationDto,
   ) {
     const response = await this.companiesService.searchCompany(
       search.keywords,
       limit,
       offset,
+      3,
+      search.autocomplete,
     );
     return response;
   }

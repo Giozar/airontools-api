@@ -43,6 +43,8 @@ export class CustomersController {
       limit,
       offset,
       search.companyId,
+      3,
+      search.autocomplete,
     );
     return response;
   }
