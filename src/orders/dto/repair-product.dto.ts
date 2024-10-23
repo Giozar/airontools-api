@@ -39,4 +39,8 @@ export class RepairProductDto {
   @IsOptional()
   @IsString()
   observation?: string; // Observaciones adicionales específicas de este producto
+
+  @IsOptional()
+  @IsString()
+  diagnostic?: string; // Diagnósticos adicionales específicas de este producto
 }

@@ -13,6 +13,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { SearchDto } from 'src/common/dtos/search.dto';
 import { PaginationDtoTemp } from 'src/common/dtos/pagination.dto';
+import { CreateRepairOrderDto } from './dto/create-repair-order.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -44,6 +45,14 @@ export class OrdersController {
       page,
     );
     return response;
+  }
+
+  @Patch('repair-order/:id')
+  createRepairOrder(
+    @Param('id') id: string,
+    @Body() createRepairOrderDto: CreateRepairOrderDto,
+  ) {
+    return this.ordersService.createRepairOrder(id, createRepairOrderDto);
   }
 
   @Patch(':id')

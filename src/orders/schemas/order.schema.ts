@@ -29,6 +29,9 @@ export class Order {
   authorizationDate: Date; // Fecha de autorización de la orden
 
   @Prop({ type: Date, required: false })
+  quotationDeliveryDate: Date; // Fecha de autorización de la orden
+
+  @Prop({ type: Date, required: false })
   deliveryDate: Date; // Fecha de entrega
 
   @Prop({ type: [{ type: Object, required: true }], _id: false })
@@ -40,13 +43,19 @@ export class Order {
   @Prop({ type: [String] })
   images?: string[]; // Imágenes opcionales
 
+  @Prop({ type: String, required: false })
+  damagedPartsImageUrl?: string;
+
   @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
   receivedBy: MongooseSchema.Types.ObjectId; // Empleado que recibe el producto
+
+  @Prop({ type: Types.ObjectId, required: false, ref: 'User' })
+  technician?: MongooseSchema.Types.ObjectId; // Empleado(Técnico) de reparación
 
   @Prop({ type: String, required: true })
   deliveryRepresentative: string; // Nombre de la persona que entrega la herramienta para reparación
 
-  @Prop({ type: String, enum: OrderStatus, default: OrderStatus.PENDING })
+  @Prop({ type: String, enum: OrderStatus, default: OrderStatus.ENTERED })
   orderStatus: OrderStatus; // Estado de la orden
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
