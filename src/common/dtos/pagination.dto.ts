@@ -8,7 +8,7 @@ export class PaginationDto {
 
   @IsOptional()
   @IsNumber()
-  @Min(0)
+  @Min(1)
   offset?: number;
 }
 export class PaginationDtoTemp {
