@@ -85,95 +85,147 @@ export class OrdersService {
     }
   }
 
+  //nota: $unwind quita datos no relacionados o rotos
   async searchOrder(
     keywords: string = '',
     limit: number = 10,
-    offset: number = 0,
+    page: number = 1,
   ): Promise<any> {
-    const ordersFound: Order[] = [];
-
-    // Si no hay palabras clave, devolver paginación básica con populate
-    if (!keywords.trim()) {
-      return this.orderModel
-        .find()
-        .sort({ createdAt: -1 }) // Ordenar por fecha de creación, 1 de forma ascendente, -1 de forma descendente
-        .skip(offset)
-        .limit(limit)
-        .populate(['customer', 'company', 'products', 'receivedBy']) // Popula entidades relacionadas
-        .exec();
-    }
-
+    let matchConditions = {};
     const keywordArray = keywords.split(' ').filter((k) => k.trim()); // Filtrar palabras vacías
 
-    for (const keyword of keywordArray) {
-      // Verificar si el keyword es solo números
-      const isNumeric = /^\d+$/.test(keyword);
+    if (keywordArray.length > 0) {
+      // Generar condiciones de búsqueda basadas en los keywords
+      const keywordConditions = keywordArray.map((keyword) => {
+        const isNumeric = /^\d+$/.test(keyword); // Verificar si el keyword es solo números
 
-      let orders = [];
-
-      if (isNumeric) {
-        // Si el keyword es solo números, buscar en 'control'
-        orders = await this.orderModel
-          .aggregate([
-            {
-              $match: {
-                $expr: {
-                  $regexMatch: {
-                    input: { $toString: '$control' }, // Convertir 'control' a string y buscar
-                    regex: keyword,
-                    options: 'i', // Búsqueda insensible a mayúsculas/minúsculas
-                  },
+        return isNumeric
+          ? {
+              $expr: {
+                $regexMatch: {
+                  input: { $toString: '$control' },
+                  regex: keyword,
+                  options: 'i',
                 },
               },
-            },
-            { $sort: { createdAt: -1 } }, // Ordenar por fecha de creación
-            { $skip: offset }, // Saltar 'offset' documentos para paginación
-            { $limit: limit }, // Limitar el número de resultados
-          ])
-          .exec();
-      } else {
-        // Si el keyword no es solo números, buscar por el nombre del cliente
-        orders = await this.orderModel
-          .aggregate([
-            {
-              $addFields: {
-                customerObjectId: { $toObjectId: '$customer' }, // Convertir 'customer' a ObjectId
-              },
-            },
-            {
-              $lookup: {
-                from: 'customers',
-                localField: 'customerObjectId', // Campo convertido a ObjectId
-                foreignField: '_id',
-                as: 'customerDetails', // Nombre del campo unido
-              },
-            },
-            { $unwind: '$customerDetails' }, // Desenrollar el array de customerDetails
-            {
-              $match: {
-                'customerDetails.name': { $regex: keyword, $options: 'i' }, // Buscar por el nombre del cliente
-              },
-            },
-            { $sort: { createdAt: -1 } }, // Ordenar por fecha de creación
-            { $skip: offset }, // Saltar 'offset' documentos para paginación
-            { $limit: limit }, // Limitar el número de resultados
-          ])
-          .exec();
-      }
+            }
+          : { 'customerDetails.name': { $regex: keyword, $options: 'i' } };
+      });
 
-      if (orders.length > 0) {
-        ordersFound.push(...orders);
-      }
+      matchConditions = { $or: keywordConditions }; // Usar $or para combinar condiciones
     }
 
-    // Después de obtener los resultados, aplicar populate
+    // Crear agregación con paginación y conteo total
+    const ordersQuery = this.orderModel.aggregate([
+      {
+        $addFields: {
+          customerObjectId: { $toObjectId: '$customer' }, // Convertir 'customer' a ObjectId
+        },
+      },
+      {
+        $lookup: {
+          from: 'customers',
+          localField: 'customerObjectId',
+          foreignField: '_id',
+          as: 'customerDetails', // Unir con la colección customers
+        },
+      },
+      {
+        $unwind: {
+          path: '$customerDetails',
+          preserveNullAndEmptyArrays: true, // Asegura que los documentos sin coincidencia aún se incluyan
+        },
+      },
+      {
+        $lookup: {
+          from: 'companies', // Hacemos el populate para 'company'
+          localField: 'company',
+          foreignField: '_id',
+          as: 'companyDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$companyDetails',
+          preserveNullAndEmptyArrays: true, // Evitar perder resultados si no tienen 'company'
+        },
+      },
+      {
+        $lookup: {
+          from: 'products', // Hacemos el populate para 'products'
+          localField: 'products',
+          foreignField: '_id',
+          as: 'productDetails',
+        },
+      },
+      {
+        $lookup: {
+          from: 'users', // Hacemos el populate para 'receivedBy'
+          localField: 'receivedBy',
+          foreignField: '_id',
+          as: 'receivedByDetails',
+        },
+      },
+      {
+        $match: matchConditions, // Aplicar las condiciones de búsqueda
+      },
+      { $sort: { createdAt: -1 } }, // Ordenar por fecha de creación
+
+      // Conteo total antes de la paginación
+      {
+        $facet: {
+          total: [{ $count: 'count' }],
+          data: [{ $skip: (page - 1) * limit }, { $limit: limit }],
+        },
+      },
+    ]);
+
+    const result = await ordersQuery.exec();
+
+    const ordersFound = result[0].data;
+    const total = result[0].total.length > 0 ? result[0].total[0].count : 0;
     const populatedOrders = await this.orderModel.populate(
       ordersFound,
       'customer company products receivedBy',
-    ); // Realizar el populate de las relaciones
-
-    return populatedOrders;
+    );
+    return {
+      data: populatedOrders,
+      page,
+      totalPages: Math.ceil(total / limit),
+      total,
+    };
   }
+
+  //Las siguientes podrian ser candidatas a find all
+  /*
+  //Esta alternativa tiene mejor rendimiento
+  async paginate(limit: number = 10, lastId?: string) {
+    const query = lastId ? { _id: { $gt: lastId } } : {};
+    const data = await this.orderModel.find(query).limit(limit).exec();
+
+    return {
+      data,
+      lastId: data.length ? data[data.length - 1]._id : null,
+      limit,
+    };
+  }*/
+  /* //Esta alternativa es lo que esperarias que hiciera paginate
+  async paginate(page: number = 1, limit: number = 10) {
+    const data = await this.orderModel
+      .find()
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
+
+    const total = await this.orderModel.countDocuments().exec();
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
+  }
+  */
 
   // Actualizar una orden por su ID
   async update(id: string, updateOrderDto: UpdateOrderDto) {
