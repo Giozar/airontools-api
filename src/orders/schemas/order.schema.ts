@@ -40,8 +40,11 @@ export class Order {
   @Prop({ type: String })
   observations?: string; // Observaciones generales de la orden
 
-  @Prop({ type: [String] })
-  images?: string[]; // Imágenes opcionales
+  // @Prop({ type: [String] })
+  // images?: string[]; // Imágenes opcionales
+
+  @Prop({ type: String })
+  imageUrl?: string; // Imágenes opcionales
 
   @Prop({ type: String, required: false })
   damagedPartsImageUrl?: string;

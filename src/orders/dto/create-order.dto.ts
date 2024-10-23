@@ -62,10 +62,14 @@ export class CreateOrderDto {
   @IsString()
   observations?: string; // Observaciones generales de la orden
 
+  // @IsOptional()
+  // @IsArray()
+  // @IsString({ each: true })
+  // images?: string[]; // Imágenes opcionales
+
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  images?: string[]; // Imágenes opcionales
+  @IsString()
+  imageUrl?: string;
 
   @IsNotEmpty()
   @IsMongoId()

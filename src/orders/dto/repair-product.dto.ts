@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsArray,
-  IsMongoId,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsMongoId } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class RepairProductDto {
@@ -31,10 +25,14 @@ export class RepairProductDto {
   @IsNotEmpty()
   quantity: number; // Cantidad de productos en la orden de reparación
 
+  // @IsOptional()
+  // @IsArray()
+  // @IsString({ each: true })
+  // images?: string[]; // Imágenes opcionales del producto
+
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  images?: string[]; // Imágenes opcionales del producto
+  @IsString()
+  imageUrl?: string; // Imágenes opcionales del producto
 
   @IsOptional()
   @IsString()
