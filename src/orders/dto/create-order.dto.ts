@@ -16,12 +16,17 @@ export enum OrderType {
 }
 
 export enum OrderStatus {
+  ENTERED = 'Ingresado',
+  UNDER_REVIEW = 'En revisión',
+  ACCEPTED = 'Aceptada',
   PENDING = 'Pendiente',
   IN_PROGRESS = 'En progreso',
-  COMPLETED = 'Completado',
-  CANCELLED = 'Cancelado',
+  IN_PROCESS = 'En proceso',
   ON_HOLD = 'En espera',
+  COMPLETED = 'Completado',
+  FINALIZED = 'Finalizado',
   DELIVERED = 'Entregado',
+  CANCELLED = 'Cancelado',
   REJECTED = 'Rechazado',
 }
 
@@ -57,10 +62,14 @@ export class CreateOrderDto {
   @IsString()
   observations?: string; // Observaciones generales de la orden
 
+  // @IsOptional()
+  // @IsArray()
+  // @IsString({ each: true })
+  // images?: string[]; // Imágenes opcionales
+
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  images?: string[]; // Imágenes opcionales
+  @IsString()
+  imageUrl?: string;
 
   @IsNotEmpty()
   @IsMongoId()

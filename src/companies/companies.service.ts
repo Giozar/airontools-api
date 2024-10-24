@@ -41,7 +41,8 @@ export class CompaniesService {
     maxDistance = 3, // Distancia máxima de Levenshtein
     autocomplete = false, // Si se busca en un input autocomplete, para no mostrar todo
   }: SearchCompanyParams): Promise<any> {
-    const companiesFound: Company[] = [];
+    const exactMatches: Company[] = [];
+    const approximateMatches: Company[] = [];
 
     // Si no hay palabras clave, devolver paginación básica con populate
     if (!keywords.trim() && !autocomplete) {
@@ -54,6 +55,8 @@ export class CompaniesService {
         .exec();
     }
 
+    const keywordArray = keywords.split(' ').filter((k) => k.trim());
+
     // Obtener todas las empresas, limitada por paginación para controlar rendimiento
     const allCompanies = await this.companyModel
       .find()
@@ -63,23 +66,49 @@ export class CompaniesService {
       .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
       .exec();
 
-    const keywordArray = keywords.split(' ').filter((k) => k.trim());
-
     // Comparar cada empresa con las palabras clave usando Levenshtein
     for (const company of allCompanies) {
+      const nameParts = company.name.toLowerCase().split(' '); // Dividimos el nombre en partes
+      let matchFound = false;
       for (const keyword of keywordArray) {
-        const distance = levenshteinDistance(
-          company.name.toLowerCase(),
-          keyword.toLowerCase(),
-        );
-        if (distance <= maxDistance) {
-          companiesFound.push(company);
-          break; // Si ya encontramos una coincidencia con una palabra clave, pasamos a la siguiente empresa
+        const loweredKeyword = keyword.toLowerCase();
+
+        // Comprobamos cada parte del nombre
+        for (const part of nameParts) {
+          const distance = levenshteinDistance(part, loweredKeyword);
+
+          // Coincidencia directa (keyword coincide exactamente con alguna parte del nombre)
+          if (part === loweredKeyword) {
+            exactMatches.push(company);
+            matchFound = true;
+            break; // No necesitamos seguir si ya encontramos coincidencia exacta
+          }
+
+          // Coincidencia aproximada usando Levenshtein
+          if (!matchFound && distance <= maxDistance) {
+            approximateMatches.push(company);
+            matchFound = true;
+            break;
+          }
+
+          // Coincidencia aproximada usando Levenshtein
+          if (!matchFound && distance <= maxDistance) {
+            approximateMatches.push(company);
+            matchFound = true;
+            break;
+          }
         }
+        if (matchFound) break; // Si ya encontramos coincidencia, pasamos la siguiente empresa
       }
     }
 
-    return companiesFound;
+    // Unir coincidencias exactas y aproximadas, dando prioridad a las exactas
+    const companiesFound = [...exactMatches, ...approximateMatches];
+
+    // Aplicar paginación manualmente
+    const paginatedResults = companiesFound.slice(offset, offset + limit);
+
+    return paginatedResults;
   }
 
   // async searchCompany(

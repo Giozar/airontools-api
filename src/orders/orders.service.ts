@@ -6,6 +6,7 @@ import { Order } from './schemas/order.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
 import { CountersService } from 'src/counters/counters.service';
+import { CreateRepairOrderDto } from './dto/create-repair-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -31,6 +32,22 @@ export class OrdersService {
 
       // Devolver la orden creada
       return orderCreated;
+    } catch (error) {
+      handleDBErrors(error);
+    }
+  }
+
+  async createRepairOrder(
+    id: string,
+    createRepairOrderDto: CreateRepairOrderDto,
+  ) {
+    try {
+      const repairOrder = await this.orderModel.findByIdAndUpdate(
+        id,
+        createRepairOrderDto,
+        { new: true }, // Devolver el documento actualizado
+      );
+      return repairOrder;
     } catch (error) {
       handleDBErrors(error);
     }

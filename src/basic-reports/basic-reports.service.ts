@@ -94,8 +94,8 @@ export class BasicReportsService {
       ifNotFound({ id, entity: searchedOrder });
       // console.log('Order found:', searchedOrder);
 
-      const imagePath = searchedOrder.images[0]
-        ? await validateImageUtil(searchedOrder.images[0], 'orders', id)
+      const imagePath = searchedOrder.imageUrl
+        ? await validateImageUtil(searchedOrder.imageUrl, 'orders', id)
         : '';
 
       console.log('Image path:', imagePath); // Loguear el resultado de validateImageUtil
