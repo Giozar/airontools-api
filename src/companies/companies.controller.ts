@@ -29,7 +29,7 @@ export class CompaniesController {
   }
 
   @Post('search')
-  async searchProduct(
+  async searchCompany(
     @Body() search: SearchCompaniesDto,
     @Query() { limit, offset }: PaginationDto,
   ) {
