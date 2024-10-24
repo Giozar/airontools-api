@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Company } from './schemas/company.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
-import { levenshteinDistance } from 'src/utils/levenshteinDistance';
+import Fuse from 'fuse.js';
 import { SearchCompanyParams } from './dto/search-companies.dto';
 
 @Injectable()
@@ -38,72 +38,36 @@ export class CompaniesService {
     keywords = '',
     limit = 10,
     offset = 0,
-    maxDistance = 3, // Distancia máxima de Levenshtein
-    autocomplete = false, // Si se busca en un input autocomplete, para no mostrar todo
-  }: SearchCompanyParams): Promise<any> {
-    const exactMatches: Company[] = [];
-    const approximateMatches: Company[] = [];
-
-    // Si no hay palabras clave, devolver paginación básica con populate
-    if (!keywords.trim() && !autocomplete) {
+  }: SearchCompanyParams): Promise<Company[]> {
+    if (!keywords.trim()) {
+      // Devolver empresas sin filtrar con paginación
       return this.companyModel
         .find()
-        .sort({ createdAt: -1 }) // Ordenar por fecha de creación
+        .sort({ createdAt: -1 })
         .skip(offset)
         .limit(limit)
-        .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
+        .populate(['createdBy', 'updatedBy'])
         .exec();
     }
 
-    const keywordArray = keywords.split(' ').filter((k) => k.trim());
-
-    // Obtener todas las empresas, limitada por paginación para controlar rendimiento
+    // Obtener todas las empresas necesarias para la búsqueda
     const allCompanies = await this.companyModel
       .find()
-      .sort({ createdAt: -1 }) // Ordenar por fecha de creación
-      .skip(offset)
-      .limit(limit)
-      .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
+      .populate(['createdBy', 'updatedBy'])
       .exec();
 
-    // Comparar cada empresa con las palabras clave usando Levenshtein
-    for (const company of allCompanies) {
-      const nameParts = company.name.toLowerCase().split(' '); // Dividimos el nombre en partes
-      let matchFound = false;
-      for (const keyword of keywordArray) {
-        const loweredKeyword = keyword.toLowerCase();
+    // Configurar Fuse.js
+    const fuse = new Fuse(allCompanies, {
+      keys: ['name'],
+      threshold: 0.4, // Ajusta este valor para más o menos tolerancia
+      minMatchCharLength: 2, // Mínimo de caracteres para empezar a buscar
+    });
 
-        // Comprobamos cada parte del nombre
-        for (const part of nameParts) {
-          const distance = levenshteinDistance(part, loweredKeyword);
+    // Realizar la búsqueda difusa
+    const results = fuse.search(keywords.trim());
 
-          // Coincidencia directa (keyword coincide exactamente con alguna parte del nombre)
-          if (part === loweredKeyword) {
-            exactMatches.push(company);
-            matchFound = true;
-            break; // No necesitamos seguir si ya encontramos coincidencia exacta
-          }
-
-          // Coincidencia aproximada usando Levenshtein
-          if (!matchFound && distance <= maxDistance) {
-            approximateMatches.push(company);
-            matchFound = true;
-            break;
-          }
-
-          // Coincidencia aproximada usando Levenshtein
-          if (!matchFound && distance <= maxDistance) {
-            approximateMatches.push(company);
-            matchFound = true;
-            break;
-          }
-        }
-        if (matchFound) break; // Si ya encontramos coincidencia, pasamos la siguiente empresa
-      }
-    }
-
-    // Unir coincidencias exactas y aproximadas, dando prioridad a las exactas
-    const companiesFound = [...exactMatches, ...approximateMatches];
+    // Mapear los resultados para obtener las empresas
+    const companiesFound = results.map((result) => result.item);
 
     // Aplicar paginación manualmente
     const paginatedResults = companiesFound.slice(offset, offset + limit);

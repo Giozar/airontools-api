@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Customer } from './schemas/customer.schema';
 import { Model } from 'mongoose';
 import { handleDBErrors } from 'src/handlers';
-import { levenshteinDistance } from 'src/utils/levenshteinDistance';
+import Fuse from 'fuse.js';
 import { SearchCustomerParams } from './dto/search-customer.dto';
 
 @Injectable()
@@ -42,11 +42,7 @@ export class CustomersService {
     offset = 0,
     company = '',
     customerType = '',
-    maxDistance = 3,
-    autocomplete = false,
-  }: SearchCustomerParams): Promise<any> {
-    const exactMatches: Customer[] = [];
-    const approximateMatches: Customer[] = [];
+  }: SearchCustomerParams): Promise<Customer[]> {
     const query: any = {};
 
     // Aplicamos filtro por company si está presente
@@ -58,61 +54,31 @@ export class CustomersService {
       query.customerType = customerType;
     }
 
-    // Si no hay palabras clave, devolver paginación básica
-    if (!keywords.trim() && !autocomplete) {
-      return (
-        this.customerModel
-          .find(query)
-          .sort({ createdAt: -1 }) // Ordenar por fecha de creación
-          .skip(offset)
-          .limit(limit)
-          // .populate(['createdBy', 'updatedBy']) // Popula entidades relacionadas
-          .exec()
-      );
+    // Si no hay palabras clave, devolver clientes filtrados por company/customerType con paginación
+    if (!keywords.trim()) {
+      return this.customerModel
+        .find(query)
+        .sort({ createdAt: -1 })
+        .skip(offset)
+        .limit(limit)
+        .exec();
     }
 
-    const keywordArray = keywords.split(' ').filter((k) => k.trim());
+    // Obtener los clientes que cumplen con los filtros de company y customerType
+    const customers = await this.customerModel.find(query).exec();
 
-    // Obtener todos los clientes limitados por paginación y aplicar filtro de company
-    const allCustomers = await this.customerModel
-      .find(query)
-      .sort({ createdAt: -1 })
-      .populate(['createdBy', 'updatedBy'])
-      .exec();
+    // Configurar Fuse.js
+    const fuse = new Fuse(customers, {
+      keys: ['name'],
+      threshold: 0.4, // Ajusta este valor para más o menos tolerancia
+      minMatchCharLength: 2, // Mínimo de caracteres para empezar a buscar
+    });
 
-    // Filtrar clientes utilizando coincidencias exactas o la distancia de Levenshtein
-    for (const customer of allCustomers) {
-      const nameParts = customer.name.toLowerCase().split(' '); // Dividimos el nombre en partes
-      let matchFound = false;
+    // Realizar la búsqueda difusa
+    const results = fuse.search(keywords.trim());
 
-      for (const keyword of keywordArray) {
-        const loweredKeyword = keyword.toLowerCase();
-
-        // Comprobamos cada parte del nombre
-        for (const part of nameParts) {
-          const distance = levenshteinDistance(part, loweredKeyword);
-
-          // Coincidencia directa (keyword coincide exactamente con alguna parte del nombre)
-          if (part === loweredKeyword) {
-            exactMatches.push(customer);
-            matchFound = true;
-            break; // No necesitamos seguir si ya encontramos coincidencia exacta
-          }
-
-          // Coincidencia aproximada usando Levenshtein
-          if (!matchFound && distance <= maxDistance) {
-            approximateMatches.push(customer);
-            matchFound = true;
-            break;
-          }
-        }
-
-        if (matchFound) break; // Si ya encontramos coincidencia, pasamos al siguiente cliente
-      }
-    }
-
-    // Unir coincidencias exactas y aproximadas, dando prioridad a las exactas
-    const customersFound = [...exactMatches, ...approximateMatches];
+    // Mapear los resultados para obtener los clientes
+    const customersFound = results.map((result) => result.item);
 
     // Aplicar paginación manualmente
     const paginatedResults = customersFound.slice(offset, offset + limit);
