@@ -42,6 +42,7 @@ export class CustomersService {
     offset = 0,
     company = '',
     customerType = '',
+    autocomplete = false,
   }: SearchCustomerParams): Promise<Customer[]> {
     const query: any = {};
 
@@ -55,7 +56,7 @@ export class CustomersService {
     }
 
     // Si no hay palabras clave, devolver clientes filtrados por company/customerType con paginación
-    if (!keywords.trim()) {
+    if (!keywords.trim() && !autocomplete) {
       return this.customerModel
         .find(query)
         .sort({ createdAt: -1 })

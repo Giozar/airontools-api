@@ -38,8 +38,9 @@ export class CompaniesService {
     keywords = '',
     limit = 10,
     offset = 0,
+    autocomplete = false,
   }: SearchCompanyParams): Promise<Company[]> {
-    if (!keywords.trim()) {
+    if (!keywords.trim() && !autocomplete) {
       // Devolver empresas sin filtrar con paginación
       return this.companyModel
         .find()
